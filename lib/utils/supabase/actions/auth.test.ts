@@ -1,8 +1,7 @@
 import { MESSAGES } from '@/lib/constants/messages';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as authModule from '@/lib/utils/supabase/actions/auth';
+import { parseAndValidateInput, signInUser } from './helpers';
 import * as serverModule from '@/lib/utils/supabase/server';
-import { signInUser } from '@/lib/utils/supabase/actions/auth';
 
 describe('parseAndValidateInput', () => {
     it('should validate valid form data', () => {
@@ -13,7 +12,7 @@ describe('parseAndValidateInput', () => {
         formData.append('email', email);
         formData.append('password', password);
 
-        const { data, result } = authModule.parseAndValidateInput(formData);
+        const { data, result } = parseAndValidateInput(formData);
 
         expect(result.success).toBe(true);
         expect(data.email).toBe(email);
@@ -28,7 +27,7 @@ describe('parseAndValidateInput', () => {
         formData.append('email', email);
         formData.append('password', password);
 
-        const { result } = authModule.parseAndValidateInput(formData);
+        const { result } = parseAndValidateInput(formData);
 
         expect(result.success).toBe(false)
         expect(result.error?.formErrors.fieldErrors).toMatchObject({
