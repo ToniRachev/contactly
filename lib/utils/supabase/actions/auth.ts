@@ -13,32 +13,49 @@ type LoginStateType = {
     errors: LoginSchemaErrorType
 }
 
-export async function login(state: LoginStateType, formData: FormData) {
-    const data = Object.fromEntries(formData);
+export const parseAndValidateInput = (formData: FormData) => {
+    const data = {
+        email: formData.get('email'),
+        password: formData.get('password')
+    }
+
     const result = loginSchema.safeParse(data);
+
+    return { data, result }
+}
+
+export const signInUser = async (data: LoginSchemaType) => {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signInWithPassword(data);
+
+    if (error) {
+        throw error;
+    }
+}
+
+const postLoginSuccess = () => {
+    revalidatePath('/', 'layout');
+    redirect('/');
+}
+
+export async function login(state: LoginStateType, formData: FormData) {
+    const { data, result } = parseAndValidateInput(formData);
 
     if (!result.success) {
         return createFormResult(data as LoginSchemaType, result.error.formErrors as LoginSchemaErrorType)
     }
 
     try {
-        const supabase = await createClient();
-        const { error } = await supabase.auth.signInWithPassword(result.data);
-
-        if (error) {
-            if (isAuthApiError(error)) {
-                return createFormResult(data as LoginSchemaType, MESSAGES.authError.login.invalidCredentials)
-            }
-            throw error;
+        await signInUser(result.data);
+    } catch (error) {
+        if (isAuthApiError(error)) {
+            return createFormResult(data as LoginSchemaType, MESSAGES.authError.login.invalidCredentials)
         }
 
-    } catch (_) {
         return createFormResult(data as LoginSchemaType, MESSAGES.genericError)
     }
 
-    revalidatePath('/', 'layout');
-
-    redirect('/');
+    postLoginSuccess();
 }
 
 export async function signout() {
