@@ -1,10 +1,14 @@
+import { MESSAGES } from '@/lib/constants/messages';
+import { VALIDATION } from '@/lib/constants/validation';
 import { z } from 'zod';
 
 export const loginSchema = z.object({
     email: z.string().email({
-        message: 'Invalid email address'
+        message: MESSAGES.validation.login.invalidEmail,
     }),
-    password: z.string().min(6, 'Password must be at least 6 characters').max(20, 'Password must not exceed 20 characters')
+    password: z.string()
+        .min(VALIDATION.password.minLength, MESSAGES.validation.password.minLength)
+        .max(VALIDATION.password.maxLength, MESSAGES.validation.password.maxLength)
 })
 
 export type LoginSchemaType = z.infer<typeof loginSchema>;
