@@ -7,12 +7,20 @@ export const MESSAGES = {
         }
     },
     validation: {
+        invalidEmail: 'Invalid email address',
         password: {
             minLength: `Password must be at least ${VALIDATION.password.minLength} characters long`,
             maxLength: `Password must not exceed ${VALIDATION.password.maxLength} characters`
         },
-        login: {
-            invalidEmail: 'Invalid email address'
+        signup: {
+            firstName: {
+                minLength: `First name must be at least ${VALIDATION.signup.firstName.minLength} characters`,
+                maxLength: `First name must be ${VALIDATION.signup.firstName.maxLength} characters or fewer`
+            },
+            lastName: {
+                minLength: `Last name must be at least ${VALIDATION.signup.lastName.minLength} characters`,
+                maxLength: `Last name must be ${VALIDATION.signup.lastName.maxLength} characters or fewer`
+            },
         }
     },
     genericError: 'Something went wrong. Please try again.'
