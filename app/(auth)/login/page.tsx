@@ -1,15 +1,15 @@
 'use client';
 
 import { login } from "@/lib/utils/supabase/actions/auth";
-import { LoginSchemaErrorType } from "@/lib/utils/supabase/validations/authSchema";
+import { LoginSchemaErrorType, LoginSchemaType } from "@/lib/utils/supabase/validations/authSchema";
 import { useActionState } from "react";
 
 export default function LoginPage() {
-    const [state, formAction, isPending] = useActionState(login, {
+    const [state, formAction] = useActionState(login, {
         data: {
             email: '',
             password: '',
-        },
+        } as LoginSchemaType,
         errors: {} as LoginSchemaErrorType
     });
 

@@ -31,7 +31,7 @@ export async function login(state: LoginStateType, formData: FormData) {
         return createFormResult(data as LoginSchemaType, MESSAGES.genericError)
     }
 
-    postLoginSuccess();
+    return postLoginSuccess();
 }
 
 export async function signout() {
