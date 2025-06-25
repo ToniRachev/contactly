@@ -1,6 +1,6 @@
 import { MESSAGES } from '@/lib/constants/messages';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { parseAndValidateInput, signInUser } from './helpers';
+import { parseAndValidateSigninInput, signInUser } from './helpers';
 import * as serverModule from '@/lib/utils/supabase/server';
 
 describe('parseAndValidateInput', () => {
@@ -12,7 +12,7 @@ describe('parseAndValidateInput', () => {
         formData.append('email', email);
         formData.append('password', password);
 
-        const { data, result } = parseAndValidateInput(formData);
+        const { data, result } = parseAndValidateSigninInput(formData);
 
         expect(result.success).toBe(true);
         expect(data.email).toBe(email);
@@ -27,11 +27,11 @@ describe('parseAndValidateInput', () => {
         formData.append('email', email);
         formData.append('password', password);
 
-        const { result } = parseAndValidateInput(formData);
+        const { result } = parseAndValidateSigninInput(formData);
 
         expect(result.success).toBe(false)
         expect(result.error?.formErrors.fieldErrors).toMatchObject({
-            email: [MESSAGES.validation.login.invalidEmail],
+            email: [MESSAGES.validation.invalidEmail],
             password: [MESSAGES.validation.password.minLength]
         })
     })
