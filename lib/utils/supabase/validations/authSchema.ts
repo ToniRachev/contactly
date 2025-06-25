@@ -29,7 +29,7 @@ export const signupSchema = z.object({
         .min(VALIDATION.password.minLength, MESSAGES.validation.password.minLength)
         .max(VALIDATION.password.maxLength, MESSAGES.validation.password.maxLength)
 }).refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords doesn\'t match',
+    message: MESSAGES.validation.signup.passwordsDontMatch,
     path: ['confirmPassword'],
 })
 

@@ -1,9 +1,9 @@
 import { MESSAGES } from '@/lib/constants/messages';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { parseAndValidateSigninInput, signInUser } from './helpers';
+import { parseAndValidateSigninInput, parseAndValidateSignupInput, signInUser } from './helpers';
 import * as serverModule from '@/lib/utils/supabase/server';
 
-describe('parseAndValidateInput', () => {
+describe('parseAndValidateSigninInput', () => {
     it('should validate valid form data', () => {
         const email = 'test@abv.bg';
         const password = '12345ab';
@@ -33,6 +33,75 @@ describe('parseAndValidateInput', () => {
         expect(result.error?.formErrors.fieldErrors).toMatchObject({
             email: [MESSAGES.validation.invalidEmail],
             password: [MESSAGES.validation.password.minLength]
+        })
+    })
+})
+
+describe('parseAndValidateSignupInput', () => {
+    it('should validate valid form data', () => {
+        const credentials = {
+            email: 'test@gmail.com',
+            password: 'password',
+            confirmPassword: 'password',
+            firstName: 'Test First Name',
+            lastName: 'Test Last Name',
+        }
+
+        const formData = new FormData();
+
+        for (const [key, value] of Object.entries(credentials)) {
+            formData.append(key, value);
+        }
+
+        const { data, result } = parseAndValidateSignupInput(formData);
+
+        expect(result.success).toBe(true);
+        expect(data).toMatchObject(credentials);
+    })
+
+    it('should return validation errors for invalid form data', () => {
+        const credentials = {
+            email: 'test',
+            password: 'password',
+            confirmPassword: 'password',
+            firstName: 'Test First Name',
+            lastName: 'Test Last Name',
+        }
+
+        const formData = new FormData();
+
+        for (const [key, value] of Object.entries(credentials)) {
+            formData.append(key, value);
+        }
+
+        const { result } = parseAndValidateSignupInput(formData);
+
+        expect(result.success).toBe(false);
+        expect(result.error?.formErrors.fieldErrors).toMatchObject({
+            email: [MESSAGES.validation.invalidEmail],
+        })
+    })
+
+    it('should return validation error when passwords do not match', () => {
+        const credentials = {
+            email: 'test@gmail.com',
+            password: 'password',
+            confirmPassword: 'confirmPassword',
+            firstName: 'Test First Name',
+            lastName: 'Test Last Name',
+        }
+
+        const formData = new FormData();
+
+        for (const [key, value] of Object.entries(credentials)) {
+            formData.append(key, value);
+        }
+
+        const { result } = parseAndValidateSignupInput(formData);
+
+        expect(result.success).toBe(false);
+        expect(result.error?.formErrors.fieldErrors).toMatchObject({
+            confirmPassword: [MESSAGES.validation.signup.passwordsDontMatch],
         })
     })
 })
