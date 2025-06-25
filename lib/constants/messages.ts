@@ -21,6 +21,7 @@ export const MESSAGES = {
                 minLength: `Last name must be at least ${VALIDATION.signup.lastName.minLength} characters`,
                 maxLength: `Last name must be ${VALIDATION.signup.lastName.maxLength} characters or fewer`
             },
+            passwordsDontMatch: 'Passwords doesn\'t match'
         }
     },
     genericError: 'Something went wrong. Please try again.'
