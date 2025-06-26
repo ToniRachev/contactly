@@ -21,7 +21,7 @@ export default async function AppWrapper({ children }: { children: ReactNode }) 
                     <div className="">
                         <AppSidebar />
                     </div>
-                    <div className="w-full">
+                    <div className="w-full pl-24 pt-8">
                         {children}
                     </div>
                 </main>
