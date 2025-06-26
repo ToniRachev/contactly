@@ -3,6 +3,9 @@
 import { login } from "@/lib/utils/supabase/actions/auth/auth";
 import { LoginSchemaErrorType, LoginSchemaType } from "@/lib/utils/supabase/validations/authSchema";
 import { useActionState } from "react";
+import FormWrapper from "../components/form-wrapper";
+import Input from "@/components/input";
+import ErrorMessage from "@/components/error-message";
 
 export default function LoginPage() {
     const [state, formAction] = useActionState(login, {
@@ -14,19 +17,31 @@ export default function LoginPage() {
     });
 
     return (
-        <form className="flex flex-col gap-4 justify-center items-center">
-            <label htmlFor="email">Email</label>
-            <input defaultValue={state.data.email} name="email" className="border" />
-            <p>{state.errors?.fieldErrors?.email}</p>
+        <FormWrapper>
+            <form className="flex flex-col gap-4 min-w-[30vw]">
+                <Input
+                    name="email"
+                    value={state.data.email}
+                    label="Email"
+                    placeholder="johndoe@gmail.com"
+                    error={state.errors?.fieldErrors?.email?.[0]}
+                />
 
-            <label htmlFor="email">Password</label>
-            <input id="email" name="password" className="border" />
-            <p>{state.errors?.fieldErrors?.password}</p>
+                <Input
+                    name="password"
+                    value={state.data.password}
+                    label="Password"
+                    placeholder="*******"
+                    error={state.errors?.fieldErrors?.password?.[0]}
+                />
 
-            <button formAction={formAction} className="bg-black text-stone-200 px-12 py-2">Login</button>
-            {state.errors?.formErrors?.length > 0 && (
-                <p>{state.errors.formErrors[0]}</p>
-            )}
-        </form>
+                <button formAction={formAction} className="bg-black text-stone-200 px-12 py-2">Login</button>
+                {state.errors?.formErrors?.length > 0 && (
+                    <ErrorMessage>
+                        {state.errors?.formErrors[0]}
+                    </ErrorMessage>
+                )}
+            </form>
+        </FormWrapper>
     )
 }
