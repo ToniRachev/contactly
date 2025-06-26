@@ -1,6 +1,6 @@
 'use client';
 
-import { login } from "@/lib/utils/supabase/actions/auth";
+import { login } from "@/lib/utils/supabase/actions/auth/auth";
 import { LoginSchemaErrorType, LoginSchemaType } from "@/lib/utils/supabase/validations/authSchema";
 import { useActionState } from "react";
 
