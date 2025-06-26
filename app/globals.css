@@ -129,3 +129,27 @@ button {
   cursor: pointer;
   user-select: none;
 }
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 3.815rem);
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw, 3.052rem);
+}
+
+h3 {
+  font-size: clamp(1.75rem, 3.5vw, 2.441rem);
+}
+
+h4 {
+  font-size: clamp(1.5rem, 3vw, 1.953rem);
+}
+
+h5 {
+  font-size: clamp(1.25rem, 2.5vw, 1.563rem);
+}
+
+h6 {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+}
