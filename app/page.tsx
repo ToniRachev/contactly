@@ -1,4 +1,4 @@
-import { login, signout } from "@/lib/utils/supabase/actions/auth";
+import { login, signout } from "@/lib/utils/supabase/actions/auth/auth";
 
 export default async function Home() {
   return (
