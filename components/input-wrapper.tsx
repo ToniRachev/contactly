@@ -12,7 +12,7 @@ export default function FormInput({ label, error, ...props }: FormInputProps) {
     return (
         <div className="grid gap-3 items-center">
             <Label htmlFor={props.name}>{label}</Label>
-            <Input {...props} />
+            <Input {...props} className="placeholder:text-stone-300"/>
             {error && (
                 <ErrorMessage>
                     {error}
