@@ -8,9 +8,8 @@ import {
     SidebarMenuButton,
     SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { Compass, MessageCircle, User } from 'lucide-react'
+import { Compass, MessageCircle, UserRound, UsersRound } from 'lucide-react'
 import Link from 'next/link'
-import UserAvatar from './user-avatar'
 import UserProfileCard from './user-profile-card'
 
 const menuItems = [
@@ -27,12 +26,12 @@ const menuItems = [
     {
         title: 'Friends',
         url: '/',
-        icon: MessageCircle,
+        icon: UsersRound,
     },
     {
         title: 'Profile',
         url: '/',
-        icon: User,
+        icon: UserRound,
     }
 ]
 
