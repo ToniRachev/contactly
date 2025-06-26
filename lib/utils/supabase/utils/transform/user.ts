@@ -1,14 +1,12 @@
-import { AuthDataType, UserDBType } from "@/lib/utils/supabase/types/user";
+import { UserDBType } from "@/lib/utils/supabase/types/user";
 
-export const transformUserData = (authData: AuthDataType, userData: UserDBType[]) => {
-    const user = userData[0];
-    const biography = user.biography[0];
+export const transformUserData = (user: UserDBType) => {
+    const biography = user.biography[0]
 
     return {
-        id: authData.user.id,
-        created_at: authData.user.created_at,
-        email: authData.user.email,
-        phone: authData.user.phone,
+        id: user.id,
+        created_at: user.created_at,
+        email: user.email,
         firstName: user.first_name,
         lastName: user.last_name,
         biography: {

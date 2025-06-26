@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
-import { createClient } from "../server";
-import { loginSchema, LoginSchemaType, signupSchema, SignupSchemaType } from "../validations/authSchema";
+import { createClient } from "../../server";
+import { loginSchema, LoginSchemaType, signupSchema, SignupSchemaType } from "../../validations/authSchema";
 import { redirect } from "next/navigation";
 
 export const parseAndValidateSigninInput = (formData: FormData) => {
@@ -55,6 +55,7 @@ export const signupUser = async (data: SignupSchemaType) => {
             id: authData.user?.id,
             first_name: firstName,
             last_name: lastName,
+            email: authData.user?.email
         }])
         .select();
 
