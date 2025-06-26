@@ -51,7 +51,7 @@ export default function LoginPage() {
             <div className="pt-4">
                 <p>
                     New here?
-                    <span className="pl-2 font-bold">
+                    <span className="pl-1 font-bold">
                         <Link href={'/register'}>
                             Create your profile
                         </Link>
