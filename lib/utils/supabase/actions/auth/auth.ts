@@ -47,7 +47,7 @@ export async function signup(state: SignupActionType, formData: FormData) {
     }
 
     try {
-        const userData = await signupUser(result.data);
+        await signupUser(result.data);
     } catch (error) {
         if (isAuthApiError(error)) {
             return createFormResult(result.data as SignupSchemaType, error.message)
