@@ -38,7 +38,7 @@ const menuItems = [
 export default function AppSidebar() {
     return (
         <Sidebar className='!border-0'>
-            <SidebarHeader className='pb-12'>
+            <SidebarHeader className='pb-12 pt-8'>
                 <Link href={'/'}>
                     <h5>Connectly</h5>
                 </Link>
