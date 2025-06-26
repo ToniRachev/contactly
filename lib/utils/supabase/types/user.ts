@@ -3,8 +3,8 @@ import { Session, User } from "@supabase/supabase-js"
 export type BiographyType = {
     school: string | null,
     hometown: string | null,
-    birth_date: string | null,
-    current_city: string | null,
+    birthDate: string | null,
+    currentCity: string | null,
 }
 
 export type AuthDataType = {
@@ -26,6 +26,7 @@ export type UserDBType = {
     created_at: string,
     first_name: string,
     last_name: string,
+    email: string,
     biography: UserBiographyDBType[],
 }
 
@@ -33,8 +34,7 @@ export type UserType = {
     id: string,
     created_at: string,
     email: string,
-    phone: string,
-    first_name: string,
-    last_name: string,
+    firstName: string,
+    lastName: string,
     biography: BiographyType,
 }

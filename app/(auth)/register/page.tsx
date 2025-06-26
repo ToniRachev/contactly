@@ -1,6 +1,6 @@
 'use client';
 
-import { signup } from "@/lib/utils/supabase/actions/auth";
+import { signup } from "@/lib/utils/supabase/actions/auth/auth";
 import { SignupSchemaErrorType, SignupSchemaType } from "@/lib/utils/supabase/validations/authSchema";
 import { useActionState } from "react";
 
