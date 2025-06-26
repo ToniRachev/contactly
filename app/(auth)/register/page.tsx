@@ -3,6 +3,11 @@
 import { signup } from "@/lib/utils/supabase/actions/auth/auth";
 import { SignupSchemaErrorType, SignupSchemaType } from "@/lib/utils/supabase/validations/authSchema";
 import { useActionState } from "react";
+import FormWrapper from "../components/form-wrapper";
+import FormInput from "@/components/input-wrapper";
+import { Button } from "@/components/ui/button";
+import ErrorMessage from "@/components/error-message";
+import Link from "next/link";
 
 const initialState = {
     data: {
@@ -16,34 +21,79 @@ const initialState = {
 }
 
 export default function Signup() {
-    const [state, formAction] = useActionState(signup, initialState);
+    const [state, formAction, isPending] = useActionState(signup, initialState);
 
     return (
-        <form className="flex flex-col gap-4 justify-center items-center">
-            <label htmlFor="firstName">First Name</label>
-            <input name="firstName" className="border" defaultValue={state.data.firstName} />
-            <p>{state.errors?.fieldErrors?.firstName}</p>
+        <FormWrapper>
+            <form className="flex flex-col gap-4 min-w-[30vw]">
+                <FormInput
+                    label="Email"
+                    name="email"
+                    defaultValue={state.data.email}
+                    type="email"
+                    placeholder="johndoe@gmail.com"
+                    error={state.errors?.fieldErrors?.email?.[0]}
+                />
 
-            <label htmlFor="lastName">Last Name</label>
-            <input name="lastName" className="border" defaultValue={state.data.lastName} />
-            <p>{state.errors?.fieldErrors?.lastName}</p>
+                <div className="flex w-full gap-4">
+                    <div className="flex-1">
+                        <FormInput
+                            label="First name"
+                            name="firstName"
+                            defaultValue={state.data.firstName}
+                            placeholder="John"
+                            error={state.errors?.fieldErrors?.firstName?.[0]}
+                        />
+                    </div>
 
-            <label htmlFor="email">Email</label>
-            <input name="email" className="border" defaultValue={state.data.email} />
-            <p>{state.errors?.fieldErrors?.email}</p>
+                    <div className="flex-1">
+                        <FormInput
+                            label="Last name"
+                            name="lastName"
+                            defaultValue={state.data.lastName}
+                            placeholder="Doe"
+                            error={state.errors?.fieldErrors?.lastName?.[0]}
+                        />
+                    </div>
+                </div>
 
-            <label htmlFor="email">Password</label>
-            <input name="password" className="border" />
-            <p>{state.errors?.fieldErrors?.password}</p>
+                <FormInput
+                    label="Password"
+                    name="password"
+                    defaultValue={state.data.password}
+                    type="password"
+                    placeholder="******"
+                    error={state.errors?.fieldErrors?.password?.[0]}
+                />
 
-            <label htmlFor="confirmPassword">Confirm password</label>
-            <input name="confirmPassword" className="border" />
-            <p>{state.errors?.fieldErrors?.confirmPassword}</p>
+                <FormInput
+                    label="Confirm password"
+                    name="confirmPassword"
+                    defaultValue={state.data.confirmPassword}
+                    type="password"
+                    placeholder="******"
+                    error={state.errors?.fieldErrors?.confirmPassword?.[0]}
+                />
 
-            <button formAction={formAction} className="bg-black text-stone-200 px-12 py-2">Login</button>
-            {state.errors?.formErrors?.length > 0 && (
-                <p>{state.errors.formErrors[0]}</p>
-            )}
-        </form>
+                <Button formAction={formAction} variant={'secondary'} disabled={isPending}>Sign up</Button>
+
+                {state.errors?.formErrors?.length > 0 && (
+                    <ErrorMessage>
+                        {state.errors?.formErrors[0]}
+                    </ErrorMessage>
+                )}
+            </form>
+
+            <div className="pt-4">
+                <p>
+                    Already have an account?
+                    <span className="pl-1 font-bold">
+                        <Link href={'/login'}>
+                            Sign in here
+                        </Link>
+                    </span>
+                </p>
+            </div>
+        </FormWrapper>
     )
 }
