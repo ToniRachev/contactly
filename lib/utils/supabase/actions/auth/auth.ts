@@ -25,7 +25,10 @@ export async function login(state: LoginStateType, formData: FormData) {
         await signInUser(result.data);
     } catch (error) {
         if (isAuthApiError(error)) {
-            return createFormResult(data as LoginSchemaType, MESSAGES.authError.login.invalidCredentials)
+            return createFormResult({
+                email: result.data.email,
+                password: '',
+            }, MESSAGES.authError.login.invalidCredentials)
         }
 
         return createFormResult(data as LoginSchemaType, MESSAGES.genericError)
