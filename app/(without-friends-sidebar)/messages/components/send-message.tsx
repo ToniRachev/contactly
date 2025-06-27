@@ -1,5 +1,4 @@
 import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
 
 export default function SendMessage() {
     return (
