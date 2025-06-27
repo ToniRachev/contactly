@@ -8,9 +8,10 @@ import {
     SidebarMenuButton,
     SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { Compass, MessageCircle, UserRound, UsersRound } from 'lucide-react'
+import { Compass, LogOut, MessageCircle, UserRound, UsersRound } from 'lucide-react'
 import Link from 'next/link'
 import UserProfileCard from './user-profile-card'
+import { signout } from '@/lib/utils/supabase/actions/auth/auth'
 
 const menuItems = [
     {
@@ -20,7 +21,7 @@ const menuItems = [
     },
     {
         title: 'Messages',
-        url: '/',
+        url: '/messages',
         icon: MessageCircle,
     },
     {
@@ -66,6 +67,19 @@ export default function AppSidebar() {
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
+
+                            <SidebarMenuItem>
+                                <SidebarMenuButton
+                                    asChild
+                                    onClick={signout}
+                                    className='text-xl cursor-pointer py-6'
+                                >
+                                    <div>
+                                        <LogOut />
+                                        <span>Logout</span>
+                                    </div>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
