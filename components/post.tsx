@@ -6,10 +6,11 @@ type PostAuthorProps = {
     avatar: string;
     authorName: string;
     postedAt: string;
-    isFollowingAuthor: boolean;
+    areFriends: boolean;
+    isOwnPost: boolean;
 }
 
-const PostAuthor = ({ avatar, authorName, postedAt, isFollowingAuthor }: PostAuthorProps) => {
+const PostAuthor = ({ avatar, authorName, postedAt, areFriends, isOwnPost }: PostAuthorProps) => {
     return (
         <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
@@ -24,11 +25,13 @@ const PostAuthor = ({ avatar, authorName, postedAt, isFollowingAuthor }: PostAut
                 </div>
             </div>
 
-            <div>
-                <Button className="bg-stone-600 hover:bg-stone-500 min-w-[5vw]">
-                    {isFollowingAuthor ? 'Following' : 'Follow'}
-                </Button>
-            </div>
+            {!isOwnPost && (
+                <div>
+                    <Button className="bg-stone-600 hover:bg-stone-500 min-w-[5vw]">
+                        {areFriends ? 'Friend' : 'Add friend'}
+                    </Button>
+                </div>
+            )}
         </div>
     )
 }
@@ -91,7 +94,7 @@ type PostProps = {
     content: string;
     likes: number;
     comments: number;
-    isFollowingAuthor: boolean;
+    areFriends: boolean;
 }
 
 export default function Post({
@@ -101,15 +104,20 @@ export default function Post({
     content,
     likes,
     comments,
-    isFollowingAuthor
+    areFriends
 }: PostProps) {
+    const currentUserId = 'Traveler Jane';
+    const isOwnPost = authorName === currentUserId;
+
+
     return (
         <div className="max-w-[50vw] flex flex-col gap-4">
             <PostAuthor
                 avatar={avatar}
                 authorName={authorName}
                 postedAt={postedAt}
-                isFollowingAuthor={isFollowingAuthor}
+                areFriends={areFriends}
+                isOwnPost={isOwnPost}
             />
 
             <PostContent
