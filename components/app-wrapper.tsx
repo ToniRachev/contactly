@@ -4,6 +4,7 @@ import { createClient } from "@/lib/utils/supabase/server";
 import { ReactNode } from "react";
 import AppSidebar from "./app-sidebar";
 import { SidebarProvider } from "./ui/sidebar";
+import FriendsSidebar from "./friends-sidebar";
 
 const getUserWithProfile = async () => {
     const supabase = await createClient();
@@ -21,8 +22,13 @@ export default async function AppWrapper({ children }: { children: ReactNode }) 
                     <div className="">
                         <AppSidebar />
                     </div>
-                    <div className="w-full pl-24 pt-8">
+
+                    <div className="w-full pt-8 flex justify-center">
                         {children}
+                    </div>
+
+                    <div className="">
+                        <FriendsSidebar />
                     </div>
                 </main>
             </SidebarProvider>
