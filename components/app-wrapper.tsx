@@ -2,9 +2,7 @@ import UserProvider from "@/lib/context/user";
 import { fetchUserProfile } from "@/lib/utils/supabase/actions/user/user";
 import { createClient } from "@/lib/utils/supabase/server";
 import { ReactNode } from "react";
-import AppSidebar from "./app-sidebar";
 import { SidebarProvider } from "./ui/sidebar";
-import FriendsSidebar from "./friends-sidebar";
 
 const getUserWithProfile = async () => {
     const supabase = await createClient();
@@ -18,18 +16,8 @@ export default async function AppWrapper({ children }: { children: ReactNode }) 
     return (
         <UserProvider userData={userData}>
             <SidebarProvider>
-                <main className="w-full flex">
-                    <div className="">
-                        <AppSidebar />
-                    </div>
-
-                    <div className="w-full pt-8 flex justify-center">
-                        {children}
-                    </div>
-
-                    <div className="">
-                        <FriendsSidebar />
-                    </div>
+                <main className="w-full">
+                    {children}
                 </main>
             </SidebarProvider>
         </UserProvider>

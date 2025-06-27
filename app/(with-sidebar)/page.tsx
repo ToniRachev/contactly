@@ -23,10 +23,10 @@ const posts = [
 
 export default async function Home() {
   return (
-    <div>
+    <div className="">
       <h4>Feed</h4>
 
-      <div className="pt-12 flex flex-col gap-24">
+      <div className="pt-12 flex flex-col gap-24 w-full items-center">
         {posts.map((post) => (
           <Post key={post.postedAt} {...post} />
         ))}

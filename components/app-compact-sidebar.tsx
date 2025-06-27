@@ -36,9 +36,9 @@ const menuItems = [
     }
 ]
 
-export default function AppSidebar() {
+export default function AppCompactSidebar() {
     return (
-        <Sidebar className='!border-0'>
+        <Sidebar className='!border-0 w-[10vw]'>
             <SidebarHeader className='pb-12 pt-8'>
                 <Link href={'/'}>
                     <h5>Connectly</h5>
@@ -49,7 +49,8 @@ export default function AppSidebar() {
                     <SidebarGroupContent>
                         <UserProfileCard
                             avatar='/user_avatar.webp'
-                            name='Traveler Jane'
+                            width={80}
+                            height={80}
                         />
                     </SidebarGroupContent>
                 </SidebarGroup>
@@ -59,10 +60,9 @@ export default function AppSidebar() {
                         <SidebarMenu>
                             {menuItems.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild className='text-xl py-6'>
+                                    <SidebarMenuButton asChild className='py-6'>
                                         <Link href={item.url}>
                                             <item.icon />
-                                            <span>{item.title}</span>
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
@@ -76,7 +76,6 @@ export default function AppSidebar() {
                                 >
                                     <div>
                                         <LogOut />
-                                        <span>Logout</span>
                                     </div>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>

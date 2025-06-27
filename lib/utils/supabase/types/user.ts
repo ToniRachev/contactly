@@ -38,3 +38,5 @@ export type UserType = {
     lastName: string,
     biography: BiographyType,
 }
+
+export type StatusType = 'online' | 'offline';
