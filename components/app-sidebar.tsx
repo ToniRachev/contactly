@@ -31,7 +31,7 @@ const menuItems = [
     },
     {
         title: 'Profile',
-        url: '/',
+        url: '/profile',
         icon: UserRound,
     }
 ]
