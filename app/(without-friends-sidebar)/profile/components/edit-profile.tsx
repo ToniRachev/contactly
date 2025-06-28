@@ -7,11 +7,11 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import clsx from "clsx"
-import { Calendar, Camera } from "lucide-react"
-import Image from "next/image"
+import { Calendar, } from "lucide-react"
 import { ReactNode } from "react"
 import EditField, { FieldType } from "./edit-field"
 import EditProfilePicture from "./edit-profile-picture"
+import EditUserCover from "./edit-user-cover"
 
 type SectionWrapperProps = {
     title: string;
@@ -58,19 +58,6 @@ export const SectionWrapper = ({ title, children, className }: SectionWrapperPro
     )
 }
 
-const EditCoverPhoto = () => {
-    return (
-        <SectionWrapper title="Edit cover photo" className="justify-center">
-            <div className="relative w-full h-[25svh]">
-                <Image src={'/user_profile_background.png'} alt="User cover photo" className="object-cover" fill />
-                <div className="absolute bottom-0 right-0 bg-stone-600 p-1 rounded-full">
-                    <Camera />
-                </div>
-            </div>
-        </SectionWrapper>
-    )
-}
-
 const EditBio = () => {
     return (
         <SectionWrapper title="Edit your bio">
@@ -100,7 +87,7 @@ export default function EditProfile() {
                     [&::-webkit-scrollbar-button]:hidden"
                 >
                     <EditProfilePicture />
-                    <EditCoverPhoto />
+                    <EditUserCover />
                     <EditBio />
                 </div>
             </DialogContent>
