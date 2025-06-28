@@ -12,7 +12,7 @@ export const createFormError = (message: string) => {
 }
 
 
-export const createFormResult = <T extends Record<string, any>>(
+export const createFormResult = <T extends Record<string, unknown>>(
     data: T,
     errorData: ZodError<T>['formErrors'] | string
 ) => ({

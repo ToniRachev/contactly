@@ -1,7 +1,6 @@
 import { PostgrestBuilder } from '@supabase/postgrest-js'
 
-
-export const baseFetcher = async <T>(query: PostgrestBuilder<any, false>): Promise<T> => {
+export const baseFetcher = async <T>(query: PostgrestBuilder<T, false>): Promise<T> => {
     const { data, error } = await query;
 
     if (error) {

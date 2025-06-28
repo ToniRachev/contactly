@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useState, useMemo, useEffect, useCallback, useOptimistic, use } from "react";
+import { createContext, useContext, ReactNode, useMemo, use } from "react";
 import { UserType } from "../utils/supabase/types/user";
 
 type UserContextType = {

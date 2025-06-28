@@ -1,6 +1,5 @@
 import AppSidebar from "@/components/app-sidebar";
 import ContentWrapper from "@/components/content-wrapper";
-import FriendsSidebar from "@/components/friends-sidebar";
 import { ReactNode } from "react";
 
 export default function Layout({ children }: { children: ReactNode }) {

@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import UserAvatar from "./user-avatar";
 import { cva } from "class-variance-authority";
 

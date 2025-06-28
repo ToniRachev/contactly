@@ -1,4 +1,3 @@
-import UserAvatar from "@/components/user-avatar";
 import { cva } from "class-variance-authority";
 
 type MessageProps = {

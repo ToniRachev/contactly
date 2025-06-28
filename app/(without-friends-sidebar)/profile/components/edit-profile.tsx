@@ -6,13 +6,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import UserAvatar from "@/components/user-avatar"
 import clsx from "clsx"
 import { Calendar, Camera } from "lucide-react"
 import Image from "next/image"
 import { ReactNode } from "react"
 import EditField, { FieldType } from "./edit-field"
-import { Input } from "@/components/ui/input"
 import EditProfilePicture from "./edit-profile-picture"
 
 type SectionWrapperProps = {

@@ -2,6 +2,7 @@ import { MESSAGES } from '@/lib/constants/messages';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { parseAndValidateSigninInput, parseAndValidateSignupInput, signInUser } from './helpers';
 import * as serverModule from '@/lib/utils/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 describe('parseAndValidateSigninInput', () => {
     it('should validate valid form data', () => {
@@ -118,9 +119,9 @@ describe('signInUser', () => {
             auth: {
                 signInWithPassword: mockSignIn.mockResolvedValue({ error: null })
             }
-        };
+        } as unknown as SupabaseClient;
 
-        vi.spyOn(serverModule, 'createClient').mockResolvedValue(mockClient as any);
+        vi.spyOn(serverModule, 'createClient').mockResolvedValue(mockClient as SupabaseClient);
 
         const credentials = {
             email: 'test@example.com',
@@ -138,9 +139,9 @@ describe('signInUser', () => {
             auth: {
                 signInWithPassword: mockSignIn.mockResolvedValue({ error })
             }
-        }
+        } as unknown as SupabaseClient;
 
-        vi.spyOn(serverModule, 'createClient').mockResolvedValue(mockClient as any);
+        vi.spyOn(serverModule, 'createClient').mockResolvedValue(mockClient as SupabaseClient);
 
         const credentials = {
             email: 'test@abv.bg',
