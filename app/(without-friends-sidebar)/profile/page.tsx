@@ -1,7 +1,7 @@
 import Post from "@/components/post";
-import { Button } from "@/components/ui/button";
 import UserProfileCard from "@/components/user-profile-card";
 import Image from "next/image";
+import EditProfile from "./components/edit-profile";
 
 const posts = [
     {
@@ -30,7 +30,7 @@ export default function Profile() {
             <div className="w-full h-[50svh] relative">
                 <Image
                     src={'/user_profile_background.png'}
-                    alt="User background profile image"
+                    alt="User cover photo"
                     fill
                     className="object-cover"
                 />
@@ -46,7 +46,7 @@ export default function Profile() {
                 </div>
 
                 <div className="absolute -bottom-20 right-14">
-                    <Button variant='secondary'>Edit profile</Button>
+                    <EditProfile />
                 </div>
             </div>
 
