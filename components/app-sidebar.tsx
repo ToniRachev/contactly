@@ -26,7 +26,7 @@ const menuItems = [
     },
     {
         title: 'Friends',
-        url: '/',
+        url: '/friends',
         icon: UsersRound,
     },
     {
