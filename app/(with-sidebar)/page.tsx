@@ -8,7 +8,7 @@ const posts = [
     content: 'Just finished this piece after a week of late nights and too much tea ☕ It’s inspired by the feeling of getting lost in thought during a slow walk home. What do you see in it? I love hearing how others interpret my work.',
     likes: 2598,
     comments: 150,
-    isFollowingAuthor: true,
+    areFriends: true,
   },
   {
     avatar: '/user_avatar.webp',
@@ -17,7 +17,7 @@ const posts = [
     content: 'Just finished this piece after a week of late nights and too much tea ☕ It’s inspired by the feeling of getting lost in thought during a slow walk home. What do you see in it? I love hearing how others interpret my work.',
     likes: 2598,
     comments: 150,
-    isFollowingAuthor: false,
+    areFriends: false,
   }
 ]
 
