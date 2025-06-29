@@ -1,4 +1,4 @@
-import Post from "@/components/post"
+import PostWrapper from "@/components/post-wrapper"
 
 const posts = [
   {
@@ -28,7 +28,7 @@ export default async function Home() {
 
       <div className="pt-12 flex flex-col gap-24 w-full items-center">
         {posts.map((post) => (
-          <Post key={post.postedAt} {...post} />
+          <PostWrapper key={post.postedAt} post={post} />
         ))}
       </div>
     </div>

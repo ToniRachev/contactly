@@ -19,7 +19,7 @@ const messageStyle = cva('p-4 rounded-md', {
     }
 })
 
-export default function Message({ message, isLastMessage }: MessageProps) {
+export default function Message({ message, isLastMessage }: Readonly<MessageProps>) {
     const currentUserId = 'user_2';
 
     const messageVariant = message.senderId === currentUserId ? 'outgoing' : 'incoming';

@@ -2,7 +2,7 @@ import Search from "@/components/search";
 import { StatusType } from "@/lib/utils/supabase/types/user";
 import MessageCard from "./components/message-card";
 import Conversation from "./components/conversation";
-import SendMessage from "./components/send-message";
+import MessageInput from "../../../components/message-input";
 
 
 const messages = [
@@ -117,8 +117,14 @@ export default function Messages() {
 
             <div className="flex flex-col w-full justify-between max-w-[55vw]">
                 <Conversation conversation={conversation} />
-                <div className="flex justify-end">
-                    <SendMessage />
+                <div className="flex justify-end w-full">
+                    <div>
+                        <MessageInput
+                            placeholder="Type a message..."
+                            name="message"
+                            className="w-[30vw]"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
