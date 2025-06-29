@@ -1,3 +1,4 @@
+import CreatePost from "@/components/create-post"
 import PostWrapper from "@/components/post-wrapper"
 
 const posts = [
@@ -27,6 +28,8 @@ export default async function Home() {
       <h4>Feed</h4>
 
       <div className="pt-12 flex flex-col gap-24 w-full items-center">
+        <CreatePost />
+
         {posts.map((post) => (
           <PostWrapper key={post.postedAt} post={post} />
         ))}
