@@ -68,10 +68,11 @@ const ReactionItem = ({ icon, count }: ReactionItemProps) => {
 type PostReactionsProps = {
     comments: number;
     likes: number;
+    open?: () => void;
 }
 
 
-const PostReactions = ({ comments, likes }: PostReactionsProps) => {
+const PostReactions = ({ comments, likes, open }: PostReactionsProps) => {
     return (
         <div className="flex gap-4">
             <ReactionItem
@@ -79,15 +80,17 @@ const PostReactions = ({ comments, likes }: PostReactionsProps) => {
                 count={likes}
             />
 
-            <ReactionItem
-                icon={MessageCircle}
-                count={comments}
-            />
+            <button onClick={open}>
+                <ReactionItem
+                    icon={MessageCircle}
+                    count={comments}
+                />
+            </button>
         </div>
     )
 }
 
-type PostProps = {
+export type PostProps = {
     avatar: string;
     authorName: string;
     postedAt: string;
@@ -97,6 +100,10 @@ type PostProps = {
     areFriends: boolean;
 }
 
+type CurrentPostProps = PostProps & {
+    open?: () => void;
+}
+
 export default function Post({
     avatar,
     authorName,
@@ -104,11 +111,11 @@ export default function Post({
     content,
     likes,
     comments,
-    areFriends
-}: PostProps) {
+    areFriends,
+    open,
+}: Readonly<CurrentPostProps>) {
     const currentUserId = 'Traveler Jane';
     const isOwnPost = authorName === currentUserId;
-
 
     return (
         <div className="max-w-[50vw] flex flex-col gap-4">
@@ -127,6 +134,7 @@ export default function Post({
             <PostReactions
                 comments={comments}
                 likes={likes}
+                open={open}
             />
         </div>
     )
