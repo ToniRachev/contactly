@@ -2,6 +2,7 @@ import Post from "@/components/post";
 import UserProfileCard from "@/components/user-profile-card";
 import Image from "next/image";
 import EditProfile from "./components/edit-profile";
+import CreatePost from "@/components/create-post";
 
 const posts = [
     {
@@ -51,6 +52,8 @@ export default function Profile() {
             </div>
 
             <div className="flex justify-center items-center flex-col pt-36 gap-24">
+                <CreatePost />
+
                 {posts.map((post) => (
                     <Post key={post.postedAt} {...post} />
                 ))}
