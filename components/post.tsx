@@ -2,30 +2,25 @@ import { Heart, LucideIcon, MessageCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import UserAvatar from "./user-avatar"
 import { FeedType } from "@/lib/utils/supabase/types/post";
-import { formatFullName, formatRelativeTime } from "@/lib/utils";
+import { formatRelativeTime } from "@/lib/utils";
 import DeletePost from "./delete-post";
 import EditPost from "./edit-post";
 
 type PostAuthorProps = {
-    author: {
-        firstName: string;
-        lastName: string;
-    }
-    createdAt: string;
+    post: FeedType;
     isOwnPost: boolean;
-    postId: string;
 }
 
 //TODO: Check if user and post author are friends
 
-const PostAuthor = ({ author, createdAt, isOwnPost, postId }: PostAuthorProps) => {
+const PostAuthor = ({ post, isOwnPost }: PostAuthorProps) => {
     let controls;
 
     if (isOwnPost) {
         controls = (
             <div className="grid grid-cols-2 gap-2">
-                <EditPost />
-                <DeletePost postId={postId} />
+                <EditPost postContent={post.body} />
+                <DeletePost postId={post.postId} />
             </div>
         )
     } else {
@@ -44,8 +39,8 @@ const PostAuthor = ({ author, createdAt, isOwnPost, postId }: PostAuthorProps) =
                     height={100}
                 />
                 <div>
-                    <h6>{formatFullName(author.firstName, author.lastName)}</h6>
-                    <p>{formatRelativeTime(createdAt)}</p>
+                    <h6>{post.author.fullName}</h6>
+                    <p>{formatRelativeTime(post.createdAt)}</p>
                 </div>
             </div>
 
@@ -121,10 +116,8 @@ export default function Post({
     return (
         <div className="flex flex-col gap-4">
             <PostAuthor
-                author={{ ...post.author }}
-                createdAt={post.createdAt}
+                post={post}
                 isOwnPost={userId === post.author.id}
-                postId={post.postId}
             />
 
             <PostContent
