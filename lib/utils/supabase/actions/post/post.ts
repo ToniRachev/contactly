@@ -17,3 +17,17 @@ export const fetchFeed = async (currentUserId: string, limit: number = 10) => {
 
     return transformFeed(data);
 }
+
+export const fetchUserPosts = async (userId: string, limit: number = 10) => {
+    const supabase = await createClient();
+
+    const data = await baseFetcher(
+        supabase.from('posts')
+            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`)
+            .eq('author_id', userId)
+            .limit(limit)
+            .order('created_at', { ascending: false })
+    );
+
+    return transformFeed(data);
+}
