@@ -53,7 +53,7 @@ export async function signup(state: SignupActionType, formData: FormData) {
         await signupUser(result.data);
     } catch (error) {
         if (isAuthApiError(error)) {
-            return createFormResult(result.data as SignupSchemaType, error.message)
+            return createFormResult(result.data, error.message)
         }
 
         return createFormResult(result.data, MESSAGES.genericError)
