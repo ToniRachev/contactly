@@ -1,3 +1,5 @@
+'use client';
+
 import {
     Dialog,
     DialogContent,
@@ -8,8 +10,18 @@ import {
 import UserAvatar from "./user-avatar"
 import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
+import { useActionState } from "react";
+import { submitPost } from "@/lib/utils/supabase/actions/post/post";
+import { PostSchemaErrorType, PostSchemaType } from "@/lib/utils/supabase/validations/postSchema";
 
 export default function CreatePost() {
+    const [state, formAction, isPending] = useActionState(submitPost, {
+        data: {
+            body: '',
+        } as PostSchemaType,
+        errors: {} as PostSchemaErrorType
+    })
+
     return (
         <Dialog>
             <DialogTrigger className="w-full max-w-[50svw]">
@@ -42,15 +54,25 @@ export default function CreatePost() {
                     </div>
 
                     <div className="pt-4">
-                        <Textarea
-                            className="resize-none min-h-[5vw]"
-                            placeholder="What’s on your mind?"
-                            name="postContent"
-                        />
+                        <form>
+                            <Textarea
+                                className="resize-none min-h-[5vw]"
+                                placeholder="What’s on your mind?"
+                                name="body"
+                                defaultValue={state.data.body}
+                            />
 
-                        <div className="pt-4">
-                            <Button className="w-full" variant={'secondary'}>Create post</Button>
-                        </div>
+                            <div className="pt-4">
+                                <Button
+                                    className="w-full"
+                                    variant={'secondary'}
+                                    formAction={formAction}
+                                    disabled={isPending}
+                                >
+                                    Create post
+                                </Button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </DialogContent>
