@@ -4,11 +4,12 @@ import { MESSAGES } from "@/lib/constants/messages";
 import { baseFetcher } from "../../helpers";
 import { createClient } from "../../server";
 import { transformFeed } from "../../utils/transform";
-import { postSchema, PostSchemaErrorType, PostSchemaType } from "../../validations/postSchema";
+import { PostSchemaErrorType, PostSchemaType } from "../../validations/postSchema";
 import { createFormResult } from "../../validations/utils";
 import { getUserId } from "../user/user";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { parseAndValidateSubmitPostData } from "./helpers";
 
 export const fetchFeed = async (currentUserId: string, limit: number = 10) => {
     const supabase = await createClient();
@@ -55,15 +56,20 @@ export const createPost = async (authorId: string, body: string) => {
     return transformedPost[0];
 }
 
-const parseAndValidateSubmitPostData = (formData: FormData) => {
-    const data = {
-        body: formData.get('body'),
+export const deletePost = async (postId: string) => {
+    try {
+        const supabase = await createClient();
+        const userId = await getUserId();
+
+        await baseFetcher(supabase.from('posts').delete().match({ id: postId, author_id: userId }))
+    } catch (error) {
+        console.error('Error deleting post', error);
     }
 
-    const result = postSchema.safeParse(data);
-
-    return { data, result };
+    revalidatePath('/', 'layout');
+    redirect('/profile');
 }
+
 
 type SubmitPostState = {
     data: PostSchemaType,
