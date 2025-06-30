@@ -5,12 +5,16 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
-import Post, { PostProps } from "./post"
+import Post from "./post"
 import UserAvatar from "./user-avatar";
 import { ThumbsUp } from "lucide-react";
 import { Separator } from "./ui/separator";
 import Filter from "./filter";
 import MessageInput from "./message-input";
+import { useEffect, useState } from "react";
+import { fetchPostComments } from "@/lib/utils/supabase/client/post";
+import { formatRelativeTime } from "@/lib/utils";
+import { CommentType, FeedType } from "@/lib/utils/supabase/types/post";
 
 const filters = [
     {
@@ -30,20 +34,9 @@ type Controls = {
     open: boolean;
 }
 
-type CommentType = {
-    id: string;
-    createdAt: string;
-    author: {
-        name: string;
-        avatar: string;
-    },
-    body: string;
-    likes: number;
-}
-
 type PostViewProps = {
-    post: PostProps;
-    comments: CommentType[];
+    post: FeedType;
+    userId: string;
     controls: Controls;
 }
 
@@ -52,25 +45,24 @@ const Comment = ({ comment }: Readonly<{ comment: CommentType }>) => {
         <div className="flex flex-col gap-2">
             <div className="flex gap-2 w-full">
                 <UserAvatar
-                    avatar={comment.author.avatar}
                     width={32}
                     height={32}
                 />
 
                 <div className="w-full">
                     <div className="bg-surface w-full p-4 rounded-lg">
-                        <p className="text-sm pb-4">{comment.author.name}</p>
+                        <p className="text-sm pb-4">{comment.author.fullName}</p>
                         <p>{comment.body}</p>
                     </div>
 
                     <div className="flex items-center justify-between p-2">
                         <div>
-                            <p>{comment.createdAt}</p>
+                            <p>{formatRelativeTime(comment.createdAt)}</p>
                         </div>
 
                         <div className="flex gap-2 items-center">
                             <ThumbsUp width={20} />
-                            <span className="text-sm">{comment.likes}</span>
+                            <span className="text-sm">{comment.likesCount}</span>
                         </div>
                     </div>
                 </div>
@@ -79,7 +71,20 @@ const Comment = ({ comment }: Readonly<{ comment: CommentType }>) => {
     )
 }
 
-export function PostView({ post, comments, controls }: Readonly<PostViewProps>) {
+export function PostView({ post, userId, controls }: Readonly<PostViewProps>) {
+    const [comments, setComments] = useState<CommentType[]>([]);
+
+    useEffect(() => {
+        if (controls.open) {
+            (async function () {
+                const comments = await fetchPostComments(post.postId);
+                setComments(comments);
+            })()
+        }
+
+        return () => setComments([]);
+    }, [post.postId, controls.open])
+
     return (
         <Dialog open={controls.open} onOpenChange={controls.setState}>
             <DialogContent className="min-w-[50vw] border-none">
@@ -94,7 +99,7 @@ export function PostView({ post, comments, controls }: Readonly<PostViewProps>) 
                     [&::-webkit-scrollbar-thumb]:bg-[#8C8C8C]
                     [&::-webkit-scrollbar-button]:hidden
                 ">
-                    <Post {...post} />
+                    <Post post={post} userId={userId} />
 
                     <Separator className="opacity-25" />
                     <Filter filters={filters} />
