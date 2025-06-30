@@ -1,5 +1,5 @@
 import { formatFullName } from "@/lib/utils"
-import { AuthorDBType, CommentDBType, CommentType, FeedDBType, FeedType, CountType, LikesType } from "../types/post"
+import { AuthorDBType, CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "../types/post"
 import { UserDBType } from "../types/user"
 
 const extractCount = (item: CountType) => {
@@ -19,15 +19,16 @@ export const transformAuthor = (author: AuthorDBType) => ({
     fullName: formatFullName(author.first_name, author.last_name)
 })
 
-export const transformFeed = (feed: FeedDBType[]): FeedType[] => {
-    return feed.map((item: FeedDBType) => ({
-        postId: item.id,
-        createdAt: item.created_at,
-        author: transformAuthor(item.author),
-        body: item.body,
-        commentsCount: extractCount(item.commentsCount),
-        likesCount: extractCount(item.likesCount),
-        likes: extractLikes(item.likes),
+export const transformPosts = (posts: PostDBType[], userId?: string): PostType[] => {
+    return posts.map((post: PostDBType) => ({
+        postId: post.id,
+        createdAt: post.created_at,
+        author: transformAuthor(post.author),
+        body: post.body,
+        commentsCount: extractCount(post.commentsCount),
+        likesCount: extractCount(post.likesCount),
+        likes: extractLikes(post.likes),
+        postOwner: userId ? userId === post.author.id : true
     }))
 }
 
