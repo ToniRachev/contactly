@@ -10,12 +10,25 @@ import {
 import { Button } from "./ui/button"
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Textarea } from "./ui/textarea";
+import { useActionState } from "react";
+import { editPostAction } from "@/lib/utils/supabase/actions/post/post";
+import { PostSchemaErrorType, PostSchemaType } from "@/lib/utils/supabase/validations/postSchema";
 
 type EditPostProps = {
+    postId: string;
     postContent: string;
 }
 
-export default function EditPost({ postContent }: Readonly<EditPostProps>) {
+export default function EditPost({ postId, postContent }: Readonly<EditPostProps>) {
+    const editPostActionWithId = editPostAction.bind(null, postId);
+
+    const [state, formAction, isPending] = useActionState(editPostActionWithId, {
+        data: {
+            body: postContent,
+        } as PostSchemaType,
+        errors: {} as PostSchemaErrorType
+    })
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -30,11 +43,17 @@ export default function EditPost({ postContent }: Readonly<EditPostProps>) {
                         className="resize-none min-h-[5vw]"
                         placeholder="What’s on your mind?"
                         name="body"
-                        defaultValue={postContent}
+                        defaultValue={state.data.body}
                     />
 
                     <div className="grid grid-cols-2 gap-2 pt-4">
-                        <Button variant={'secondary'}>Save</Button>
+                        <Button
+                            variant={'secondary'}
+                            formAction={formAction}
+                            disabled={isPending}
+                        >
+                            Save
+                        </Button>
 
                         <DialogClose asChild>
                             <Button variant={'destructive'}>Cancel</Button>

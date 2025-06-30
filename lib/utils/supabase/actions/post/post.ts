@@ -56,6 +56,20 @@ export const createPost = async (authorId: string, body: string) => {
     return transformedPost[0];
 }
 
+export const editPost = async (postId: string, postContent: string) => {
+    const supabase = await createClient();
+    const userId = await getUserId();
+
+    const data = await baseFetcher(
+        supabase.from('posts')
+            .update({ body: postContent })
+            .match({ id: postId, author_id: userId })
+            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`));
+
+    const transformedPost = transformFeed(data);
+    return transformedPost[0];
+}
+
 export const deletePost = async (postId: string) => {
     try {
         const supabase = await createClient();
@@ -71,12 +85,12 @@ export const deletePost = async (postId: string) => {
 }
 
 
-type SubmitPostState = {
+type PostState = {
     data: PostSchemaType,
     errors: PostSchemaErrorType
 }
 
-export async function submitPost(state: SubmitPostState, formData: FormData) {
+export async function submitPost(state: PostState, formData: FormData) {
     const { data, result } = parseAndValidateSubmitPostData(formData);
 
     if (!result.success) {
@@ -92,5 +106,26 @@ export async function submitPost(state: SubmitPostState, formData: FormData) {
     }
 
     revalidatePath('/profile');
+    redirect('/profile');
+}
+
+export async function editPostAction(postId: string, state: PostState, formData: FormData) {
+    const { data, result } = parseAndValidateSubmitPostData(formData);
+
+    if (!result.success) {
+        return createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType)
+    }
+
+    if (state.data.body === result.data.body) {
+        return createFormResult(result.data, {} as PostSchemaErrorType)
+    }
+
+    try {
+        await editPost(postId, result.data.body);
+    } catch (error) {
+        console.error('Failed to edit post', error);
+    }
+
+    revalidatePath('/profile', 'layout');
     redirect('/profile');
 }
