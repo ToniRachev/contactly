@@ -10,20 +10,34 @@ import {
 import UserAvatar from "./user-avatar"
 import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { submitPost } from "@/lib/utils/supabase/actions/post/post";
 import { PostSchemaErrorType, PostSchemaType } from "@/lib/utils/supabase/validations/postSchema";
+import { usePosts } from "@/lib/context/posts";
 
 export default function CreatePost() {
+    const [open, setOpen] = useState(false);
+
+    const { addPost } = usePosts();
+
     const [state, formAction, isPending] = useActionState(submitPost, {
         data: {
             body: '',
         } as PostSchemaType,
-        errors: {} as PostSchemaErrorType
+        errors: {} as PostSchemaErrorType,
+        success: false,
+        newPost: null
     })
 
+    useEffect(() => {
+        if (state.success && state.newPost) {
+            addPost(state.newPost);
+            setOpen(false);
+        }
+    }, [state.success, state.newPost, addPost])
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="w-full max-w-[50svw]">
                 <div className="flex items-center gap-4">
                     <UserAvatar
@@ -69,7 +83,7 @@ export default function CreatePost() {
                                     formAction={formAction}
                                     disabled={isPending}
                                 >
-                                    Create post
+                                    {isPending ? 'Creating post...' : 'Create post'}
                                 </Button>
                             </div>
                         </form>
