@@ -4,6 +4,7 @@ import UserAvatar from "./user-avatar"
 import { FeedType } from "@/lib/utils/supabase/types/post";
 import { formatFullName, formatRelativeTime } from "@/lib/utils";
 import DeletePost from "./delete-post";
+import EditPost from "./edit-post";
 
 type PostAuthorProps = {
     author: {
@@ -21,7 +22,12 @@ const PostAuthor = ({ author, createdAt, isOwnPost, postId }: PostAuthorProps) =
     let controls;
 
     if (isOwnPost) {
-        controls = <DeletePost postId={postId} />
+        controls = (
+            <div className="grid grid-cols-2 gap-2">
+                <EditPost />
+                <DeletePost postId={postId} />
+            </div>
+        )
     } else {
         controls = (<div>
             <Button className="bg-stone-600 hover:bg-stone-500 min-w-[5vw]">
