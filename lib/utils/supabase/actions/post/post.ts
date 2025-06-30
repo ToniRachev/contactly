@@ -3,16 +3,16 @@
 import { MESSAGES } from "@/lib/constants/messages";
 import { baseFetcher } from "../../helpers";
 import { createClient } from "../../server";
-import { transformFeed } from "../../utils/transform";
+import { transformPosts } from "../../utils/transform";
 import { PostSchemaErrorType, PostSchemaType } from "../../validations/postSchema";
 import { createFormResult } from "../../validations/utils";
 import { getUserId } from "../user/user";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { parseAndValidateSubmitPostData } from "./helpers";
+import { PostType } from "../../types/post";
 
-export const fetchFeed = async (currentUserId: string, limit: number = 10) => {
+export const fetchPosts = async (currentUserId: string, limit: number = 10) => {
     const supabase = await createClient();
+    const userId = await getUserId();
 
     const data = await baseFetcher(
         supabase.from('posts')
@@ -22,7 +22,7 @@ export const fetchFeed = async (currentUserId: string, limit: number = 10) => {
             .order('created_at', { ascending: false })
     );
 
-    return transformFeed(data);
+    return transformPosts(data, userId);
 }
 
 export const fetchUserPosts = async (userId: string, limit: number = 10) => {
@@ -36,7 +36,7 @@ export const fetchUserPosts = async (userId: string, limit: number = 10) => {
             .order('created_at', { ascending: false })
     );
 
-    return transformFeed(data);
+    return transformPosts(data);
 }
 
 export const createPost = async (authorId: string, body: string) => {
@@ -52,7 +52,7 @@ export const createPost = async (authorId: string, body: string) => {
             .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`)
     )
 
-    const transformedPost = transformFeed(data);
+    const transformedPost = transformPosts(data);
     return transformedPost[0];
 }
 
@@ -66,7 +66,7 @@ export const editPost = async (postId: string, postContent: string) => {
             .match({ id: postId, author_id: userId })
             .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`));
 
-    const transformedPost = transformFeed(data);
+    const transformedPost = transformPosts(data);
     return transformedPost[0];
 }
 
@@ -79,53 +79,102 @@ export const deletePost = async (postId: string) => {
     } catch (error) {
         console.error('Error deleting post', error);
     }
-
-    revalidatePath('/', 'layout');
-    redirect('/profile');
 }
 
 
 type PostState = {
-    data: PostSchemaType,
-    errors: PostSchemaErrorType
+    data: PostSchemaType;
+    errors: PostSchemaErrorType;
+    success: boolean;
 }
 
-export async function submitPost(state: PostState, formData: FormData) {
+type SubmitPostState = PostState & { newPost: PostType | null }
+
+export async function submitPost(state: SubmitPostState, formData: FormData) {
     const { data, result } = parseAndValidateSubmitPostData(formData);
 
     if (!result.success) {
-        return createFormResult(data as PostSchemaType, result.error.formErrors)
+        const formResult = createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType)
+        return {
+            data: formResult.data,
+            errors: formResult.errors,
+            success: false,
+            newPost: null,
+        }
     }
 
     try {
         const userId = await getUserId();
-        await createPost(userId, result.data.body);
+        const newPost = await createPost(userId, result.data.body);
+
+        return {
+            data: result.data,
+            success: true,
+            newPost,
+            errors: {} as PostSchemaErrorType
+        }
     } catch (error) {
         console.error('Failed to create post', error);
-        return createFormResult(data as PostSchemaType, MESSAGES.genericError);
-    }
+        const formResult = createFormResult(data as PostSchemaType, MESSAGES.genericError);
 
-    revalidatePath('/profile');
-    redirect('/profile');
+        return {
+            data: formResult.data,
+            errors: formResult.errors,
+            success: false,
+            newPost: null,
+        }
+    }
 }
 
 export async function editPostAction(postId: string, state: PostState, formData: FormData) {
     const { data, result } = parseAndValidateSubmitPostData(formData);
 
     if (!result.success) {
-        return createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType)
+        const formResult = createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType);
+
+        return {
+            ...formResult,
+            success: false,
+        }
     }
 
     if (state.data.body === result.data.body) {
-        return createFormResult(result.data, {} as PostSchemaErrorType)
+        const formResult = createFormResult(result.data, {} as PostSchemaErrorType)
+        return {
+            ...formResult,
+            success: false,
+        }
     }
 
     try {
         await editPost(postId, result.data.body);
+        const formResult = createFormResult(result.data, {} as PostSchemaErrorType);
+
+        return {
+            ...formResult,
+            success: true,
+        }
     } catch (error) {
         console.error('Failed to edit post', error);
+        const formResult = createFormResult(result.data, MESSAGES.genericError);
+        return {
+            ...formResult,
+            success: false,
+        }
     }
+}
 
-    revalidatePath('/', 'layout');
-    redirect('/profile');
+export const deletePostAction = async (postId: string) => {
+    try {
+        await deletePost(postId)
+        return {
+            success: true,
+        }
+
+    } catch (error) {
+        console.error('Failed to delete post', error);
+        return {
+            success: false
+        }
+    }
 }
