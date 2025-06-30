@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import UserAvatar from "./user-avatar"
 import { FeedType } from "@/lib/utils/supabase/types/post";
 import { formatFullName, formatRelativeTime } from "@/lib/utils";
+import DeletePost from "./delete-post";
 
 type PostAuthorProps = {
     author: {
@@ -11,11 +12,24 @@ type PostAuthorProps = {
     }
     createdAt: string;
     isOwnPost: boolean;
+    postId: string;
 }
 
 //TODO: Check if user and post author are friends
 
-const PostAuthor = ({ author, createdAt, isOwnPost }: PostAuthorProps) => {
+const PostAuthor = ({ author, createdAt, isOwnPost, postId }: PostAuthorProps) => {
+    let controls;
+
+    if (isOwnPost) {
+        controls = <DeletePost postId={postId} />
+    } else {
+        controls = (<div>
+            <Button className="bg-stone-600 hover:bg-stone-500 min-w-[5vw]">
+                Add friend
+            </Button>
+        </div>)
+    }
+
     return (
         <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
@@ -29,13 +43,7 @@ const PostAuthor = ({ author, createdAt, isOwnPost }: PostAuthorProps) => {
                 </div>
             </div>
 
-            {!isOwnPost && (
-                <div>
-                    <Button className="bg-stone-600 hover:bg-stone-500 min-w-[5vw]">
-                        Add friend
-                    </Button>
-                </div>
-            )}
+            {controls}
         </div>
     )
 }
@@ -110,6 +118,7 @@ export default function Post({
                 author={{ ...post.author }}
                 createdAt={post.createdAt}
                 isOwnPost={userId === post.author.id}
+                postId={post.postId}
             />
 
             <PostContent
