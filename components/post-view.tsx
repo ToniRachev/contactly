@@ -14,7 +14,7 @@ import MessageInput from "./message-input";
 import { useEffect, useState } from "react";
 import { fetchPostComments } from "@/lib/utils/supabase/client/post";
 import { formatRelativeTime } from "@/lib/utils";
-import { CommentType, FeedType } from "@/lib/utils/supabase/types/post";
+import { CommentType, PostType } from "@/lib/utils/supabase/types/post";
 
 const filters = [
     {
@@ -35,8 +35,7 @@ type Controls = {
 }
 
 type PostViewProps = {
-    post: FeedType;
-    userId: string;
+    post: PostType;
     controls: Controls;
 }
 
@@ -71,7 +70,7 @@ const Comment = ({ comment }: Readonly<{ comment: CommentType }>) => {
     )
 }
 
-export function PostView({ post, userId, controls }: Readonly<PostViewProps>) {
+export function PostView({ post, controls }: Readonly<PostViewProps>) {
     const [comments, setComments] = useState<CommentType[]>([]);
 
     useEffect(() => {
@@ -99,7 +98,7 @@ export function PostView({ post, userId, controls }: Readonly<PostViewProps>) {
                     [&::-webkit-scrollbar-thumb]:bg-[#8C8C8C]
                     [&::-webkit-scrollbar-button]:hidden
                 ">
-                    <Post post={post} userId={userId} />
+                    <Post post={post} />
 
                     <Separator className="opacity-25" />
                     <Filter filters={filters} />
