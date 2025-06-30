@@ -9,8 +9,13 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "./ui/button"
 import { DialogClose } from "@radix-ui/react-dialog";
+import { Textarea } from "./ui/textarea";
 
-export default function EditPost() {
+type EditPostProps = {
+    postContent: string;
+}
+
+export default function EditPost({ postContent }: Readonly<EditPostProps>) {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -20,11 +25,22 @@ export default function EditPost() {
                 <DialogHeader className="border-b-1 border-stone-500 pb-4">
                     <DialogTitle className="!text-lg">Edit post</DialogTitle>
                 </DialogHeader>
-                <div className="grid grid-cols-2 gap-2">
-                    <DialogClose asChild>
-                        <Button variant={'destructive'}>Cancel</Button>
-                    </DialogClose>
-                </div>
+                <form>
+                    <Textarea
+                        className="resize-none min-h-[5vw]"
+                        placeholder="What’s on your mind?"
+                        name="body"
+                        defaultValue={postContent}
+                    />
+
+                    <div className="grid grid-cols-2 gap-2 pt-4">
+                        <Button variant={'secondary'}>Save</Button>
+
+                        <DialogClose asChild>
+                            <Button variant={'destructive'}>Cancel</Button>
+                        </DialogClose>
+                    </div>
+                </form>
             </DialogContent>
         </Dialog>
     )
