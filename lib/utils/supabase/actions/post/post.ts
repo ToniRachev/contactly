@@ -108,7 +108,7 @@ export async function submitPost(state: SubmitPostState, formData: FormData) {
         const newPost = await createPost(userId, result.data.body);
 
         return {
-            data: result.data,
+            data: '' as unknown as PostSchemaType,
             success: true,
             newPost,
             errors: {} as PostSchemaErrorType
