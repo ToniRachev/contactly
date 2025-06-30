@@ -19,7 +19,7 @@ const PostAuthor = ({ post, isOwnPost }: PostAuthorProps) => {
     if (isOwnPost) {
         controls = (
             <div className="grid grid-cols-2 gap-2">
-                <EditPost postContent={post.body} />
+                <EditPost postId={post.postId} postContent={post.body} />
                 <DeletePost postId={post.postId} />
             </div>
         )
