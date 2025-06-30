@@ -1,31 +1,15 @@
-import Post from "@/components/post";
 import UserProfileCard from "@/components/user-profile-card";
 import Image from "next/image";
 import EditProfile from "./components/edit-profile";
 import CreatePost from "@/components/create-post";
+import { getUserId } from "@/lib/utils/supabase/actions/user/user";
+import { fetchUserPosts } from "@/lib/utils/supabase/actions/post/post";
+import PostWrapper from "@/components/post-wrapper";
 
-const posts = [
-    {
-        avatar: '/user_avatar.webp',
-        authorName: 'Traveler Jane',
-        postedAt: '2 hours ago',
-        content: 'Just finished this piece after a week of late nights and too much tea ☕ It’s inspired by the feeling of getting lost in thought during a slow walk home. What do you see in it? I love hearing how others interpret my work.',
-        likes: 2598,
-        comments: 150,
-        areFriends: false,
-    },
-    {
-        avatar: '/user_avatar.webp',
-        authorName: 'Traveler Jane',
-        postedAt: '2 days ago',
-        content: 'Just finished this piece after a week of late nights and too much tea ☕ It’s inspired by the feeling of getting lost in thought during a slow walk home. What do you see in it? I love hearing how others interpret my work.',
-        likes: 2598,
-        comments: 150,
-        areFriends: false,
-    }
-]
+export default async function Profile() {
+    const userId = await getUserId();
+    const posts = await fetchUserPosts(userId);
 
-export default function Profile() {
     return (
         <div>
             <div className="w-full h-[50svh] relative">
@@ -55,7 +39,11 @@ export default function Profile() {
                 <CreatePost />
 
                 {posts.map((post) => (
-                    <Post key={post.postedAt} {...post} />
+                    <PostWrapper
+                        key={post.postId}
+                        post={post}
+                        userId={userId}
+                    />
                 ))}
             </div>
         </div>

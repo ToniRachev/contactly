@@ -1,34 +1,38 @@
 import { Heart, LucideIcon, MessageCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import UserAvatar from "./user-avatar"
+import { FeedType } from "@/lib/utils/supabase/types/post";
+import { formatFullName, formatRelativeTime } from "@/lib/utils";
 
 type PostAuthorProps = {
-    avatar: string;
-    authorName: string;
-    postedAt: string;
-    areFriends: boolean;
+    author: {
+        firstName: string;
+        lastName: string;
+    }
+    createdAt: string;
     isOwnPost: boolean;
 }
 
-const PostAuthor = ({ avatar, authorName, postedAt, areFriends, isOwnPost }: PostAuthorProps) => {
+//TODO: Check if user and post author are friends
+
+const PostAuthor = ({ author, createdAt, isOwnPost }: PostAuthorProps) => {
     return (
         <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
                 <UserAvatar
-                    avatar={avatar}
                     width={100}
                     height={100}
                 />
                 <div>
-                    <h6>{authorName}</h6>
-                    <p>{postedAt}</p>
+                    <h6>{formatFullName(author.firstName, author.lastName)}</h6>
+                    <p>{formatRelativeTime(createdAt)}</p>
                 </div>
             </div>
 
             {!isOwnPost && (
                 <div>
                     <Button className="bg-stone-600 hover:bg-stone-500 min-w-[5vw]">
-                        {areFriends ? 'Friend' : 'Add friend'}
+                        Add friend
                     </Button>
                 </div>
             )}
@@ -71,7 +75,6 @@ type PostReactionsProps = {
     open?: () => void;
 }
 
-
 const PostReactions = ({ comments, likes, open }: PostReactionsProps) => {
     return (
         <div className="flex gap-4">
@@ -90,50 +93,32 @@ const PostReactions = ({ comments, likes, open }: PostReactionsProps) => {
     )
 }
 
-export type PostProps = {
-    avatar: string;
-    authorName: string;
-    postedAt: string;
-    content: string;
-    likes: number;
-    comments: number;
-    areFriends: boolean;
-}
-
-type CurrentPostProps = PostProps & {
+type PostProp = {
+    post: FeedType;
+    userId: string;
     open?: () => void;
 }
 
 export default function Post({
-    avatar,
-    authorName,
-    postedAt,
-    content,
-    likes,
-    comments,
-    areFriends,
+    post,
+    userId,
     open,
-}: Readonly<CurrentPostProps>) {
-    const currentUserId = 'Traveler Jane';
-    const isOwnPost = authorName === currentUserId;
-
+}: Readonly<PostProp>) {
     return (
-        <div className="max-w-[50vw] flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
             <PostAuthor
-                avatar={avatar}
-                authorName={authorName}
-                postedAt={postedAt}
-                areFriends={areFriends}
-                isOwnPost={isOwnPost}
+                author={{ ...post.author }}
+                createdAt={post.createdAt}
+                isOwnPost={userId === post.author.id}
             />
 
             <PostContent
-                content={content}
+                content={post.body}
             />
 
             <PostReactions
-                comments={comments}
-                likes={likes}
+                comments={post.commentsCount}
+                likes={post.likesCount}
                 open={open}
             />
         </div>
