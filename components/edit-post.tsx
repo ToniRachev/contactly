@@ -10,9 +10,10 @@ import {
 import { Button } from "./ui/button"
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Textarea } from "./ui/textarea";
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { editPostAction } from "@/lib/utils/supabase/actions/post/post";
 import { PostSchemaErrorType, PostSchemaType } from "@/lib/utils/supabase/validations/postSchema";
+import { usePosts } from "@/lib/context/posts";
 
 type EditPostProps = {
     postId: string;
@@ -20,17 +21,30 @@ type EditPostProps = {
 }
 
 export default function EditPost({ postId, postContent }: Readonly<EditPostProps>) {
+    const [open, setOpen] = useState(false);
+
+    const { editPost } = usePosts();
     const editPostActionWithId = editPostAction.bind(null, postId);
 
     const [state, formAction, isPending] = useActionState(editPostActionWithId, {
         data: {
             body: postContent,
         } as PostSchemaType,
-        errors: {} as PostSchemaErrorType
+        errors: {} as PostSchemaErrorType,
+        success: false
     })
 
+    console.log(state);
+
+    useEffect(() => {
+        if (state.success) {
+            editPost(postId, state.data.body);
+            setOpen(false);
+        }
+    }, [state.success, postId, editPost, state.data.body])
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button className="bg-stone-600 hover:bg-stone-500 min-w-[5vw]">Edit post</Button>
             </DialogTrigger>
@@ -52,7 +66,7 @@ export default function EditPost({ postId, postContent }: Readonly<EditPostProps
                             formAction={formAction}
                             disabled={isPending}
                         >
-                            Save
+                            {isPending ? 'Saving...' : 'Save'}
                         </Button>
 
                         <DialogClose asChild>

@@ -1,10 +1,9 @@
 import UserProfileCard from "@/components/user-profile-card";
 import Image from "next/image";
 import EditProfile from "./components/edit-profile";
-import CreatePost from "@/components/create-post";
 import { getUserId } from "@/lib/utils/supabase/actions/user/user";
 import { fetchUserPosts } from "@/lib/utils/supabase/actions/post/post";
-import PostWrapper from "@/components/post-wrapper";
+import PostsListWrapper from "@/components/post-lists";
 
 export default async function Profile() {
     const userId = await getUserId();
@@ -36,15 +35,7 @@ export default async function Profile() {
             </div>
 
             <div className="flex justify-center items-center flex-col pt-36 gap-24">
-                <CreatePost />
-
-                {posts.map((post) => (
-                    <PostWrapper
-                        key={post.postId}
-                        post={post}
-                        userId={userId}
-                    />
-                ))}
+                <PostsListWrapper posts={posts} />
             </div>
         </div>
     )

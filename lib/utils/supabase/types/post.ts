@@ -40,7 +40,7 @@ export type CommentType = {
     likesCount: number;
 }
 
-export type FeedDBType = {
+export type PostDBType = {
     id: string;
     created_at: string;
     author: AuthorDBType;
@@ -50,7 +50,7 @@ export type FeedDBType = {
     likes: LikesType;
 }
 
-export type FeedType = {
+export type PostType = {
     postId: string;
     createdAt: string;
     author: AuthorType;
@@ -58,4 +58,5 @@ export type FeedType = {
     commentsCount: number;
     likesCount: number;
     likes: string[];
+    postOwner: boolean;
 }
