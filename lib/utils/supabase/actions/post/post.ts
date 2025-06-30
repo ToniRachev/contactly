@@ -126,6 +126,6 @@ export async function editPostAction(postId: string, state: PostState, formData:
         console.error('Failed to edit post', error);
     }
 
-    revalidatePath('/profile', 'layout');
+    revalidatePath('/', 'layout');
     redirect('/profile');
 }
