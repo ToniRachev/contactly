@@ -1,22 +1,21 @@
 import { Heart, LucideIcon, MessageCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import UserAvatar from "./user-avatar"
-import { FeedType } from "@/lib/utils/supabase/types/post";
+import { PostType } from "@/lib/utils/supabase/types/post";
 import { formatRelativeTime } from "@/lib/utils";
 import DeletePost from "./delete-post";
 import EditPost from "./edit-post";
 
 type PostAuthorProps = {
-    post: FeedType;
-    isOwnPost: boolean;
+    post: PostType;
 }
 
 //TODO: Check if user and post author are friends
 
-const PostAuthor = ({ post, isOwnPost }: PostAuthorProps) => {
+const PostAuthor = ({ post }: PostAuthorProps) => {
     let controls;
 
-    if (isOwnPost) {
+    if (post.postOwner) {
         controls = (
             <div className="grid grid-cols-2 gap-2">
                 <EditPost postId={post.postId} postContent={post.body} />
@@ -103,21 +102,18 @@ const PostReactions = ({ comments, likes, open }: PostReactionsProps) => {
 }
 
 type PostProp = {
-    post: FeedType;
-    userId: string;
+    post: PostType;
     open?: () => void;
 }
 
 export default function Post({
     post,
-    userId,
     open,
 }: Readonly<PostProp>) {
     return (
         <div className="flex flex-col gap-4">
             <PostAuthor
                 post={post}
-                isOwnPost={userId === post.author.id}
             />
 
             <PostContent
