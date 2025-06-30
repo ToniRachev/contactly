@@ -105,7 +105,7 @@ export default function Post({
     open,
 }: Readonly<PostProp>) {
     return (
-        <div className="w-[50vw] flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
             <PostAuthor
                 author={{ ...post.author }}
                 createdAt={post.createdAt}
