@@ -32,7 +32,7 @@ export type UserDBType = {
 
 export type UserType = {
     id: string,
-    created_at: string,
+    createdAt: string,
     email: string,
     firstName: string,
     lastName: string,

@@ -14,8 +14,8 @@ type UserProviderProps = {
 
 const UserContext = createContext<UserContextType | null>(null);
 
-export default function UserProvider({ children, userData }: UserProviderProps) {
-    const user = userData ? use(userData) : null;
+export default function UserProvider({ children, userData }: Readonly<UserProviderProps>) {
+    const user = use(userData);
 
     const contextValue = useMemo(() => ({
         user,
