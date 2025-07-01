@@ -37,7 +37,7 @@ export const transformUserData = (user: UserDBType) => {
 
     return {
         id: user.id,
-        created_at: user.created_at,
+        createdAt: user.created_at,
         email: user.email,
         firstName: user.first_name,
         lastName: user.last_name,
