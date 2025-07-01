@@ -28,7 +28,7 @@ export const transformPosts = (posts: PostDBType[], userId?: string): PostType[]
         commentsCount: extractCount(post.commentsCount),
         likesCount: extractCount(post.likesCount),
         likes: extractLikes(post.likes),
-        postOwner: userId ? userId === post.author.id : true
+        postOwner: userId ? userId === post.author.id : true,
     }))
 }
 
