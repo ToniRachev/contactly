@@ -59,5 +59,4 @@ export type PostType = {
     likesCount: number;
     likes: string[];
     postOwner: boolean;
-    isLikedPost: boolean;
 }
