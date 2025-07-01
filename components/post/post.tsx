@@ -1,10 +1,13 @@
-import { Heart, LucideIcon, MessageCircle } from "lucide-react";
-import { Button } from "./ui/button";
-import UserAvatar from "./user-avatar"
+'use client';
+
+import { Heart, MessageCircle } from "lucide-react";
+import { Button } from "../ui/button";
+import UserAvatar from "../user-avatar"
 import { PostType } from "@/lib/utils/supabase/types/post";
 import { formatRelativeTime } from "@/lib/utils";
-import DeletePost from "./delete-post";
-import EditPost from "./edit-post";
+import DeletePost from "../delete-post";
+import EditPost from "../edit-post";
+import { ReactNode } from "react";
 
 type PostAuthorProps = {
     post: PostType;
@@ -62,16 +65,14 @@ const PostContent = ({ content }: PostContentProps) => {
 
 
 type ReactionItemProps = {
-    icon: LucideIcon;
+    icon: ReactNode;
     count: number;
 }
 
 const ReactionItem = ({ icon, count }: ReactionItemProps) => {
-    const Icon = icon;
-
     return (
         <div className="flex items-center gap-1 cursor-pointer">
-            <Icon />
+            {icon}
             <p>{count}</p>
         </div>
     )
@@ -84,16 +85,17 @@ type PostReactionsProps = {
 }
 
 const PostReactions = ({ comments, likes, open }: PostReactionsProps) => {
+
     return (
         <div className="flex gap-4">
             <ReactionItem
-                icon={Heart}
+                icon={<Heart />}
                 count={likes}
             />
 
             <button onClick={open}>
                 <ReactionItem
-                    icon={MessageCircle}
+                    icon={<MessageCircle />}
                     count={comments}
                 />
             </button>

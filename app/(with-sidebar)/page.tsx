@@ -1,4 +1,4 @@
-import PostsList from "@/components/post-lists";
+import PostsList from "@/components/post/posts-wrapper";
 import { fetchPosts } from "@/lib/utils/supabase/actions/post/post"
 import { getUserId } from "@/lib/utils/supabase/actions/user/user";
 

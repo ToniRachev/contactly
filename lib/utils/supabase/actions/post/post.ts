@@ -36,7 +36,7 @@ export const fetchUserPosts = async (userId: string, limit: number = 10) => {
             .order('created_at', { ascending: false })
     );
 
-    return transformPosts(data);
+    return transformPosts(data, userId);
 }
 
 export const createPost = async (authorId: string, body: string) => {
@@ -52,7 +52,7 @@ export const createPost = async (authorId: string, body: string) => {
             .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`)
     )
 
-    const transformedPost = transformPosts(data);
+    const transformedPost = transformPosts(data, authorId);
     return transformedPost[0];
 }
 
@@ -66,19 +66,15 @@ export const editPost = async (postId: string, postContent: string) => {
             .match({ id: postId, author_id: userId })
             .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`));
 
-    const transformedPost = transformPosts(data);
+    const transformedPost = transformPosts(data, userId);
     return transformedPost[0];
 }
 
 export const deletePost = async (postId: string) => {
-    try {
-        const supabase = await createClient();
-        const userId = await getUserId();
+    const supabase = await createClient();
+    const userId = await getUserId();
 
-        await baseFetcher(supabase.from('posts').delete().match({ id: postId, author_id: userId }))
-    } catch (error) {
-        console.error('Error deleting post', error);
-    }
+    await baseFetcher(supabase.from('posts').delete().match({ id: postId, author_id: userId }))
 }
 
 
@@ -175,6 +171,51 @@ export const deletePostAction = async (postId: string) => {
         console.error('Failed to delete post', error);
         return {
             success: false
+        }
+    }
+}
+
+export const likePost = async (postId: string, userId: string) => {
+    const supabase = await createClient();
+
+    await baseFetcher(
+        supabase.from('likes_posts')
+            .insert([{
+                post_id: postId,
+                user_id: userId
+            }])
+    )
+}
+
+export const unlikePost = async (postId: string, userId: string) => {
+    const supabase = await createClient();
+
+    await baseFetcher(supabase.from('likes_posts')
+        .delete()
+        .match({ post_id: postId, user_id: userId })
+    )
+}
+
+export async function postReaction(postId: string, isLikedPost: boolean) {
+    const userId = await getUserId();
+
+    try {
+        if (isLikedPost) {
+            await unlikePost(postId, userId)
+        } else {
+            await likePost(postId, userId);
+        }
+
+        return {
+            success: true,
+            userId,
+        }
+
+    } catch (error) {
+        console.error('Failed to like post', error);
+        return {
+            success: false,
+            userId: null
         }
     }
 }
