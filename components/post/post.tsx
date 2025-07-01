@@ -7,7 +7,11 @@ import { PostType } from "@/lib/utils/supabase/types/post";
 import { formatRelativeTime } from "@/lib/utils";
 import DeletePost from "../delete-post";
 import EditPost from "../edit-post";
-import { ReactNode } from "react";
+import { ReactNode, useActionState, useEffect, useRef } from "react";
+import { useUser } from "@/lib/context/user";
+import clsx from "clsx";
+import { postReaction } from "@/lib/utils/supabase/actions/post/post.actions";
+import { usePosts } from "@/lib/context/posts";
 
 type PostAuthorProps = {
     post: PostType;
@@ -71,7 +75,7 @@ type ReactionItemProps = {
 
 const ReactionItem = ({ icon, count }: ReactionItemProps) => {
     return (
-        <div className="flex items-center gap-1 cursor-pointer">
+        <div className="flex items-center gap-1 cursor-pointer hover:bg-stone-600 p-2 rounded-full">
             {icon}
             <p>{count}</p>
         </div>
@@ -79,24 +83,50 @@ const ReactionItem = ({ icon, count }: ReactionItemProps) => {
 }
 
 type PostReactionsProps = {
-    comments: number;
-    likes: number;
+    postId: string;
+    commentsCount: number;
+    likesCount: number;
+    likes: string[];
     open?: () => void;
 }
 
-const PostReactions = ({ comments, likes, open }: PostReactionsProps) => {
+const PostReactions = ({ postId, commentsCount, likesCount, likes, open }: PostReactionsProps) => {
+    const { user } = useUser();
+
+    const isLikedPost = user?.id ? likes.includes(user.id) : false;
+
+    const { postReaction: postReactionState } = usePosts();
+
+    const postReactionWithPostId = postReaction.bind(null, postId, isLikedPost);
+    const [state, formAction, isPending] = useActionState(postReactionWithPostId, {
+        success: false,
+        timestamp: 0
+    });
+
+    const prevTimestampRef = useRef(0);
+
+    useEffect(() => {
+        if (state.success && user && state.timestamp > prevTimestampRef.current) {
+            postReactionState(postId, user.id, isLikedPost);
+            prevTimestampRef.current = state.timestamp;
+        }
+    }, [state.success, state.timestamp, user, postId, postReactionState, isLikedPost])
 
     return (
         <div className="flex gap-4">
-            <ReactionItem
-                icon={<Heart />}
-                count={likes}
-            />
+            <form>
+                <button formAction={formAction} disabled={isPending}>
+                    <ReactionItem
+                        icon={<Heart className={clsx('', isLikedPost && 'stroke-red-500 fill-red-700')} />}
+                        count={likesCount}
+                    />
+                </button>
+            </form>
 
             <button onClick={open}>
                 <ReactionItem
                     icon={<MessageCircle />}
-                    count={comments}
+                    count={commentsCount}
                 />
             </button>
         </div>
@@ -112,6 +142,7 @@ export default function Post({
     post,
     open,
 }: Readonly<PostProp>) {
+
     return (
         <div className="flex flex-col gap-4">
             <PostAuthor
@@ -123,9 +154,11 @@ export default function Post({
             />
 
             <PostReactions
-                comments={post.commentsCount}
-                likes={post.likesCount}
+                postId={post.postId}
+                commentsCount={post.commentsCount}
+                likesCount={post.likesCount}
                 open={open}
+                likes={post.likes}
             />
         </div>
     )

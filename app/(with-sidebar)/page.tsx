@@ -1,6 +1,6 @@
 import PostsList from "@/components/post/posts-wrapper";
-import { fetchPosts } from "@/lib/utils/supabase/actions/post/post"
-import { getUserId } from "@/lib/utils/supabase/actions/user/user";
+import { fetchPosts } from "@/lib/utils/supabase/actions/post/post.actions"
+import { getUserId } from "@/lib/utils/supabase/actions/user/user.actions";
 
 export default async function Home() {
   const userId = await getUserId();

@@ -6,9 +6,9 @@ import { createClient } from "../../server";
 import { transformPosts } from "../../utils/transform";
 import { PostSchemaErrorType, PostSchemaType } from "../../validations/postSchema";
 import { createFormResult } from "../../validations/utils";
-import { getUserId } from "../user/user";
 import { parseAndValidateSubmitPostData } from "./helpers";
 import { PostType } from "../../types/post";
+import { getUserId } from "../user/user.actions";
 
 export const fetchPosts = async (currentUserId: string, limit: number = 10) => {
     const supabase = await createClient();
@@ -208,14 +208,14 @@ export async function postReaction(postId: string, isLikedPost: boolean) {
 
         return {
             success: true,
-            userId,
+            timestamp: Date.now(),
         }
 
     } catch (error) {
         console.error('Failed to like post', error);
         return {
             success: false,
-            userId: null
+            timestamp: Date.now(),
         }
     }
 }

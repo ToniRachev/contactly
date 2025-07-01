@@ -11,7 +11,7 @@ import { Button } from "./ui/button"
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Textarea } from "./ui/textarea";
 import { useActionState, useEffect, useState } from "react";
-import { editPostAction } from "@/lib/utils/supabase/actions/post/post";
+import { editPostAction } from "@/lib/utils/supabase/actions/post/post.actions";
 import { PostSchemaErrorType, PostSchemaType } from "@/lib/utils/supabase/validations/postSchema";
 import { usePosts } from "@/lib/context/posts";
 
@@ -33,8 +33,6 @@ export default function EditPost({ postId, postContent }: Readonly<EditPostProps
         errors: {} as PostSchemaErrorType,
         success: false
     })
-
-    console.log(state);
 
     useEffect(() => {
         if (state.success) {

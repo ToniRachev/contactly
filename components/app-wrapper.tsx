@@ -1,5 +1,5 @@
 import UserProvider from "@/lib/context/user";
-import { fetchUserProfile } from "@/lib/utils/supabase/actions/user/user";
+import { fetchUserProfile } from "@/lib/utils/supabase/actions/user/user.actions";
 import { createClient } from "@/lib/utils/supabase/server";
 import { ReactNode } from "react";
 import { SidebarProvider } from "./ui/sidebar";
