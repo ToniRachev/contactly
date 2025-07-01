@@ -3,7 +3,7 @@ import Image from "next/image";
 import EditProfile from "./components/edit-profile";
 import { getUserId } from "@/lib/utils/supabase/actions/user/user";
 import { fetchUserPosts } from "@/lib/utils/supabase/actions/post/post";
-import PostsListWrapper from "@/components/post-lists";
+import PostsListWrapper from "@/components/post/posts-wrapper";
 
 export default async function Profile() {
     const userId = await getUserId();

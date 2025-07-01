@@ -1,10 +1,10 @@
 import { Heart, LucideIcon, MessageCircle } from "lucide-react";
-import { Button } from "./ui/button";
-import UserAvatar from "./user-avatar"
+import { Button } from "../ui/button";
+import UserAvatar from "../user-avatar"
 import { PostType } from "@/lib/utils/supabase/types/post";
 import { formatRelativeTime } from "@/lib/utils";
-import DeletePost from "./delete-post";
-import EditPost from "./edit-post";
+import DeletePost from "../delete-post";
+import EditPost from "../edit-post";
 
 type PostAuthorProps = {
     post: PostType;

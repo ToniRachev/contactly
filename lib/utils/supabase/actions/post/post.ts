@@ -36,7 +36,7 @@ export const fetchUserPosts = async (userId: string, limit: number = 10) => {
             .order('created_at', { ascending: false })
     );
 
-    return transformPosts(data);
+    return transformPosts(data, userId);
 }
 
 export const createPost = async (authorId: string, body: string) => {
@@ -52,7 +52,7 @@ export const createPost = async (authorId: string, body: string) => {
             .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`)
     )
 
-    const transformedPost = transformPosts(data);
+    const transformedPost = transformPosts(data, authorId);
     return transformedPost[0];
 }
 
@@ -66,7 +66,7 @@ export const editPost = async (postId: string, postContent: string) => {
             .match({ id: postId, author_id: userId })
             .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`));
 
-    const transformedPost = transformPosts(data);
+    const transformedPost = transformPosts(data, userId);
     return transformedPost[0];
 }
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Post from "./post";
-import { PostView } from "./post-view";
+import { PostDetailedView } from "./post-detailed-view";
 import { PostType } from "@/lib/utils/supabase/types/post";
 
 type PostWrapperProps = {
@@ -20,7 +20,7 @@ export default function PostWrapper({ post }: Readonly<PostWrapperProps>) {
                 post={post}
                 open={() => setOpen(true)}
             />
-            <PostView
+            <PostDetailedView
                 post={post}
                 controls={{ setState: handleState, open }}
             />

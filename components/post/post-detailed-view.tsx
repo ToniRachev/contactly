@@ -6,11 +6,11 @@ import {
 } from "@/components/ui/dialog"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import Post from "./post"
-import UserAvatar from "./user-avatar";
+import UserAvatar from "../user-avatar";
 import { ThumbsUp } from "lucide-react";
-import { Separator } from "./ui/separator";
-import Filter from "./filter";
-import MessageInput from "./message-input";
+import { Separator } from "../ui/separator";
+import Filter from "../filter";
+import MessageInput from "../message-input";
 import { useEffect, useState } from "react";
 import { fetchPostComments } from "@/lib/utils/supabase/client/post";
 import { formatRelativeTime } from "@/lib/utils";
@@ -70,7 +70,7 @@ const Comment = ({ comment }: Readonly<{ comment: CommentType }>) => {
     )
 }
 
-export function PostView({ post, controls }: Readonly<PostViewProps>) {
+export function PostDetailedView({ post, controls }: Readonly<PostViewProps>) {
     const [comments, setComments] = useState<CommentType[]>([]);
 
     useEffect(() => {
