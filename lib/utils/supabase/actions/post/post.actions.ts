@@ -10,6 +10,8 @@ import { parseAndValidateSubmitPostData } from "./helpers";
 import { PostType } from "../../types/post";
 import { getUserId } from "../user/user.actions";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export const fetchPosts = async (currentUserId: string, limit: number = 10) => {
     const supabase = await createClient();
@@ -87,7 +89,7 @@ type PostState = {
 
 type SubmitPostState = PostState & { newPost: PostType | null }
 
-export async function submitPost(state: SubmitPostState, formData: FormData) {
+export async function submitPost(path: string, state: SubmitPostState, formData: FormData) {
     const { data, result } = parseAndValidateSubmitPostData(formData);
 
     if (!result.success) {
@@ -104,6 +106,11 @@ export async function submitPost(state: SubmitPostState, formData: FormData) {
         const userId = await getUserId();
         const newPost = await createPost(userId, result.data.body);
 
+        if (path === '/') {
+            redirect('/profile');
+        }
+
+        revalidatePath('/');
         return {
             data: '' as unknown as PostSchemaType,
             success: true,
@@ -111,6 +118,10 @@ export async function submitPost(state: SubmitPostState, formData: FormData) {
             errors: {} as PostSchemaErrorType
         }
     } catch (error) {
+        if (isRedirectError(error)) {
+            throw error;
+        }
+
         console.error('Failed to create post', error);
         const formResult = createFormResult(data as PostSchemaType, MESSAGES.genericError);
 
@@ -147,6 +158,8 @@ export async function editPostAction(postId: string, state: PostState, formData:
         await editPost(postId, result.data.body);
         const formResult = createFormResult(result.data, {} as PostSchemaErrorType);
 
+        revalidatePath('/');
+
         return {
             ...formResult,
             success: true,
@@ -164,6 +177,7 @@ export async function editPostAction(postId: string, state: PostState, formData:
 export const deletePostAction = async (postId: string) => {
     try {
         await deletePost(postId)
+        revalidatePath('/');
         return {
             success: true,
         }
@@ -207,7 +221,7 @@ export async function postReaction(postId: string, isLikedPost: boolean) {
             await likePost(postId, userId);
         }
 
-        revalidatePath('/');
+        revalidatePath('/', 'layout');
 
         return {
             success: true,

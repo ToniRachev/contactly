@@ -10,8 +10,8 @@ import {
 import { Button } from "./ui/button"
 import { DialogClose } from "@radix-ui/react-dialog";
 import { deletePostAction } from "@/lib/utils/supabase/actions/post/post.actions";
-import { useActionState, useEffect, useState } from "react";
-import { usePosts } from "@/lib/context/posts";
+import { startTransition, useActionState, useEffect, useState } from "react";
+import { usePosts } from "@/lib/context/posts.context";
 
 type DeletePostProps = {
     postId: string;
@@ -26,6 +26,14 @@ export default function DeletePost({ postId }: Readonly<DeletePostProps>) {
     const [state, formAction, isPending] = useActionState(actionWithPostId, {
         success: false,
     })
+
+    const handleDeletePost = () => {
+        deletePost(postId);
+
+        startTransition(() => {
+            formAction();
+        })
+    }
 
     useEffect(() => {
         if (state.success) {
@@ -49,7 +57,7 @@ export default function DeletePost({ postId }: Readonly<DeletePostProps>) {
                     <form className="w-full">
                         <Button
                             variant={'secondary'}
-                            formAction={formAction}
+                            formAction={handleDeletePost}
                             className="w-full"
                             disabled={isPending}
                         >

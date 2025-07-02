@@ -1,6 +1,6 @@
 'use client';
 
-import { usePosts } from "@/lib/context/posts";
+import { usePosts } from "@/lib/context/posts.context";
 import PostWrapper from "../post/post-wrapper";
 
 export default function Posts() {

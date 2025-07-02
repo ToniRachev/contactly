@@ -13,14 +13,17 @@ import { Button } from "./ui/button"
 import { useActionState, useEffect, useState } from "react";
 import { submitPost } from "@/lib/utils/supabase/actions/post/post.actions";
 import { PostSchemaErrorType, PostSchemaType } from "@/lib/utils/supabase/validations/postSchema";
-import { usePosts } from "@/lib/context/posts";
+import { usePosts } from "@/lib/context/posts.context";
+import { usePathname } from "next/navigation";
 
 export default function CreatePost() {
     const [open, setOpen] = useState(false);
+    const path = usePathname();
 
     const { addPost } = usePosts();
 
-    const [state, formAction, isPending] = useActionState(submitPost, {
+    const submitPostWithPath = submitPost.bind(null, path);
+    const [state, formAction, isPending] = useActionState(submitPostWithPath, {
         data: {
             body: '',
         } as PostSchemaType,

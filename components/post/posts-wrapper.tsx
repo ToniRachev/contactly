@@ -1,4 +1,4 @@
-import PostsProvider from "@/lib/context/posts";
+import PostsProvider from "@/lib/context/posts.context";
 import Posts from "./posts";
 import { PostType } from "@/lib/utils/supabase/types/post";
 import CreatePost from "../create-post";
