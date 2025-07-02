@@ -11,7 +11,7 @@ export default function Posts() {
             {posts.map((post) => (
                 <PostWrapper
                     key={post.postId}
-                    post={post}
+                    postData={post}
                 />
             ))}
         </div>

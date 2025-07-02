@@ -1,28 +1,30 @@
 'use client';
 
-import { useState } from "react";
 import Post from "./post";
 import { PostDetailedView } from "./post-detailed-view";
 import { PostType } from "@/lib/utils/supabase/types/post";
+import usePost from "@/hooks/usePost";
 
 type PostWrapperProps = {
-    post: PostType;
+    postData: PostType;
 }
 
-export default function PostWrapper({ post }: Readonly<PostWrapperProps>) {
-    const [open, setOpen] = useState(false);
-
-    const handleState = (state: boolean) => setOpen(state);
+export default function PostWrapper({ postData }: Readonly<PostWrapperProps>) {
+    const { post, isLikedPost, controls, reaction } = usePost(postData);
 
     return (
         <div>
             <Post
                 post={post}
-                open={() => setOpen(true)}
+                open={controls.openDetailedView}
+                reaction={reaction}
+                isLikedPost={isLikedPost}
             />
             <PostDetailedView
                 post={post}
-                controls={{ setState: handleState, open }}
+                controls={{ setState: controls.handleDetailedViewState, open: controls.isDetailedViewOpen }}
+                reaction={reaction}
+                isLikedPost={isLikedPost}
             />
         </div>
     )

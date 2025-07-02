@@ -9,6 +9,7 @@ import { createFormResult } from "../../validations/utils";
 import { parseAndValidateSubmitPostData } from "./helpers";
 import { PostType } from "../../types/post";
 import { getUserId } from "../user/user.actions";
+import { revalidatePath } from "next/cache";
 
 export const fetchPosts = async (currentUserId: string, limit: number = 10) => {
     const supabase = await createClient();
@@ -206,16 +207,16 @@ export async function postReaction(postId: string, isLikedPost: boolean) {
             await likePost(postId, userId);
         }
 
+        revalidatePath('/');
+
         return {
             success: true,
-            timestamp: Date.now(),
         }
 
     } catch (error) {
         console.error('Failed to like post', error);
         return {
             success: false,
-            timestamp: Date.now(),
         }
     }
 }
