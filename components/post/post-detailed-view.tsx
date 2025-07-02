@@ -37,6 +37,8 @@ type Controls = {
 type PostViewProps = {
     post: PostType;
     controls: Controls;
+    reaction: () => void;
+    isLikedPost: boolean;
 }
 
 const Comment = ({ comment }: Readonly<{ comment: CommentType }>) => {
@@ -70,7 +72,7 @@ const Comment = ({ comment }: Readonly<{ comment: CommentType }>) => {
     )
 }
 
-export function PostDetailedView({ post, controls }: Readonly<PostViewProps>) {
+export function PostDetailedView({ post, controls, reaction, isLikedPost }: Readonly<PostViewProps>) {
     const [comments, setComments] = useState<CommentType[]>([]);
 
     useEffect(() => {
@@ -98,7 +100,7 @@ export function PostDetailedView({ post, controls }: Readonly<PostViewProps>) {
                     [&::-webkit-scrollbar-thumb]:bg-[#8C8C8C]
                     [&::-webkit-scrollbar-button]:hidden
                 ">
-                    <Post post={post} />
+                    <Post post={post} reaction={reaction} isLikedPost={isLikedPost} />
 
                     <Separator className="opacity-25" />
                     <Filter filters={filters} />
