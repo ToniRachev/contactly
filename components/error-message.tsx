@@ -1,7 +1,13 @@
+import clsx from "clsx";
 import { ReactNode } from "react";
 
-export default function ErrorMessage({ children }: { children: ReactNode }) {
+type ErrorMessageProps = {
+    children: ReactNode;
+    className?: string;
+}
+
+export default function ErrorMessage({ children, className }: Readonly<ErrorMessageProps>) {
     return (
-        <p className="text-red-300">{children}</p>
+        <p className={clsx('text-red-300', className)}>{children}</p>
     )
 }
