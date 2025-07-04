@@ -6,7 +6,7 @@ import { createClient } from "@/lib/utils/supabase/server";
 import { transformPosts } from "@/lib/utils/transform";
 import { PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
 import { createFormResult } from "@/lib/validations/utils";
-import { parseAndValidateSubmitPostData } from "@/lib/actions/post/helpers";
+import { parseAndValidateSubmitPostData } from "@/lib/actions/post/post.helpers";
 import { PostType } from "@/lib/types/post";
 import { getUserId } from "@/lib/actions/user/user.actions";
 import { redirect } from "next/navigation";

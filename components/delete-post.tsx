@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "./ui/button"
 import { DialogClose } from "@radix-ui/react-dialog";
-import { deletePostAction } from "@/lib/utils/supabase/actions/post/post.actions";
+import { deletePostAction } from "@/lib/actions/post/post.actions";
 import { startTransition, useActionState, useEffect, useState } from "react";
 import { usePosts } from "@/lib/context/posts.context";
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { signup } from "@/lib/utils/supabase/actions/auth/auth.actions";
+import { signup } from "@/lib/actions/auth/auth.actions";
 import { SignupSchemaErrorType, SignupSchemaType } from "@/lib/validations/authSchema";
 import { useActionState } from "react";
 import FormWrapper from "../components/form-wrapper";

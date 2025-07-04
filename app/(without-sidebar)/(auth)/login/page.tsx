@@ -1,6 +1,6 @@
 'use client';
 
-import { login } from "@/lib/utils/supabase/actions/auth/auth.actions";
+import { login } from "@/lib/actions/auth/auth.actions";
 import { LoginSchemaErrorType, LoginSchemaType } from "@/lib/validations/authSchema";
 import { useActionState } from "react";
 import FormWrapper from "../components/form-wrapper";

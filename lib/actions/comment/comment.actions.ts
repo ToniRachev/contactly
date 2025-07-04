@@ -3,7 +3,7 @@ import { createClient } from "@/lib/utils/supabase/server";
 import { transformPostComments } from "@/lib/utils/transform";
 import { CommentSchemaErrorType, CommentSchemaType } from "@/lib/validations/postSchema";
 import { createFormResult } from "@/lib/validations/utils";
-import { parseAndValidateSubmitCommentData } from "@/lib/actions/post/helpers";
+import { parseAndValidateSubmitCommentData } from "@/lib/actions/post/post.helpers";
 import { CommentType } from "@/lib/types/post";
 import { MESSAGES } from "@/lib/constants/messages";
 

@@ -1,7 +1,7 @@
-import { createClient } from "../client"
-import { baseFetcher } from "../helpers";
-import { CommentType } from "../../../types/post";
-import { transformPostComments } from "../utils/transform";
+import { createClient } from "@/lib/utils/supabase/client"
+import { baseFetcher } from "@/lib/utils/supabase/helpers";
+import { CommentType } from "@/lib/types/post";
+import { transformPostComments } from "@/lib/utils/transform";
 
 export const fetchPostComments = async (postId: string): Promise<CommentType[]> => {
     const supabase = createClient();
