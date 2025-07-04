@@ -26,7 +26,12 @@ export const MESSAGES = {
         post: {
             minLength: 'Post is too short to share.',
             maxLength: 'Post is too long. Please keep it under 500 characters'
-        }
+        },
+        comment: {
+            minLength: 'Comment is too short to share.',
+            maxLength: 'Comment is too long. Please keep it under 500 characters'
+        },
     },
+
     genericError: 'Something went wrong. Please try again.'
 }

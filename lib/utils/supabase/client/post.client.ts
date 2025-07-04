@@ -10,6 +10,7 @@ export const fetchPostComments = async (postId: string): Promise<CommentType[]> 
         supabase.from('comments')
             .select(`*, author:author_id(*), likes:likes_comments(user:user_id), likesCount:likes_comments(count)`)
             .eq('post_id', postId)
+            .order('created_at', { ascending: false })
     )
 
     return transformPostComments(data);

@@ -16,5 +16,9 @@ export const VALIDATION = {
     post: {
         minLength: 1,
         maxLength: 500
+    },
+    comment: {
+        minLength: 1,
+        maxLength: 500
     }
 }

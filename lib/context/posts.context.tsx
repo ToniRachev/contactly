@@ -3,11 +3,10 @@
 import {
     createContext,
     ReactNode,
-    startTransition,
     useCallback,
     useContext,
     useMemo,
-    useOptimistic
+    useState
 } from "react";
 import { PostType } from "../utils/supabase/types/post";
 
@@ -26,42 +25,35 @@ type PostsProviderProps = {
 }
 
 export default function PostsProvider({ postsData, children }: Readonly<PostsProviderProps>) {
-    const [posts, setPosts] = useOptimistic<PostType[]>(postsData);
+    const [posts, setPosts] = useState<PostType[]>(postsData);
 
     const addPost = useCallback((post: PostType) => {
-        startTransition(() => {
-            setPosts((prevPosts) => {
-                const isAlreadyInPosts = prevPosts.find((oldPost) => oldPost.postId === post.postId);
+        setPosts((prevPosts) => {
+            const isAlreadyInPosts = prevPosts.find((oldPost) => oldPost.postId === post.postId);
 
-                if (isAlreadyInPosts) {
-                    return prevPosts;
-                }
+            if (isAlreadyInPosts) {
+                return prevPosts;
+            }
 
-                return [post, ...prevPosts];
-            })
+            return [post, ...prevPosts];
         })
     }, [setPosts])
 
     const editPost = useCallback((postId: string, newContent: string) => {
-        startTransition(() => {
-            setPosts((prevPosts) => {
+        setPosts((prevPosts) => {
+            const updatedPosts = [...prevPosts];
+            const post = updatedPosts.find((post) => post.postId === postId);
 
-                const updatedPosts = [...prevPosts];
-                const post = updatedPosts.find((post) => post.postId === postId);
+            if (post) {
+                post.body = newContent;
+            }
 
-                if (post) {
-                    post.body = newContent;
-                }
-
-                return updatedPosts;
-            })
+            return updatedPosts;
         })
     }, [setPosts])
 
     const deletePost = useCallback((postId: string) => {
-        startTransition(() => {
-            setPosts((prevPosts) => prevPosts.filter((post) => post.postId !== postId));
-        })
+        setPosts((prevPosts) => prevPosts.filter((post) => post.postId !== postId));
     }, [setPosts])
 
     const contextValue = useMemo(() => ({

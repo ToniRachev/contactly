@@ -1,14 +1,14 @@
 import { useUser } from "@/lib/context/user";
 import { PostType } from "@/lib/utils/supabase/types/post"
-import { startTransition, useCallback, useOptimistic, useState } from "react"
+import { useCallback, useState } from "react"
 
-export default function usePost(post: PostType) {
-    const [optimisticPost, updatePost] = useOptimistic<PostType>(post);
+export default function usePost(postData: PostType) {
+    const [post, setPost] = useState<PostType>(postData);
     const [isDetailedViewOpen, setIsDetailedViewOpen] = useState(false);
 
     const { user } = useUser();
 
-    const isLikedPost = !!optimisticPost.likes.find((userLikedPostId) => userLikedPostId === user?.id);
+    const isLikedPost = !!post.likes.find((userLikedPostId) => userLikedPostId === user?.id);
 
     const handleDetailedViewState = (state: boolean) => setIsDetailedViewOpen(state);
 
@@ -16,29 +16,34 @@ export default function usePost(post: PostType) {
 
     const closeDetailedView = () => setIsDetailedViewOpen(false);
 
+    const updateCommentsCount = useCallback((type: 'add' | 'remove') => {
+        setPost((prevState) => ({
+            ...prevState,
+            commentsCount: type === 'add' ? prevState.commentsCount + 1 : prevState.commentsCount - 1
+        }));
+    }, []);
+
     const reaction = useCallback(() => {
         if (user) {
             const userId = user.id;
-
-            startTransition(() => {
-                updatePost((prevState) => ({
-                    ...prevState,
-                    likes: isLikedPost ? prevState.likes.filter((userLikedPostId) => userLikedPostId !== userId) : [...prevState.likes, userId],
-                    likesCount: isLikedPost ? prevState.likesCount - 1 : prevState.likesCount + 1
-                }))
-            })
+            setPost((prevState) => ({
+                ...prevState,
+                likes: isLikedPost ? prevState.likes.filter((userLikedPostId) => userLikedPostId !== userId) : [...prevState.likes, userId],
+                likesCount: isLikedPost ? prevState.likesCount - 1 : prevState.likesCount + 1
+            }))
         }
-    }, [isLikedPost, updatePost, user])
+    }, [isLikedPost, setPost, user])
 
     return {
-        post: optimisticPost,
+        post: post,
         isLikedPost,
         controls: {
             handleDetailedViewState,
             openDetailedView,
             closeDetailedView,
-            isDetailedViewOpen
+            isDetailedViewOpen,
         },
         reaction,
+        updateCommentsCount
     }
 }
