@@ -1,8 +1,8 @@
 import UserProfileCard from "@/components/user-profile-card";
 import Image from "next/image";
 import EditProfile from "./components/edit-profile";
-import { getUserId } from "@/lib/utils/supabase/actions/user/user.actions";
-import { fetchUserPosts } from "@/lib/utils/supabase/actions/post/post.actions";
+import { getUserId } from "@/lib/actions/user/user.actions";
+import { fetchUserPosts } from "@/lib/actions/post/post.actions";
 import PostsListWrapper from "@/components/post/posts-wrapper";
 
 export default async function Profile() {
