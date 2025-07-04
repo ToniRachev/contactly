@@ -94,6 +94,15 @@ export async function editCommentAction(authorId: string, commentId: string, sta
         }
     }
 
+    if (state.data.body === result.data.body) {
+        const formResult = createFormResult(result.data, {} as CommentSchemaErrorType);
+
+        return {
+            ...formResult,
+            success: false,
+        }
+    }
+
     try {
         await editComment(authorId, commentId, result.data.body);
 
