@@ -9,7 +9,6 @@ import { createFormResult } from "../../validations/utils";
 import { parseAndValidateSubmitCommentData, parseAndValidateSubmitPostData } from "./helpers";
 import { CommentType, PostType } from "../../types/post";
 import { getUserId } from "../user/user.actions";
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
@@ -110,7 +109,6 @@ export async function submitPost(path: string, state: SubmitPostState, formData:
             redirect('/profile');
         }
 
-        revalidatePath('/');
         return {
             data: '' as unknown as PostSchemaType,
             success: true,
@@ -158,8 +156,6 @@ export async function editPostAction(postId: string, state: PostState, formData:
         await editPost(postId, result.data.body);
         const formResult = createFormResult(result.data, {} as PostSchemaErrorType);
 
-        revalidatePath('/');
-
         return {
             ...formResult,
             success: true,
@@ -177,7 +173,7 @@ export async function editPostAction(postId: string, state: PostState, formData:
 export const deletePostAction = async (postId: string) => {
     try {
         await deletePost(postId)
-        revalidatePath('/');
+
         return {
             success: true,
         }
@@ -220,8 +216,6 @@ export async function postReaction(postId: string, isLikedPost: boolean) {
         } else {
             await likePost(postId, userId);
         }
-
-        revalidatePath('/', 'layout');
 
         return {
             success: true,
@@ -276,8 +270,6 @@ export const createCommentAction = async (postId: string, authorId: string, stat
         const newComment = await createComment(authorId, postId, result.data.body);
         const formResult = createFormResult({ body: '' } as CommentSchemaType, {} as CommentSchemaErrorType);
 
-        revalidatePath('/');
-
         return {
             ...formResult,
             success: true,
@@ -291,6 +283,75 @@ export const createCommentAction = async (postId: string, authorId: string, stat
             ...formResult,
             success: false,
             newComment: null,
+        }
+    }
+}
+
+export const editComment = async (authorId: string, commentId: string, body: string) => {
+    const supabase = await createClient();
+
+    await baseFetcher(supabase.from('comments')
+        .update({ body })
+        .match({ author_id: authorId, id: commentId })
+        .select('*'))
+}
+
+type EditCommentState = {
+    data: CommentSchemaType;
+    errors: CommentSchemaErrorType;
+    success: boolean;
+}
+
+export const editCommentAction = async (authorId: string, commentId: string, state: EditCommentState, formData: FormData) => {
+    const { data, result } = parseAndValidateSubmitCommentData(formData);
+
+    if (!result.success) {
+        const formResult = createFormResult(data as CommentSchemaType, result.error.formErrors as CommentSchemaErrorType)
+
+        return {
+            ...formResult,
+            success: false,
+        }
+    }
+
+    try {
+        await editComment(authorId, commentId, result.data.body);
+
+        const formResult = createFormResult(result.data, {} as CommentSchemaErrorType);
+
+        return {
+            ...formResult,
+            success: true,
+        }
+
+    } catch (error) {
+        console.error('Failed to edit comment', error);
+        const formResult = createFormResult(result.data as CommentSchemaType, MESSAGES.genericError);
+
+        return {
+            ...formResult,
+            success: false,
+        }
+    }
+}
+
+export const deleteComment = async (authorId: string, commentId: string) => {
+    const supabase = await createClient();
+
+    await baseFetcher(supabase.from('comments').delete().match({ author_id: authorId, id: commentId }));
+}
+
+export const deleteCommentAction = async (authorId: string, commentId: string) => {
+    try {
+        await deleteComment(authorId, commentId);
+
+        return {
+            success: true,
+        }
+    } catch (error) {
+        console.error('Failed to delete comment', error);
+        return {
+            success: false,
         }
     }
 }
