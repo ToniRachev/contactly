@@ -12,7 +12,15 @@ import { getUserId } from "@/lib/actions/user/user.actions";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
-export const fetchPosts = async (currentUserId: string, limit: number = 10) => {
+type PostState = {
+    data: PostSchemaType;
+    errors: PostSchemaErrorType;
+    success: boolean;
+}
+
+type SubmitPostState = PostState & { newPost: PostType | null }
+
+export async function fetchPosts(currentUserId: string, limit: number = 10) {
     const supabase = await createClient();
     const userId = await getUserId();
 
@@ -27,7 +35,7 @@ export const fetchPosts = async (currentUserId: string, limit: number = 10) => {
     return transformPosts(data, userId);
 }
 
-export const fetchUserPosts = async (userId: string, limit: number = 10) => {
+export async function fetchUserPosts(userId: string, limit: number = 10) {
     const supabase = await createClient();
 
     const data = await baseFetcher(
@@ -41,7 +49,7 @@ export const fetchUserPosts = async (userId: string, limit: number = 10) => {
     return transformPosts(data, userId);
 }
 
-export const createPost = async (authorId: string, body: string) => {
+export async function createPost(authorId: string, body: string) {
     const supabase = await createClient();
 
     const data = await baseFetcher(
@@ -58,7 +66,7 @@ export const createPost = async (authorId: string, body: string) => {
     return transformedPost[0];
 }
 
-export const editPost = async (postId: string, postContent: string) => {
+export async function editPost(postId: string, postContent: string) {
     const supabase = await createClient();
     const userId = await getUserId();
 
@@ -78,15 +86,6 @@ export const deletePost = async (postId: string) => {
 
     await baseFetcher(supabase.from('posts').delete().match({ id: postId, author_id: userId }))
 }
-
-
-type PostState = {
-    data: PostSchemaType;
-    errors: PostSchemaErrorType;
-    success: boolean;
-}
-
-type SubmitPostState = PostState & { newPost: PostType | null }
 
 export async function submitPost(path: string, state: SubmitPostState, formData: FormData) {
     const { data, result } = parseAndValidateSubmitPostData(formData);
@@ -170,7 +169,7 @@ export async function editPostAction(postId: string, state: PostState, formData:
     }
 }
 
-export const deletePostAction = async (postId: string) => {
+export async function deletePostAction(postId: string) {
     try {
         await deletePost(postId)
 

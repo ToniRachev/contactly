@@ -2,7 +2,7 @@ import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { getUserId } from "@/lib/actions/user/user.actions";
 
-export const likePost = async (postId: string, userId: string) => {
+export async function likePost(postId: string, userId: string) {
     const supabase = await createClient();
 
     await baseFetcher(
@@ -14,7 +14,7 @@ export const likePost = async (postId: string, userId: string) => {
     )
 }
 
-export const unlikePost = async (postId: string, userId: string) => {
+export async function unlikePost(postId: string, userId: string) {
     const supabase = await createClient();
 
     await baseFetcher(supabase.from('likes_posts')

@@ -5,7 +5,7 @@ import { createClient } from "@/lib/utils/supabase/server";
 import { UserDBType } from "@/lib/types/user";
 import { transformUserData } from "@/lib/utils/transform";
 
-export const fetchUserProfile = async (userId: string) => {
+export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();
 
     const query = supabase.from('users')
@@ -18,7 +18,7 @@ export const fetchUserProfile = async (userId: string) => {
     return transformUserData(data);
 }
 
-export const getUserId = async () => {
+export async function getUserId() {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getUser();
 
