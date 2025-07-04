@@ -1,13 +1,13 @@
 'use server';
 
 import { redirect } from "next/navigation";
-import { createClient } from "../../server";
+import { createClient } from "@/lib/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-import { LoginSchemaErrorType, LoginSchemaType, SignupSchemaErrorType, SignupSchemaType } from "../../validations/authSchema";
+import { LoginSchemaErrorType, LoginSchemaType, SignupSchemaErrorType, SignupSchemaType } from "@/lib/validations/authSchema";
 import { isAuthApiError } from "@supabase/supabase-js";
-import { createFormResult } from "../../validations/utils";
+import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
-import { parseAndValidateSigninInput, parseAndValidateSignupInput, postLoginSuccess, signInUser, signupUser } from "./helpers";
+import { parseAndValidateSigninInput, parseAndValidateSignupInput, postLoginSuccess, signInUser, signupUser } from "./auth.helpers";
 
 type LoginStateType = {
     data: LoginSchemaType,

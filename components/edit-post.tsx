@@ -11,8 +11,8 @@ import { Button } from "./ui/button"
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Textarea } from "./ui/textarea";
 import { useActionState, useEffect, useState } from "react";
-import { editPostAction } from "@/lib/utils/supabase/actions/post/post.actions";
-import { PostSchemaErrorType, PostSchemaType } from "@/lib/utils/supabase/validations/postSchema";
+import { editPostAction } from "@/lib/actions/post/post.actions";
+import { PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
 import { usePosts } from "@/lib/context/posts.context";
 
 type EditPostProps = {

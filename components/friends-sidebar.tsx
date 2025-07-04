@@ -4,7 +4,7 @@ import {
     SidebarHeader,
 } from '@/components/ui/sidebar'
 import UserAvatarWithStatus from './user-avatar-with-status';
-import { StatusType } from '@/lib/utils/supabase/types/user';
+import { StatusType } from '@/lib/types/user';
 
 const friends = [
     {

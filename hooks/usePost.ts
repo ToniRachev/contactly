@@ -1,5 +1,5 @@
-import { useUser } from "@/lib/context/user";
-import { PostType } from "@/lib/utils/supabase/types/post"
+import { useUser } from "@/lib/context/user.context";
+import { PostType } from "@/lib/types/post"
 import { useCallback, useState } from "react"
 
 export default function usePost(postData: PostType) {

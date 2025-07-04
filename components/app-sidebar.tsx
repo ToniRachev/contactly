@@ -11,7 +11,7 @@ import {
 import { Compass, LogOut, MessageCircle, UserRound, UsersRound } from 'lucide-react'
 import Link from 'next/link'
 import UserProfileCard from './user-profile-card'
-import { signout } from '@/lib/utils/supabase/actions/auth/auth.actions'
+import { signout } from '@/lib/actions/auth/auth.actions'
 
 const menuItems = [
     {

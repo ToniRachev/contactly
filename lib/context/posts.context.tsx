@@ -8,7 +8,7 @@ import {
     useMemo,
     useState
 } from "react";
-import { PostType } from "../utils/supabase/types/post";
+import { PostType } from "../types/post";
 
 type PostsContextType = {
     posts: PostType[];

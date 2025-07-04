@@ -2,7 +2,7 @@
 
 import Post from "./post";
 import { PostDetailedView } from "./post-detailed-view";
-import { PostType } from "@/lib/utils/supabase/types/post";
+import { PostType } from "@/lib/types/post";
 import usePost from "@/hooks/usePost";
 import useComments from "@/hooks/useComments";
 

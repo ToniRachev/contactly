@@ -1,6 +1,6 @@
 import { MESSAGES } from '@/lib/constants/messages';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { parseAndValidateSigninInput, parseAndValidateSignupInput, signInUser } from './helpers';
+import { parseAndValidateSigninInput, parseAndValidateSignupInput, signInUser } from '@/lib/actions/auth/auth.helpers';
 import * as serverModule from '@/lib/utils/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 

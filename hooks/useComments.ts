@@ -1,5 +1,5 @@
-import { fetchPostComments } from "@/lib/utils/supabase/client/post.client";
-import { CommentType } from "@/lib/utils/supabase/types/post";
+import { fetchPostComments } from "@/lib/client/post.client";
+import { CommentType } from "@/lib/types/post";
 import { useCallback, useEffect, useState } from "react";
 
 export default function useComments(
