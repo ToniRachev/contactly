@@ -1,8 +1,10 @@
+'use server';
+
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { getUserId } from "@/lib/actions/user/user.actions";
 
-export const likePost = async (postId: string, userId: string) => {
+export async function likePost(postId: string, userId: string) {
     const supabase = await createClient();
 
     await baseFetcher(
@@ -14,7 +16,7 @@ export const likePost = async (postId: string, userId: string) => {
     )
 }
 
-export const unlikePost = async (postId: string, userId: string) => {
+export async function unlikePost(postId: string, userId: string) {
     const supabase = await createClient();
 
     await baseFetcher(supabase.from('likes_posts')
@@ -39,6 +41,49 @@ export async function postReaction(postId: string, isLikedPost: boolean) {
 
     } catch (error) {
         console.error('Failed to like post', error);
+        return {
+            success: false,
+        }
+    }
+}
+
+export async function likeComment(commentId: string, userId: string) {
+    const supabase = await createClient();
+
+    await baseFetcher(
+        supabase.from('likes_comments')
+            .insert([{
+                comment_id: commentId,
+                user_id: userId
+            }])
+    )
+}
+
+export async function unlikeComment(commentId: string, userId: string) {
+    const supabase = await createClient();
+
+    await baseFetcher(
+        supabase.from('likes_comments')
+            .delete()
+            .match({ comment_id: commentId, user_id: userId })
+    )
+}
+
+export async function commentReaction(commentId: string, isLikedComment: boolean) {
+    const userId = await getUserId();
+
+    try {
+        if (isLikedComment) {
+            await unlikeComment(commentId, userId);
+        } else {
+            await likeComment(commentId, userId);
+        }
+
+        return {
+            success: true,
+        }
+    } catch (error) {
+        console.error('Failed to like comment', error);
         return {
             success: false,
         }

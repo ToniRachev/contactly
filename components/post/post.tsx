@@ -7,9 +7,10 @@ import { PostType } from "@/lib/types/post";
 import { formatRelativeTime } from "@/lib/utils";
 import DeletePost from "../delete-post";
 import EditPost from "../edit-post";
-import { ReactNode, startTransition, useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import clsx from "clsx";
 import { postReaction } from "@/lib/actions/likes/likes.actions";
+import ReactionItem from "../reaction-item";
 
 type PostAuthorProps = {
     post: PostType;
@@ -61,21 +62,6 @@ const PostContent = ({ content }: PostContentProps) => {
     return (
         <div>
             <p>{content}</p>
-        </div>
-    )
-}
-
-
-type ReactionItemProps = {
-    icon: ReactNode;
-    count: number;
-}
-
-const ReactionItem = ({ icon, count }: ReactionItemProps) => {
-    return (
-        <div className="flex items-center gap-1 cursor-pointer hover:bg-stone-600 p-2 rounded-full">
-            {icon}
-            <p>{count}</p>
         </div>
     )
 }

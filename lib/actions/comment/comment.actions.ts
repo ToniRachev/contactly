@@ -1,3 +1,5 @@
+'use server';
+
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { transformPostComments } from "@/lib/utils/transform";
@@ -7,7 +9,7 @@ import { parseAndValidateSubmitCommentData } from "@/lib/actions/post/post.helpe
 import { CommentType } from "@/lib/types/post";
 import { MESSAGES } from "@/lib/constants/messages";
 
-const createComment = async (authorId: string, postId: string, body: string) => {
+export async function createComment(authorId: string, postId: string, body: string) {
     const supabase = await createClient();
 
     const data = await baseFetcher(supabase.from('comments')
@@ -31,7 +33,7 @@ type CommentState = {
     newComment: CommentType | null;
 }
 
-export const createCommentAction = async (postId: string, authorId: string, state: CommentState, formData: FormData) => {
+export async function createCommentAction(postId: string, authorId: string, state: CommentState, formData: FormData) {
     const { data, result } = parseAndValidateSubmitCommentData(formData);
 
     if (!result.success) {
@@ -65,7 +67,7 @@ export const createCommentAction = async (postId: string, authorId: string, stat
     }
 }
 
-export const editComment = async (authorId: string, commentId: string, body: string) => {
+export async function editComment(authorId: string, commentId: string, body: string) {
     const supabase = await createClient();
 
     await baseFetcher(supabase.from('comments')
@@ -80,7 +82,7 @@ type EditCommentState = {
     success: boolean;
 }
 
-export const editCommentAction = async (authorId: string, commentId: string, state: EditCommentState, formData: FormData) => {
+export async function editCommentAction(authorId: string, commentId: string, state: EditCommentState, formData: FormData) {
     const { data, result } = parseAndValidateSubmitCommentData(formData);
 
     if (!result.success) {
@@ -113,13 +115,13 @@ export const editCommentAction = async (authorId: string, commentId: string, sta
     }
 }
 
-export const deleteComment = async (authorId: string, commentId: string) => {
+export async function deleteComment(authorId: string, commentId: string) {
     const supabase = await createClient();
 
     await baseFetcher(supabase.from('comments').delete().match({ author_id: authorId, id: commentId }));
 }
 
-export const deleteCommentAction = async (authorId: string, commentId: string) => {
+export async function deleteCommentAction(authorId: string, commentId: string) {
     try {
         await deleteComment(authorId, commentId);
 

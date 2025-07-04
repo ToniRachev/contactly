@@ -12,7 +12,7 @@ type PostWrapperProps = {
 
 export default function PostWrapper({ postData }: Readonly<PostWrapperProps>) {
     const { post, isLikedPost, controls, reaction, updateCommentsCount } = usePost(postData);
-    const { comments, addComment, editComment, deleteComment } = useComments(
+    const { comments, addComment, editComment, deleteComment, reactionComment } = useComments(
         controls.isDetailedViewOpen,
         post.postId,
         updateCommentsCount,
@@ -36,6 +36,7 @@ export default function PostWrapper({ postData }: Readonly<PostWrapperProps>) {
                 addComment={addComment}
                 editComment={editComment}
                 deleteComment={deleteComment}
+                reactionComment={reactionComment}
             />
         </div>
     )
