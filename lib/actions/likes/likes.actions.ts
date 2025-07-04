@@ -68,3 +68,24 @@ export async function unlikeComment(commentId: string, userId: string) {
             .match({ comment_id: commentId, user_id: userId })
     )
 }
+
+export async function commentReaction(commentId: string, isLikedComment: boolean) {
+    const userId = await getUserId();
+
+    try {
+        if (isLikedComment) {
+            await unlikeComment(commentId, userId);
+        } else {
+            await likeComment(commentId, userId);
+        }
+
+        return {
+            success: true,
+        }
+    } catch (error) {
+        console.error('Failed to like comment', error);
+        return {
+            success: false,
+        }
+    }
+}
