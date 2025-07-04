@@ -1,6 +1,6 @@
 import { formatFullName } from "@/lib/utils"
-import { AuthorDBType, CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "../../../types/post"
-import { UserDBType } from "../../../types/user"
+import { AuthorDBType, CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "@/lib/types/post"
+import { UserDBType } from "@/lib/types/user"
 
 const extractCount = (item: CountType) => {
     return item?.[0]?.count ?? 0
