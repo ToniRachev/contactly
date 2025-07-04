@@ -7,7 +7,7 @@ import { LoginSchemaErrorType, LoginSchemaType, SignupSchemaErrorType, SignupSch
 import { isAuthApiError } from "@supabase/supabase-js";
 import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
-import { parseAndValidateSigninInput, parseAndValidateSignupInput, postLoginSuccess, signInUser, signupUser } from "./helpers";
+import { parseAndValidateSigninInput, parseAndValidateSignupInput, postLoginSuccess, signInUser, signupUser } from "./auth.helpers";
 
 type LoginStateType = {
     data: LoginSchemaType,

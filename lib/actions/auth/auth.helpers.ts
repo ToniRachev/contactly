@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
-import { createClient } from "../../server";
-import { loginSchema, LoginSchemaType, signupSchema, SignupSchemaType } from "../../validations/authSchema";
+import { createClient } from "@/lib/utils/supabase/server";
+import { loginSchema, LoginSchemaType, signupSchema, SignupSchemaType } from "@/lib/validations/authSchema";
 import { redirect } from "next/navigation";
 
 export const parseAndValidateSigninInput = (formData: FormData) => {
