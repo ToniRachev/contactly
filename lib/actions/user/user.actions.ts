@@ -1,9 +1,9 @@
 'use server';
 
-import { baseFetcher } from "../../helpers";
-import { createClient } from "../../server";
-import { UserDBType } from "../../types/user";
-import { transformUserData } from "../../utils/transform";
+import { baseFetcher } from "@/lib/utils/supabase/helpers";
+import { createClient } from "@/lib/utils/supabase/server";
+import { UserDBType } from "@/lib/types/user";
+import { transformUserData } from "@/lib/utils/transform";
 
 export const fetchUserProfile = async (userId: string) => {
     const supabase = await createClient();

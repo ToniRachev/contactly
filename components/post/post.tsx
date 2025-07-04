@@ -3,13 +3,13 @@
 import { Heart, MessageCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import UserAvatar from "../user-avatar"
-import { PostType } from "@/lib/utils/supabase/types/post";
+import { PostType } from "@/lib/types/post";
 import { formatRelativeTime } from "@/lib/utils";
 import DeletePost from "../delete-post";
 import EditPost from "../edit-post";
 import { ReactNode, startTransition, useActionState } from "react";
 import clsx from "clsx";
-import { postReaction } from "@/lib/utils/supabase/actions/post/post.actions";
+import { postReaction } from "@/lib/actions/likes/likes.actions";
 
 type PostAuthorProps = {
     post: PostType;

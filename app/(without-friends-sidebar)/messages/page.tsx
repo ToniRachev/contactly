@@ -1,5 +1,5 @@
 import Search from "@/components/search";
-import { StatusType } from "@/lib/utils/supabase/types/user";
+import { StatusType } from "@/lib/types/user";
 import MessageCard from "./components/message-card";
 import Conversation from "./components/conversation";
 import MessageInput from "../../../components/message-input";

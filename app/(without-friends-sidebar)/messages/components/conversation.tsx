@@ -1,6 +1,6 @@
 import UserAvatarWithStatus from "@/components/user-avatar-with-status";
 import Message from "./message";
-import { StatusType } from "@/lib/utils/supabase/types/user";
+import { StatusType } from "@/lib/types/user";
 
 type MessageType = {
     id: string;

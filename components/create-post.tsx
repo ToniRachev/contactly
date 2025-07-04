@@ -12,7 +12,7 @@ import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
 import { useActionState, useEffect, useState } from "react";
 import { submitPost } from "@/lib/utils/supabase/actions/post/post.actions";
-import { PostSchemaErrorType, PostSchemaType } from "@/lib/utils/supabase/validations/postSchema";
+import { PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
 import { usePosts } from "@/lib/context/posts.context";
 import { usePathname } from "next/navigation";
 

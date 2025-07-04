@@ -1,14 +1,14 @@
 'use server';
 
 import { MESSAGES } from "@/lib/constants/messages";
-import { baseFetcher } from "../../helpers";
-import { createClient } from "../../server";
-import { transformPostComments, transformPosts } from "../../utils/transform";
-import { CommentSchemaErrorType, CommentSchemaType, PostSchemaErrorType, PostSchemaType } from "../../validations/postSchema";
-import { createFormResult } from "../../validations/utils";
-import { parseAndValidateSubmitCommentData, parseAndValidateSubmitPostData } from "./helpers";
-import { CommentType, PostType } from "../../types/post";
-import { getUserId } from "../user/user.actions";
+import { baseFetcher } from "@/lib/utils/supabase/helpers";
+import { createClient } from "@/lib/utils/supabase/server";
+import { transformPosts } from "@/lib/utils/transform";
+import { PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
+import { createFormResult } from "@/lib/validations/utils";
+import { parseAndValidateSubmitPostData } from "@/lib/actions/post/helpers";
+import { PostType } from "@/lib/types/post";
+import { getUserId } from "@/lib/actions/user/user.actions";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
@@ -182,176 +182,6 @@ export const deletePostAction = async (postId: string) => {
         console.error('Failed to delete post', error);
         return {
             success: false
-        }
-    }
-}
-
-export const likePost = async (postId: string, userId: string) => {
-    const supabase = await createClient();
-
-    await baseFetcher(
-        supabase.from('likes_posts')
-            .insert([{
-                post_id: postId,
-                user_id: userId
-            }])
-    )
-}
-
-export const unlikePost = async (postId: string, userId: string) => {
-    const supabase = await createClient();
-
-    await baseFetcher(supabase.from('likes_posts')
-        .delete()
-        .match({ post_id: postId, user_id: userId })
-    )
-}
-
-export async function postReaction(postId: string, isLikedPost: boolean) {
-    const userId = await getUserId();
-
-    try {
-        if (isLikedPost) {
-            await unlikePost(postId, userId)
-        } else {
-            await likePost(postId, userId);
-        }
-
-        return {
-            success: true,
-        }
-
-    } catch (error) {
-        console.error('Failed to like post', error);
-        return {
-            success: false,
-        }
-    }
-}
-
-const createComment = async (authorId: string, postId: string, body: string) => {
-    const supabase = await createClient();
-
-    const data = await baseFetcher(supabase.from('comments')
-        .insert([{
-            post_id: postId,
-            author_id: authorId,
-            body
-        }])
-        .select(`*, author:author_id(*), likes:likes_comments(user:user_id), likesCount:likes_comments(count)`)
-    )
-
-    const transformedComment = transformPostComments(data);
-
-    return transformedComment[0];
-}
-
-type CommentState = {
-    data: CommentSchemaType;
-    errors: CommentSchemaErrorType;
-    success: boolean;
-    newComment: CommentType | null;
-}
-
-export const createCommentAction = async (postId: string, authorId: string, state: CommentState, formData: FormData) => {
-    const { data, result } = parseAndValidateSubmitCommentData(formData);
-
-    if (!result.success) {
-        const formResult = createFormResult(data as CommentSchemaType, result.error.formErrors as CommentSchemaErrorType)
-
-        return {
-            ...formResult,
-            success: false,
-            newComment: null,
-        }
-    }
-
-    try {
-        const newComment = await createComment(authorId, postId, result.data.body);
-        const formResult = createFormResult({ body: '' } as CommentSchemaType, {} as CommentSchemaErrorType);
-
-        return {
-            ...formResult,
-            success: true,
-            newComment
-        }
-    } catch (error) {
-        console.error('Failed to create comment', error);
-        const formResult = createFormResult(result.data as CommentSchemaType, MESSAGES.genericError);
-
-        return {
-            ...formResult,
-            success: false,
-            newComment: null,
-        }
-    }
-}
-
-export const editComment = async (authorId: string, commentId: string, body: string) => {
-    const supabase = await createClient();
-
-    await baseFetcher(supabase.from('comments')
-        .update({ body })
-        .match({ author_id: authorId, id: commentId })
-        .select('*'))
-}
-
-type EditCommentState = {
-    data: CommentSchemaType;
-    errors: CommentSchemaErrorType;
-    success: boolean;
-}
-
-export const editCommentAction = async (authorId: string, commentId: string, state: EditCommentState, formData: FormData) => {
-    const { data, result } = parseAndValidateSubmitCommentData(formData);
-
-    if (!result.success) {
-        const formResult = createFormResult(data as CommentSchemaType, result.error.formErrors as CommentSchemaErrorType)
-
-        return {
-            ...formResult,
-            success: false,
-        }
-    }
-
-    try {
-        await editComment(authorId, commentId, result.data.body);
-
-        const formResult = createFormResult(result.data, {} as CommentSchemaErrorType);
-
-        return {
-            ...formResult,
-            success: true,
-        }
-
-    } catch (error) {
-        console.error('Failed to edit comment', error);
-        const formResult = createFormResult(result.data as CommentSchemaType, MESSAGES.genericError);
-
-        return {
-            ...formResult,
-            success: false,
-        }
-    }
-}
-
-export const deleteComment = async (authorId: string, commentId: string) => {
-    const supabase = await createClient();
-
-    await baseFetcher(supabase.from('comments').delete().match({ author_id: authorId, id: commentId }));
-}
-
-export const deleteCommentAction = async (authorId: string, commentId: string) => {
-    try {
-        await deleteComment(authorId, commentId);
-
-        return {
-            success: true,
-        }
-    } catch (error) {
-        console.error('Failed to delete comment', error);
-        return {
-            success: false,
         }
     }
 }

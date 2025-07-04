@@ -22,10 +22,10 @@ import Filter from "../filter";
 import MessageInput from "../message-input";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { formatRelativeTime } from "@/lib/utils";
-import { CommentType, PostType } from "@/lib/utils/supabase/types/post";
-import { createCommentAction, deleteCommentAction, editCommentAction } from "@/lib/utils/supabase/actions/post/post.actions";
-import { CommentSchemaErrorType, CommentSchemaType } from "@/lib/utils/supabase/validations/postSchema";
-import { useUser } from "@/lib/context/user";
+import { CommentType, PostType } from "@/lib/types/post";
+import { createCommentAction, deleteCommentAction, editCommentAction } from "@/lib/actions/comment/comment.actions";
+import { CommentSchemaErrorType, CommentSchemaType } from "@/lib/validations/postSchema";
+import { useUser } from "@/lib/context/user.context";
 import { Button } from "../ui/button";
 import { flushSync } from "react-dom";
 

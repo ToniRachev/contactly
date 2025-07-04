@@ -1,6 +1,6 @@
 import { createClient } from "../client"
 import { baseFetcher } from "../helpers";
-import { CommentType } from "../types/post";
+import { CommentType } from "../../../types/post";
 import { transformPostComments } from "../utils/transform";
 
 export const fetchPostComments = async (postId: string): Promise<CommentType[]> => {

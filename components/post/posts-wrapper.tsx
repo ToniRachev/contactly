@@ -1,6 +1,6 @@
 import PostsProvider from "@/lib/context/posts.context";
 import Posts from "./posts";
-import { PostType } from "@/lib/utils/supabase/types/post";
+import { PostType } from "@/lib/types/post";
 import CreatePost from "../create-post";
 
 type PostsListWrapperProps = {
