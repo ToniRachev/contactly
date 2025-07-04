@@ -3,7 +3,7 @@ import Image from "next/image";
 import EditProfile from "./components/edit-profile";
 import { getUserId } from "@/lib/actions/user/user.actions";
 import { fetchUserPosts } from "@/lib/actions/post/post.actions";
-import PostsListWrapper from "@/components/post/posts-wrapper";
+import PostsListWrapper from "@/components/post/posts-list";
 
 export default async function Profile() {
     const userId = await getUserId();

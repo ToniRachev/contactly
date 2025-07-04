@@ -1,4 +1,4 @@
-import PostsList from "@/components/post/posts-wrapper";
+import PostsList from "@/components/post/posts-list";
 import { fetchPosts } from "@/lib/actions/post/post.actions"
 import { getUserId } from "@/lib/actions/user/user.actions";
 

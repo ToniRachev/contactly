@@ -1,7 +1,7 @@
 'use client';
 
 import Post from "./post";
-import { PostDetailedView } from "./post-detailed-view";
+import { PostDetailedView } from "@/components/post/post-detailed-view";
 import { PostType } from "@/lib/types/post";
 import usePost from "@/hooks/usePost";
 import useComments from "@/hooks/useComments";
