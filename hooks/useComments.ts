@@ -32,6 +32,22 @@ export default function useComments(
         updateCommentsCount('remove');
     }, [updateCommentsCount, comments]);
 
+    const reactionComment = useCallback((commentId: string, userId: string, isLikedComment: boolean) => {
+        setComments((prevComments) => {
+            return prevComments.map((comment) => {
+                if (comment.id === commentId) {
+                    return {
+                        ...comment,
+                        likes: isLikedComment ? comment.likes.filter((userLikedCommentId) => userLikedCommentId !== userId) : [...comment.likes, userId],
+                        likesCount: isLikedComment ? comment.likesCount - 1 : comment.likesCount + 1
+                    }
+                }
+                return comment;
+            })
+        })
+    }, [])
+
+
     useEffect(() => {
         if (isDetailedViewOpen) {
             (async function () {
@@ -42,5 +58,5 @@ export default function useComments(
     }, [isDetailedViewOpen, postId]);
 
 
-    return { comments, addComment, editComment, deleteComment };
+    return { comments, addComment, editComment, deleteComment, reactionComment };
 }
