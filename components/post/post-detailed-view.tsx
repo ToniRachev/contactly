@@ -20,7 +20,7 @@ import { Ellipsis, ThumbsUp } from "lucide-react";
 import { Separator } from "../ui/separator";
 import Filter from "../filter";
 import MessageInput from "../message-input";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { formatRelativeTime } from "@/lib/utils";
 import { CommentType, PostType } from "@/lib/types/post";
 import { createCommentAction, deleteCommentAction, editCommentAction } from "@/lib/actions/comment/comment.actions";
@@ -28,6 +28,9 @@ import { CommentSchemaErrorType, CommentSchemaType } from "@/lib/validations/pos
 import { useUser } from "@/lib/context/user.context";
 import { Button } from "../ui/button";
 import { flushSync } from "react-dom";
+import ReactionItem from "../reaction-item";
+import { commentReaction } from "@/lib/actions/likes/likes.actions";
+import clsx from "clsx";
 
 const filters = [
     {
@@ -56,6 +59,7 @@ type PostViewProps = {
     addComment: (comment: CommentType) => void;
     editComment: (commentId: string, newContent: string) => void;
     deleteComment: (commentId: string) => void;
+    reactionComment: (commentId: string, userId: string, isLikedComment: boolean) => void;
 }
 
 type CreateCommentProps = {
@@ -89,6 +93,7 @@ type CommentProps = {
     comment: CommentType;
     editComment: (commentId: string, newContent: string) => void;
     deleteComment: (commentId: string) => void;
+    reactionComment: (commentId: string, userId: string, isLikedComment: boolean) => void;
 }
 
 const CommentForm = ({ formRef, formAction, value, error, isPending, className }: Readonly<CommentFormProps>) => {
@@ -130,7 +135,9 @@ const DeleteCommentDialog = ({ open, setOpen, deleteComment, commentId }: Readon
             deleteComment(commentId);
         });
 
-        formAction();
+        startTransition(() => {
+            formAction();
+        })
     }
 
     return (
@@ -187,12 +194,20 @@ const CommentControls = ({ setIsEditing, commentId, deleteComment }: Readonly<Co
     )
 }
 
-const Comment = ({ comment, editComment, deleteComment }: Readonly<CommentProps>) => {
-    const { user } = useUser();
+const Comment = ({ comment, editComment, deleteComment, reactionComment }: Readonly<CommentProps>) => {
+    const formRef = useRef<HTMLFormElement>(null);
     const [isEditing, setIsEditing] = useState(false);
 
-    const formRef = useRef<HTMLFormElement>(null);
+    const { user } = useUser();
+
+    const isLikedComment = comment.likes.some((userLikedCommentId) => userLikedCommentId === user?.id);
     const isCommentAuthor = user?.id === comment.author.id;
+
+    const commentReactionActionWithUserAndCommentId = commentReaction.bind(null, comment.id, isLikedComment);
+
+    const [, commentReactionAction, isCommentReactionPending] = useActionState(commentReactionActionWithUserAndCommentId, {
+        success: false
+    })
 
     const editCommentActionWithUserAndCommentId = editCommentAction.bind(null, user?.id ?? '', comment.id);
 
@@ -203,6 +218,13 @@ const Comment = ({ comment, editComment, deleteComment }: Readonly<CommentProps>
         errors: {} as CommentSchemaErrorType,
         success: false
     })
+
+    const handleCommentReaction = () => {
+        setTimeout(() => {
+            reactionComment(comment.id, user?.id ?? '', isLikedComment);
+        }, 0)
+        commentReactionAction();
+    }
 
     useEffect(() => {
         if (state.success) {
@@ -256,8 +278,22 @@ const Comment = ({ comment, editComment, deleteComment }: Readonly<CommentProps>
                         </div>
 
                         <div className="flex gap-2 items-center">
-                            <ThumbsUp width={20} />
-                            <span className="text-sm">{comment.likesCount}</span>
+                            <form>
+                                <button
+                                    formAction={handleCommentReaction}
+                                    disabled={isCommentReactionPending}
+                                >
+                                    <ReactionItem
+                                        icon={(
+                                            <ThumbsUp
+                                                width={20}
+                                                className={clsx(isLikedComment && 'fill-blue-500 stroke-blue-600')}
+                                            />
+                                        )}
+                                        count={comment.likesCount}
+                                    />
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -302,7 +338,18 @@ const CreateComment = ({ postId, addComment }: Readonly<CreateCommentProps>) => 
     )
 }
 
-export function PostDetailedView({ post, controls, reaction, isLikedPost, comments, addComment, editComment, deleteComment }: Readonly<PostViewProps>) {
+export function PostDetailedView(
+    {
+        post,
+        controls,
+        reaction,
+        isLikedPost,
+        comments,
+        addComment,
+        editComment,
+        deleteComment,
+        reactionComment
+    }: Readonly<PostViewProps>) {
     return (
         <Dialog open={controls.open} onOpenChange={controls.setState}>
             <DialogContent className="min-w-[50vw] border-none">
@@ -323,7 +370,13 @@ export function PostDetailedView({ post, controls, reaction, isLikedPost, commen
                     <Filter filters={filters} />
 
                     {comments.map((comment) => (
-                        <Comment key={comment.id} comment={comment} editComment={editComment} deleteComment={deleteComment} />
+                        <Comment
+                            key={comment.id}
+                            comment={comment}
+                            editComment={editComment}
+                            deleteComment={deleteComment}
+                            reactionComment={reactionComment}
+                        />
                     ))}
 
                     <CreateComment postId={post.postId} addComment={addComment} />
