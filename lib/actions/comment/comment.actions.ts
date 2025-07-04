@@ -1,3 +1,5 @@
+'use server';
+
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { transformPostComments } from "@/lib/utils/transform";
