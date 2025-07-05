@@ -10,8 +10,8 @@ const getUserWithProfile = async () => {
     return user ? fetchUserProfile(user.id) : null;
 }
 
-export default async function AppWrapper({ children }: { children: ReactNode }) {
-    const userData = getUserWithProfile();
+export default async function AppWrapper({ children }: Readonly<{ children: ReactNode }>) {
+    const userData = await getUserWithProfile();
 
     return (
         <UserProvider userData={userData}>
