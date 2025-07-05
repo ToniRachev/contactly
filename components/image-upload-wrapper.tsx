@@ -29,7 +29,7 @@ export default function ImageUploadWrapper({ children, name, onImageChange, erro
 
     return (
         <div className="relative w-full flex flex-col justify-center items-center">
-            <button onClick={handleClick} type="button" className="w-fit hover:opacity-80 hover:cursor-pointer h-full">
+            <button onClick={handleClick} type="button" className="w-full hover:opacity-80 hover:cursor-pointer h-full">
                 {children}
                 <Input
                     ref={inputRef}
