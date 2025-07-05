@@ -1,9 +1,9 @@
-import Image from "next/image";
 import { getUserId } from "@/lib/actions/user/user.actions";
 import { fetchUserPosts } from "@/lib/actions/post/post.actions";
 import PostsListWrapper from "@/components/post/posts-list";
 import EditProfile from "@/app/(without-friends-sidebar)/profile/components/edit-profile";
 import UserData from "@/app/(without-friends-sidebar)/profile/components/user-data";
+import Cover from "./components/cover";
 
 export default async function Profile() {
     const userId = await getUserId();
@@ -12,12 +12,7 @@ export default async function Profile() {
     return (
         <div>
             <div className="w-full h-[50svh] relative">
-                <Image
-                    src={'/user_profile_background.png'}
-                    alt="User cover photo"
-                    fill
-                    className="object-cover"
-                />
+                <Cover />
 
                 <div className="absolute -bottom-24 left-4 flex justify-between w-full">
                     <UserData />
