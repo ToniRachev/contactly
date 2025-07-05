@@ -15,9 +15,9 @@ type DeleteCommentDialogProps = {
 }
 
 export default function DeleteCommentDialog({ open, setOpen, deleteComment, commentId }: Readonly<DeleteCommentDialogProps>) {
-    const { user } = useUser();
+    const {user} = useUser();
 
-    const deleteCommentActionWithUserAndCommentId = deleteCommentAction.bind(null, user?.id ?? '', commentId);
+    const deleteCommentActionWithUserAndCommentId = deleteCommentAction.bind(null, user.id, commentId);
     const [, formAction, isPending] = useActionState(deleteCommentActionWithUserAndCommentId, {
         success: false
     })
