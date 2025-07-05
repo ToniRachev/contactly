@@ -7,6 +7,7 @@ export type AuthorDBType = {
     first_name: string;
     last_name: string;
     created_at: string;
+    avatar_url: string | null;
 }
 
 export type AuthorType = {
@@ -16,6 +17,7 @@ export type AuthorType = {
     lastName: string;
     createdAt: string;
     fullName: string;
+    avatarUrl: string | null;
 }
 
 export type CommentDBType = {
