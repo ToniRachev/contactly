@@ -16,7 +16,8 @@ export const transformAuthor = (author: AuthorDBType) => ({
     firstName: author.first_name,
     lastName: author.last_name,
     createdAt: author.created_at,
-    fullName: formatFullName(author.first_name, author.last_name)
+    fullName: formatFullName(author.first_name, author.last_name),
+    avatarUrl: author.avatar_url
 })
 
 export const transformPosts = (posts: PostDBType[], userId?: string): PostType[] => {
@@ -46,7 +47,9 @@ export const transformUserData = (user: UserDBType) => {
             hometown: biography?.hometown ?? '',
             currentCity: biography?.current_city ?? '',
             school: biography?.school ?? ''
-        }
+        },
+        fullName: formatFullName(user.first_name, user.last_name),
+        avatarUrl: user.avatar_url
     }
 }
 
