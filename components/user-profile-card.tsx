@@ -1,16 +1,18 @@
-import UserAvatar from "./user-avatar";
+import Avatar from "./user-avatar";
+import clsx from "clsx";
 
 type UserProfileCardProps = {
-    avatar: string;
+    avatar: string | null;
     name?: string;
     width?: number;
     height?: number;
+    className?: string;
 }
 
-export default function UserProfileCard({ avatar, name, width, height }: UserProfileCardProps) {
+export default function UserProfileCard({ avatar, name, className }: Readonly<UserProfileCardProps>) {
     return (
-        <div className='flex flex-col justify-center items-center w-full gap-4'>
-            <UserAvatar avatar={avatar} width={width} height={height} />
+        <div className={clsx('flex flex-col justify-center items-center w-full gap-4', className)}>
+            <Avatar avatar={avatar} size={'lg'} />
             <h6>{name}</h6>
         </div>
     )
