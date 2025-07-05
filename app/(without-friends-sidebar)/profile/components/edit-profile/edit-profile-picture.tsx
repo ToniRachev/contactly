@@ -7,11 +7,12 @@ import ImageUploadWrapper from "@/components/image-upload-wrapper";
 import { useUser } from "@/lib/context/user.context";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { updateUserAvatarAction } from "@/lib/actions/user/user.actions";
-import { UpdateUserAvatarSchemaErrorType } from "@/lib/validations/userSchema";
+import { UpdateUserAvatarSchemaErrorType, updateUserAvatarSchema } from "@/lib/validations/userSchema";
 
 export default function EditProfilePicture() {
     const { user, updateUserAvatar } = useUser();
     const formRef = useRef<HTMLFormElement>(null);
+    const [validateError, setValidateError] = useState<string | null>(null);
 
     const updateUserAvatarActionWithUserId = updateUserAvatarAction.bind(null, user.id);
 
@@ -22,12 +23,21 @@ export default function EditProfilePicture() {
     });
 
     const [image, setImage] = useState<string | null>(user.avatarUrl);
-    const error = state.errors?.fieldErrors?.avatar?.[0] ?? state.errors?.formErrors?.[0];
+    const error = validateError ?? state.errors?.fieldErrors?.avatar?.[0] ?? state.errors?.formErrors?.[0];
 
-    const handleImageChange = (image: File) => {
-        setImage(URL.createObjectURL(image));
+    const handleImageChange = (file: File) => {
+        const validateFile = updateUserAvatarSchema.safeParse({
+            avatar: file,
+        })
+
+        if (!validateFile.success) {
+            setValidateError(validateFile.error?.formErrors?.fieldErrors?.avatar?.[0] ?? null);
+            return;
+        }
 
         if (formRef.current) {
+            setValidateError(null);
+            setImage(URL.createObjectURL(file));
             formRef.current.requestSubmit();
         }
     }
