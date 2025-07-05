@@ -22,21 +22,24 @@ export type UserBiographyDBType = {
 }
 
 export type UserDBType = {
-    id: string,
-    created_at: string,
-    first_name: string,
-    last_name: string,
-    email: string,
+    id: string;
+    created_at: string;
+    first_name: string;
+    last_name: string;
+    email: string;
     biography: UserBiographyDBType[],
+    avatar_url: string | null;
 }
 
 export type UserType = {
-    id: string,
-    createdAt: string,
-    email: string,
-    firstName: string,
-    lastName: string,
-    biography: BiographyType,
+    id: string;
+    createdAt: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    biography: BiographyType;
+    fullName: string;
+    avatarUrl: string | null;
 }
 
 export type StatusType = 'online' | 'offline';
