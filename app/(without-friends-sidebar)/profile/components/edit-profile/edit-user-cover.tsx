@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { SectionWrapper } from "./edit-profile";
+import { SectionWrapper } from ".";
 import { Camera } from "lucide-react";
 import ImageUploadWrapper from "@/components/image-upload-wrapper";
 
