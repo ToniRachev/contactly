@@ -8,7 +8,7 @@ export default function usePost(postData: PostType) {
 
     const { user } = useUser();
 
-    const isLikedPost = !!post.likes.find((userLikedPostId) => userLikedPostId === user?.id);
+    const isLikedPost = !!post.likes.find((userLikedPostId) => userLikedPostId === user.id);
 
     const handleDetailedViewState = (state: boolean) => setIsDetailedViewOpen(state);
 
@@ -24,14 +24,12 @@ export default function usePost(postData: PostType) {
     }, []);
 
     const reaction = useCallback(() => {
-        if (user) {
-            const userId = user.id;
-            setPost((prevState) => ({
-                ...prevState,
-                likes: isLikedPost ? prevState.likes.filter((userLikedPostId) => userLikedPostId !== userId) : [...prevState.likes, userId],
-                likesCount: isLikedPost ? prevState.likesCount - 1 : prevState.likesCount + 1
-            }))
-        }
+        const userId = user.id;
+        setPost((prevState) => ({
+            ...prevState,
+            likes: isLikedPost ? prevState.likes.filter((userLikedPostId) => userLikedPostId !== userId) : [...prevState.likes, userId],
+            likesCount: isLikedPost ? prevState.likesCount - 1 : prevState.likesCount + 1
+        }))
     }, [isLikedPost, setPost, user])
 
     return {
