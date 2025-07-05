@@ -7,7 +7,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import UserAvatar from "./user-avatar"
+import Avatar from "./user-avatar"
 import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
 import { useActionState, useEffect, useState } from "react";
@@ -15,10 +15,13 @@ import { submitPost } from "@/lib/actions/post/post.actions";
 import { PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
 import { usePosts } from "@/lib/context/posts.context";
 import { usePathname } from "next/navigation";
+import { useUser } from "@/lib/context/user.context";
 
 export default function CreatePost() {
     const [open, setOpen] = useState(false);
+
     const path = usePathname();
+    const { user } = useUser();
 
     const { addPost } = usePosts();
 
@@ -43,10 +46,9 @@ export default function CreatePost() {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="w-full max-w-[50svw]">
                 <div className="flex items-center gap-4">
-                    <UserAvatar
-                        avatar="/user_avatar.webp"
-                        width={48}
-                        height={48}
+                    <Avatar
+                        avatar={user.avatarUrl}
+                        size={'sm'}
                     />
 
                     <div className="bg-surface w-full p-4 text-left rounded-lg">
@@ -61,13 +63,12 @@ export default function CreatePost() {
 
                 <div>
                     <div className="flex items-center gap-2">
-                        <UserAvatar
-                            avatar="/user_avatar.webp"
-                            width={48}
-                            height={48}
+                        <Avatar
+                            avatar={user.avatarUrl}
+                            size={'sm'}
                         />
 
-                        <p>Traveler Jane</p>
+                        <p>{user.fullName}</p>
                     </div>
 
                     <div className="pt-4">

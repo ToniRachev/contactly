@@ -6,7 +6,7 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { commentReaction } from "@/lib/actions/likes/likes.actions";
 import { editCommentAction } from "@/lib/actions/comment/comment.actions";
 import { CommentSchemaType, CommentSchemaErrorType } from "@/lib/validations/postSchema";
-import UserAvatar from "@/components/user-avatar";
+import Avatar from "@/components/user-avatar";
 import CommentForm from "./comment-form";
 import CommentControls from "./comment-controls";
 import { formatRelativeTime } from "@/lib/utils";
@@ -116,15 +116,15 @@ export default function Comment({ comment, editComment, deleteComment, reactionC
 
     const { user } = useUser();
 
-    const isLikedComment = comment.likes.some((userLikedCommentId) => userLikedCommentId === user?.id);
-    const isCommentAuthor = user?.id === comment.author.id;
+    const isLikedComment = comment.likes.some((userLikedCommentId) => userLikedCommentId === user.id);
+    const isCommentAuthor = user.id === comment.author.id;
 
     return (
         <div className="flex flex-col gap-2 relative">
             <div className="flex gap-2 w-full">
-                <UserAvatar
-                    width={32}
-                    height={32}
+                <Avatar
+                    avatar={comment.author.avatarUrl}
+                    size={'sm'}
                 />
 
                 <div className="w-full">
@@ -138,7 +138,7 @@ export default function Comment({ comment, editComment, deleteComment, reactionC
                                 <EditCommentForm
                                     formRef={formRef}
                                     comment={comment}
-                                    userId={user?.id ?? ''}
+                                    userId={user.id}
                                     closeEditing={() => setIsEditing(false)}
                                     editComment={editComment}
                                 />
@@ -158,7 +158,7 @@ export default function Comment({ comment, editComment, deleteComment, reactionC
                             comment={comment}
                             isLikedComment={isLikedComment}
                             reactionComment={reactionComment}
-                            userId={user?.id ?? ''}
+                            userId={user.id}
                         />
 
                     </div>

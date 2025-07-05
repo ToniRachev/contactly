@@ -1,25 +1,38 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useMemo, use } from "react";
+import { createContext, useContext, ReactNode, useMemo, useState, useCallback } from "react";
 import { UserType } from "../types/user";
 
 type UserContextType = {
     user: UserType | null;
+    updateUserAvatar: (avatarUrl: string) => void;
 }
 
 type UserProviderProps = {
     children: ReactNode;
-    userData: Promise<UserType | null>;
+    userData: UserType | null;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
 
 export default function UserProvider({ children, userData }: Readonly<UserProviderProps>) {
-    const user = use(userData);
+    const [user, setUser] = useState(userData);
+
+    const updateUserAvatar = useCallback((avatarUrl: string) => {
+        setUser((prevState) => {
+            if (!prevState) return null;
+
+            return {
+                ...prevState,
+                avatarUrl
+            }
+        })
+    }, [setUser]);
 
     const contextValue = useMemo(() => ({
         user,
-    }), [user]);
+        updateUserAvatar
+    }), [user, updateUserAvatar]);
 
     return (
         <UserContext.Provider value={contextValue}>
@@ -35,5 +48,12 @@ export function useUser() {
         throw new Error('useUser must be used inside a UserProvider');
     }
 
-    return context;
+    if (!context.user) {
+        throw new Error('User is not authenticated');
+    }
+
+    return {
+        user: context.user,
+        updateUserAvatar: context.updateUserAvatar
+    };
 }

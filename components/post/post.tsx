@@ -2,7 +2,7 @@
 
 import { Heart, MessageCircle } from "lucide-react";
 import { Button } from "../ui/button";
-import UserAvatar from "../user-avatar"
+import Avatar from "../user-avatar"
 import { PostType } from "@/lib/types/post";
 import { formatRelativeTime } from "@/lib/utils";
 import DeletePost from "../delete-post";
@@ -39,9 +39,8 @@ const PostAuthor = ({ post }: PostAuthorProps) => {
     return (
         <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-                <UserAvatar
-                    width={100}
-                    height={100}
+                <Avatar
+                    avatar={post.author.avatarUrl}
                 />
                 <div>
                     <h6>{post.author.fullName}</h6>

@@ -1,4 +1,4 @@
-import UserAvatar from "@/components/user-avatar";
+import Avatar from "@/components/user-avatar";
 
 type MessageCardProps = {
     avatar: string;
@@ -25,13 +25,13 @@ export default function MessageCard({ avatar,
     username,
     lastMessage,
     date,
-    newMessagesCount }: MessageCardProps) {
+    newMessagesCount }: Readonly<MessageCardProps>) {
     const messagesCount = formatMessagesCount(newMessagesCount);
     const formatedLastMessage = lastMessage.length > 27 ? `${lastMessage.slice(0, 27)}...` : lastMessage;
 
     return (
         <div className="flex py-4 justify-between items-center cursor-pointer hover:bg-blue-500 rounded-xl p-2">
-            <UserAvatar avatar={avatar} width={70} height={70} />
+            <Avatar avatar={avatar} size={'sm'} />
             <div>
                 <h6>{username}</h6>
                 <p>{formatedLastMessage}</p>

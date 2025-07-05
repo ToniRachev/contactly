@@ -1,4 +1,4 @@
-import UserAvatar from "./user-avatar";
+import Avatar from "./user-avatar";
 import { cva } from "class-variance-authority";
 
 type UserAvatarWithStatusProps = {
@@ -24,26 +24,14 @@ const statusDot = cva('absolute bottom-0 right-1 rounded-full', {
     }
 })
 
-const avatarSize = {
-    sm: {
-        width: 40,
-        height: 40
-    },
-    md: {
-        width: 80,
-        height: 80
-    }
-}
-
-
 export default function UserAvatarWithStatus({
     avatar,
     status,
     size = 'sm'
-}: UserAvatarWithStatusProps) {
+}: Readonly<UserAvatarWithStatusProps>) {
     return (
         <div className='relative'>
-            <UserAvatar avatar={avatar} width={avatarSize[size].width} height={avatarSize[size].height} />
+            <Avatar avatar={avatar} size={size} />
             <div className={statusDot({ status, size })} />
         </div>
     )

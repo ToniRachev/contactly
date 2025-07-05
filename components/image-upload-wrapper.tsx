@@ -1,9 +1,17 @@
 'use client';
 
-import { useRef } from "react";
+import { InputHTMLAttributes, ReactNode, useRef } from "react";
 import { Input } from "./ui/input";
+import ErrorMessage from "./error-message";
 
-export default function ImageUploadWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+type ImageUploadWrapperProps = {
+    children: ReactNode;
+    name: string;
+    error?: string;
+    onImageChange: (image: File) => void;
+} & InputHTMLAttributes<HTMLInputElement>
+
+export default function ImageUploadWrapper({ children, name, onImageChange, error, ...props }: Readonly<ImageUploadWrapperProps>) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleClick = () => {
@@ -12,17 +20,27 @@ export default function ImageUploadWrapper({ children }: Readonly<{ children: Re
         }
     }
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            onImageChange(file);
+        }
+    }
+
     return (
-        <div className="relative w-full">
-            <button onClick={handleClick} className="w-fit hover:opacity-80 hover:cursor-pointer h-full">
+        <div className="relative w-full flex flex-col justify-center items-center">
+            <button onClick={handleClick} type="button" className="w-fit hover:opacity-80 hover:cursor-pointer h-full">
                 {children}
                 <Input
                     ref={inputRef}
                     hidden
-                    name='profilePicture'
+                    name={name}
                     type='file'
+                    onChange={handleChange}
+                    {...props}
                 />
             </button>
+            {error && <ErrorMessage className="pt-2">{error}</ErrorMessage>}
         </div>
     )
 }

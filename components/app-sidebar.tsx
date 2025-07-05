@@ -1,3 +1,5 @@
+'use client';
+
 import {
     Sidebar,
     SidebarContent,
@@ -12,6 +14,7 @@ import { Compass, LogOut, MessageCircle, UserRound, UsersRound } from 'lucide-re
 import Link from 'next/link'
 import UserProfileCard from './user-profile-card'
 import { signout } from '@/lib/actions/auth/auth.actions'
+import { useUser } from '@/lib/context/user.context'
 
 const menuItems = [
     {
@@ -37,6 +40,8 @@ const menuItems = [
 ]
 
 export default function AppSidebar() {
+    const { user } = useUser();
+
     return (
         <Sidebar className='!border-0'>
             <SidebarHeader className='pb-12 pt-8'>
@@ -48,8 +53,8 @@ export default function AppSidebar() {
                 <SidebarGroup className='pb-8'>
                     <SidebarGroupContent>
                         <UserProfileCard
-                            avatar='/user_avatar.webp'
-                            name='Traveler Jane'
+                            name={user.fullName}
+                            avatar={user.avatarUrl}
                         />
                     </SidebarGroupContent>
                 </SidebarGroup>

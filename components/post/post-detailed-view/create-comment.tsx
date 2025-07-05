@@ -5,7 +5,7 @@ import { useActionState, useEffect, useRef } from "react";
 import { createCommentAction } from "@/lib/actions/comment/comment.actions";
 import { CommentSchemaErrorType, CommentSchemaType } from "@/lib/validations/postSchema";
 import { CommentType } from "@/lib/types/post";
-import UserAvatar from "@/components/user-avatar";
+import Avatar from "@/components/user-avatar";
 import CommentForm from "./comment-form";
 
 type CreateCommentProps = {
@@ -17,7 +17,7 @@ export default function CreateComment({ postId, addComment }: Readonly<CreateCom
     const { user } = useUser();
     const formRef = useRef<HTMLFormElement>(null);
 
-    const createCommentActionWithUserAndPostId = createCommentAction.bind(null, postId, user?.id ?? '');
+    const createCommentActionWithUserAndPostId = createCommentAction.bind(null, postId, user.id);
 
     const [state, formAction, isPending] = useActionState(createCommentActionWithUserAndPostId, {
         data: {
@@ -36,7 +36,7 @@ export default function CreateComment({ postId, addComment }: Readonly<CreateCom
 
     return (
         <div className="w-full flex gap-2 items-center sticky bottom-0 bg-background py-4">
-            <UserAvatar avatar={'/user_avatar.webp'} width={32} height={32} />
+            <Avatar avatar={'/user_avatar.webp'} size={'sm'} />
 
             <CommentForm
                 formRef={formRef}
