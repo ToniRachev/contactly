@@ -1,9 +1,9 @@
-import UserProfileCard from "@/components/user-profile-card";
 import Image from "next/image";
-import EditProfile from "./components/edit-profile";
 import { getUserId } from "@/lib/actions/user/user.actions";
 import { fetchUserPosts } from "@/lib/actions/post/post.actions";
 import PostsListWrapper from "@/components/post/posts-list";
+import EditProfile from "@/app/(without-friends-sidebar)/profile/components/edit-profile";
+import UserData from "@/app/(without-friends-sidebar)/profile/components/user-data";
 
 export default async function Profile() {
     const userId = await getUserId();
@@ -19,14 +19,8 @@ export default async function Profile() {
                     className="object-cover"
                 />
 
-                <div className="absolute -bottom-24 -left-14 flex justify-between w-full">
-                    <div>
-                        <UserProfileCard
-                            avatar={'/user_avatar.webp'}
-                            name='Traveler Jane'
-                        />
-                        <p className="ml-17">From Havenbrook, Canada</p>
-                    </div>
+                <div className="absolute -bottom-24 left-4 flex justify-between w-full">
+                    <UserData />
                 </div>
 
                 <div className="absolute -bottom-20 right-14">
