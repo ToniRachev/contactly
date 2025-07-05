@@ -6,6 +6,7 @@ import { UserType } from "../types/user";
 type UserContextType = {
     user: UserType | null;
     updateUserAvatar: (avatarUrl: string) => void;
+    updateUserCover: (coverUrl: string) => void;
 }
 
 type UserProviderProps = {
@@ -29,10 +30,22 @@ export default function UserProvider({ children, userData }: Readonly<UserProvid
         })
     }, [setUser]);
 
+    const updateUserCover = useCallback((coverUrl: string) => {
+        setUser((prevState) => {
+            if (!prevState) return null;
+
+            return {
+                ...prevState,
+                coverUrl
+            }
+        })
+    }, [setUser]);
+
     const contextValue = useMemo(() => ({
         user,
-        updateUserAvatar
-    }), [user, updateUserAvatar]);
+        updateUserAvatar,
+        updateUserCover
+    }), [user, updateUserAvatar, updateUserCover]);
 
     return (
         <UserContext.Provider value={contextValue}>
@@ -54,6 +67,7 @@ export function useUser() {
 
     return {
         user: context.user,
-        updateUserAvatar: context.updateUserAvatar
+        updateUserAvatar: context.updateUserAvatar,
+        updateUserCover: context.updateUserCover
     };
 }
