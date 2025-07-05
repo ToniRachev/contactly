@@ -4,7 +4,7 @@ import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { UserDBType } from "@/lib/types/user";
 import { transformUserData } from "@/lib/utils/transform";
-import { updateUserAvatarSchema, UpdateUserAvatarSchemaErrorType } from "@/lib/validations/userSchema";
+import { updateUserImageSchema, UpdateUserImageSchemaErrorType } from "@/lib/validations/userSchema";
 import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
 
@@ -32,70 +32,70 @@ export async function getUserId() {
     return data.user.id;
 }
 
-export async function updateUserAvatar(userId: string, avatar: File) {
+export async function updateUserImage(userId: string, image: File, imageType: 'avatar' | 'cover') {
     const supabase = await createClient();
     const uuid = crypto.randomUUID();
 
-    const { data: avatarData, error } = await supabase.storage.from('avatars').upload(uuid, avatar, { upsert: true });
+    const { data: imageData, error } = await supabase.storage.from(imageType).upload(uuid, image, { upsert: true });
 
     if (error) {
-        console.error('Failed to update user avatar', error);
-        throw new Error('Failed to update user avatar')
+        console.error('Failed to update user image', error);
+        throw new Error('Failed to update user image')
     }
 
-    if (!avatarData.path) {
-        throw new Error('Failed to update user avatar')
+    if (!imageData.path) {
+        throw new Error('Failed to update user image')
     }
 
-    const avatarUrl = process.env.IMAGE_PATH + avatarData.path;
+    const imageUrl = process.env.IMAGE_PATH + imageType + '/' + imageData.path;
 
     await baseFetcher(
         supabase.from('users')
-            .update({ avatar_url: avatarUrl })
+            .update({ [imageType + '_url']: imageUrl })
             .eq('id', userId)
     )
 
-    return avatarUrl;
+    return imageUrl;
 }
 
-type UpdateUserAvatarActionState = {
+type UpdateUserImageActionState = {
     success: boolean;
-    errors: UpdateUserAvatarSchemaErrorType;
-    avatarUrl: string | null;
+    errors: UpdateUserImageSchemaErrorType;
+    imageUrl: string | null;
 }
 
-export async function updateUserAvatarAction(userId: string, state: UpdateUserAvatarActionState, formData: FormData) {
+export async function updateUserImageAction(userId: string, imageType: 'avatar' | 'cover', state: UpdateUserImageActionState, formData: FormData) {
     const data = {
-        avatar: formData.get('avatar')
+        image: formData.get('image')
     }
 
-    const result = updateUserAvatarSchema.safeParse(data);
+    const result = updateUserImageSchema.safeParse(data);
 
     if (!result.success) {
         return {
             success: false,
-            errors: result.error.formErrors as UpdateUserAvatarSchemaErrorType,
-            avatarUrl: null
+            errors: result.error.formErrors as UpdateUserImageSchemaErrorType,
+            imageUrl: null
         }
     }
 
     try {
-        const avatarUrl = await updateUserAvatar(userId, result.data.avatar);
+        const imageUrl = await updateUserImage(userId, result.data.image, imageType);
 
         return {
             success: true,
-            errors: {} as UpdateUserAvatarSchemaErrorType,
-            avatarUrl
+            errors: {} as UpdateUserImageSchemaErrorType,
+            imageUrl
         }
     } catch (error) {
-        console.error('Failed to update user avatar', error);
+        console.error('Failed to update user image', error);
 
         const formResult = createFormResult(data, MESSAGES.genericError)
 
         return {
             success: false,
             errors: formResult.errors,
-            avatarUrl: null
+            imageUrl: null
         }
     }
 }
