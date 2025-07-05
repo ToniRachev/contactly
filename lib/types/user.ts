@@ -29,6 +29,7 @@ export type UserDBType = {
     email: string;
     biography: UserBiographyDBType[],
     avatar_url: string | null;
+    cover_url: string | null;
 }
 
 export type UserType = {
@@ -40,6 +41,7 @@ export type UserType = {
     biography: BiographyType;
     fullName: string;
     avatarUrl: string | null;
+    coverUrl: string | null;
 }
 
 export type StatusType = 'online' | 'offline';
