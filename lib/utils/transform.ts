@@ -49,7 +49,8 @@ export const transformUserData = (user: UserDBType) => {
             school: biography?.school ?? ''
         },
         fullName: formatFullName(user.first_name, user.last_name),
-        avatarUrl: user.avatar_url
+        avatarUrl: user.avatar_url,
+        coverUrl: user.cover_url,
     }
 }
 
