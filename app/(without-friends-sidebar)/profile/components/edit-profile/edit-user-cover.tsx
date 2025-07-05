@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import { SectionWrapper } from ".";
 import { Camera } from "lucide-react";
