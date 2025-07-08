@@ -2,7 +2,7 @@
 import ImageUploadWrapper from "@/components/image-upload-wrapper";
 import { updateUserImageAction } from "@/lib/actions/user/user.actions";
 import { useUser } from "@/lib/context/user.context";
-import { updateUserImageSchema, UpdateUserImageSchemaErrorType } from "@/lib/validations/userSchema";
+import { updateUserImageSchema, UpdateUserImageSchemaErrorType, UpdateUserImageSchemaType } from "@/lib/validations/userSchema";
 import { ReactNode, useActionState, useEffect, useRef, useState } from "react";
 
 type EditUserImageProps = {
@@ -20,6 +20,9 @@ export default function EditUserImage({ imageType, onImageChange, onSuccess, chi
     const updateUserImageActionWithUserId = updateUserImageAction.bind(null, user.id, imageType);
 
     const [state, formAction, isPending] = useActionState(updateUserImageActionWithUserId, {
+        data: {
+            image: null as unknown as File
+        } as UpdateUserImageSchemaType,
         success: false,
         errors: {} as UpdateUserImageSchemaErrorType,
         imageUrl: null

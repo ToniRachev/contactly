@@ -7,6 +7,7 @@ type UserContextType = {
     user: UserType | null;
     updateUserAvatar: (avatarUrl: string) => void;
     updateUserCover: (coverUrl: string) => void;
+    updateUserBioField: (field: string, value: string) => void;
 }
 
 type UserProviderProps = {
@@ -41,11 +42,27 @@ export default function UserProvider({ children, userData }: Readonly<UserProvid
         })
     }, [setUser]);
 
+    const updateUserBioField = useCallback((field: string, value: string) => {
+        setUser((prevState) => {
+            if (!prevState) return null;
+
+            return {
+                ...prevState,
+                biography: {
+                    ...prevState.biography,
+                    [field]: value
+                }
+            }
+        })
+
+    }, [setUser]);
+
     const contextValue = useMemo(() => ({
         user,
         updateUserAvatar,
-        updateUserCover
-    }), [user, updateUserAvatar, updateUserCover]);
+        updateUserCover,
+        updateUserBioField
+    }), [user, updateUserAvatar, updateUserCover, updateUserBioField]);
 
     return (
         <UserContext.Provider value={contextValue}>
@@ -68,6 +85,7 @@ export function useUser() {
     return {
         user: context.user,
         updateUserAvatar: context.updateUserAvatar,
-        updateUserCover: context.updateUserCover
+        updateUserCover: context.updateUserCover,
+        updateUserBioField: context.updateUserBioField
     };
 }

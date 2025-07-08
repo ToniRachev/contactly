@@ -4,9 +4,17 @@ import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { UserDBType } from "@/lib/types/user";
 import { transformUserData } from "@/lib/utils/transform";
-import { updateUserImageSchema, UpdateUserImageSchemaErrorType } from "@/lib/validations/userSchema";
+import {
+    UpdateHometownSchemaType,
+    UpdateHometownSchemaErrorType,
+    updateUserImageSchema,
+    UpdateUserImageSchemaErrorType,
+    UpdateUserImageSchemaType,
+    updateBioSchemas
+} from "@/lib/validations/userSchema";
 import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
+import { ActionState } from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-bio/types";
 
 export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();
@@ -59,22 +67,22 @@ export async function updateUserImage(userId: string, image: File, imageType: 'a
 }
 
 type UpdateUserImageActionState = {
+    data: UpdateUserImageSchemaType;
+    errors: UpdateUserImageSchemaErrorType | null;
     success: boolean;
-    errors: UpdateUserImageSchemaErrorType;
     imageUrl: string | null;
 }
 
 export async function updateUserImageAction(userId: string, imageType: 'avatar' | 'cover', state: UpdateUserImageActionState, formData: FormData) {
     const data = {
-        image: formData.get('image')
+        image: formData.get('image') as File
     }
 
     const result = updateUserImageSchema.safeParse(data);
 
     if (!result.success) {
         return {
-            success: false,
-            errors: result.error.formErrors as UpdateUserImageSchemaErrorType,
+            ...createFormResult(data, result.error.formErrors, false),
             imageUrl: null
         }
     }
@@ -83,19 +91,80 @@ export async function updateUserImageAction(userId: string, imageType: 'avatar' 
         const imageUrl = await updateUserImage(userId, result.data.image, imageType);
 
         return {
-            success: true,
-            errors: {} as UpdateUserImageSchemaErrorType,
+            ...createFormResult(result.data, null, true),
             imageUrl
         }
     } catch (error) {
         console.error('Failed to update user image', error);
 
-        const formResult = createFormResult(data, MESSAGES.genericError)
-
         return {
-            success: false,
-            errors: formResult.errors,
+            ...createFormResult(result.data, MESSAGES.genericError, false),
             imageUrl: null
+        }
+    }
+}
+
+async function updateBioField(userId: string, field: string, value: string | Date) {
+    const supabase = await createClient();
+
+    await baseFetcher(
+        supabase.from('biography')
+            .update({ [field]: value })
+            .eq('user_id', userId)
+    )
+}
+
+async function deleteBioField(userId: string, field: string) {
+    const supabase = await createClient();
+    await baseFetcher(
+        supabase.from('biography')
+            .update({ [field]: null })
+            .eq('user_id', userId)
+    )
+}
+
+export async function updateUserBioAction(field: string, dbField: string, state: ActionState, formData: FormData) {
+    const userId = await getUserId();
+
+    const data = {
+        [field]: formData.get(field)
+    }
+
+    const result = updateBioSchemas[field as keyof typeof updateBioSchemas].safeParse(data);
+
+    if (!result.success) {
+        return createFormResult(data as UpdateHometownSchemaType, result.error.formErrors as UpdateHometownSchemaErrorType, false)
+    }
+
+    const fieldValue = (result.data as Record<string, string | Date>)[field];
+
+    if (fieldValue === state.data[field]) {
+        return createFormResult(result.data, null, false);
+    }
+
+    try {
+        await updateBioField(userId, dbField, fieldValue);
+        return createFormResult(result.data, null, true);
+    } catch (error) {
+        console.error('Failed to update user bio', error);
+        return createFormResult(data as UpdateHometownSchemaType, MESSAGES.genericError, false)
+    }
+}
+
+export async function deleteUserBioFieldAction(field: string) {
+    const userId = await getUserId();
+
+    try {
+        await deleteBioField(userId, field);
+        return {
+            error: null,
+            success: true
+        }
+    } catch (error) {
+        console.error('Failed to delete user bio field', error);
+        return {
+            error: MESSAGES.genericError,
+            success: false
         }
     }
 }

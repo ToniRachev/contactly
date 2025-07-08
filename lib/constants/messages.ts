@@ -31,6 +31,22 @@ export const MESSAGES = {
             minLength: 'Comment is too short to share.',
             maxLength: 'Comment is too long. Please keep it under 500 characters'
         },
+        user: {
+            bio: {
+                hometown: {
+                    minLength: `Hometown must be at least ${VALIDATION.user.bio.hometown.minLength} characters`,
+                    maxLength: `Hometown must be ${VALIDATION.user.bio.hometown.maxLength} characters or fewer`
+                },
+                currentCity: {
+                    minLength: `Current city must be at least ${VALIDATION.user.bio.currentCity.minLength} characters`,
+                    maxLength: `Current city must be ${VALIDATION.user.bio.currentCity.maxLength} characters or fewer`
+                },
+                highSchool: {
+                    minLength: `High school must be at least ${VALIDATION.user.bio.highSchool.minLength} characters`,
+                    maxLength: `High school must be ${VALIDATION.user.bio.highSchool.maxLength} characters or fewer`
+                }
+            }
+        }
     },
 
     genericError: 'Something went wrong. Please try again.'
