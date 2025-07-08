@@ -1,15 +1,13 @@
 'use client';
 
-import { DatePicker } from "@/components/date-picker";
 import { Button } from "@/components/ui/button";
 import { CirclePlus, Pencil, Trash2 } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
-import InputWrapper from "@/components/input-wrapper";
 import { FieldConfig } from "./types";
 import { deleteUserBioFieldAction, updateUserBioAction } from "@/lib/actions/user/user.actions";
 import { useUser } from "@/lib/context/user.context";
-import ErrorMessage from "@/components/error-message";
 import { formatDate } from "date-fns";
+import FieldInput from "./field-input";
 
 type ControlsProps = {
     close: () => void;
@@ -46,9 +44,7 @@ type FormFieldProps = {
 
 const FormField = ({ field, closeEditing, callback }: FormFieldProps) => {
     const actionWrapper = updateUserBioAction.bind(null, field.name, field.dbField);
-
     const [state, formAction, isPending] = useActionState(actionWrapper, field.initialState);
-
     const error = state.errors?.fieldErrors?.[field.name]?.[0] ?? state.errors?.formErrors?.[0];
 
     useEffect(() => {
@@ -60,35 +56,18 @@ const FormField = ({ field, closeEditing, callback }: FormFieldProps) => {
 
     return (
         <form action={formAction}>
-
-            {field.type === 'date' ? (
-                <li className="py-4 flex items-center">
-                    <div>
-                        <DatePicker
-                            name={field.name}
-                            value={state.data[field.name] as Date | undefined}
-                        />
-                        <ErrorMessage className="pt-2">{error}</ErrorMessage>
-                    </div>
-                    <Controls close={closeEditing} />
-                </li>
-            ) : (
-                <>
-                    < InputWrapper
-                        name={field.name}
-                        placeholder={field.placeholder}
-                        defaultValue={state.data[field.name] as string}
-                        label={field.label}
+            <li className="py-4 grid grid-cols-2 items-end">
+                    <FieldInput
+                        field={field}
+                        state={state}
                         error={error}
-                        className="selection:bg-blue-500 selection:text-white"
                     />
 
-                    <div className="w-full flex justify-end gap-4 pt-4">
-                        <Controls close={closeEditing} isPending={isPending} />
-                    </div>
-                </>
-            )}
-        </form>
+                <div className="w-full flex justify-end gap-4 pt-4">
+                    <Controls close={closeEditing} isPending={isPending} />
+                </div>
+            </li>
+        </form >
     )
 }
 
@@ -99,14 +78,13 @@ type EditFieldProps = {
 
 export default function EditField({ config, callback }: Readonly<EditFieldProps>) {
     const [isEditing, setIsEditing] = useState(false);
+    const { updateUserBioField } = useUser();
 
     const deleteActionWrapper = deleteUserBioFieldAction.bind(null, config.dbField);
     const [deleteState, deleteFormAction, isDeletePending] = useActionState(deleteActionWrapper, {
         error: null,
         success: false
     });
-
-    const { updateUserBioField } = useUser();
 
     useEffect(() => {
         if (deleteState.success) {
