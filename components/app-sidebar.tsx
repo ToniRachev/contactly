@@ -10,37 +10,59 @@ import {
     SidebarMenuButton,
     SidebarMenuItem
 } from '@/components/ui/sidebar'
-import { Compass, LogOut, MessageCircle, UserRound, UsersRound } from 'lucide-react'
+import { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import UserProfileCard from './user-profile-card'
-import { signout } from '@/lib/actions/auth/auth.actions'
 import { useUser } from '@/lib/context/user.context'
+import { NAVIGATION } from '@/lib/constants/navigation'
+import { useFriends } from '@/lib/context/friends.context';
 
-const menuItems = [
-    {
-        title: 'News feed',
-        url: '/',
-        icon: Compass,
-    },
-    {
-        title: 'Messages',
-        url: '/messages',
-        icon: MessageCircle,
-    },
-    {
-        title: 'Friends',
-        url: '/friends',
-        icon: UsersRound,
-    },
-    {
-        title: 'Profile',
-        url: '/profile',
-        icon: UserRound,
+type MenuItemProps = {
+    children: React.ReactNode
+    url?: string
+    onClick?: () => void
+}
+
+type MenuItemIconProps = {
+    icon: LucideIcon
+    title: string
+}
+
+const MenuItemIcon = ({ icon, title }: MenuItemIconProps) => {
+    const Icon = icon;
+    return (
+        <div className='flex items-center gap-2'>
+            <Icon />
+            <span>{title}</span>
+        </div>
+    )
+}
+
+const MenuItem = ({ children, url, onClick }: MenuItemProps) => {
+    if (onClick) {
+        return (
+            <SidebarMenuItem>
+                <SidebarMenuButton className='text-xl py-6' onClick={onClick}>
+                    {children}
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        )
     }
-]
+
+    return (
+        <SidebarMenuItem>
+            <SidebarMenuButton asChild className='text-xl py-6'>
+                <Link href={url || '/'}>
+                    {children}
+                </Link>
+            </SidebarMenuButton>
+        </SidebarMenuItem>
+    )
+}
 
 export default function AppSidebar() {
     const { user } = useUser();
+    const { friendRequests } = useFriends();
 
     return (
         <Sidebar className='!border-0'>
@@ -62,29 +84,28 @@ export default function AppSidebar() {
                 <SidebarGroup>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {menuItems.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild className='text-xl py-6'>
-                                        <Link href={item.url}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
+                            <MenuItem url={NAVIGATION.HOME.url}>
+                                <MenuItemIcon icon={NAVIGATION.HOME.icon} title={NAVIGATION.HOME.title} />
+                            </MenuItem>
 
-                            <SidebarMenuItem>
-                                <SidebarMenuButton
-                                    asChild
-                                    onClick={signout}
-                                    className='text-xl cursor-pointer py-6'
-                                >
-                                    <div>
-                                        <LogOut />
-                                        <span>Logout</span>
-                                    </div>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
+                            <MenuItem url={NAVIGATION.MESSAGES.url}>
+                                <MenuItemIcon icon={NAVIGATION.MESSAGES.icon} title={NAVIGATION.MESSAGES.title} />
+                            </MenuItem>
+
+                            <MenuItem url={NAVIGATION.FRIENDS.url}>
+                                <div className='flex items-center gap-3 w-full'>
+                                    <MenuItemIcon icon={NAVIGATION.FRIENDS.icon} title={NAVIGATION.FRIENDS.title} />
+                                    <span className='text-lg text-red-500'>{friendRequests.length}</span>
+                                </div>
+                            </MenuItem>
+
+                            <MenuItem url={NAVIGATION.PROFILE.url}>
+                                <MenuItemIcon icon={NAVIGATION.PROFILE.icon} title={NAVIGATION.PROFILE.title} />
+                            </MenuItem>
+
+                            <MenuItem onClick={NAVIGATION.LOGOUT.onClick}>
+                                <MenuItemIcon icon={NAVIGATION.LOGOUT.icon} title={NAVIGATION.LOGOUT.title} />
+                            </MenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
