@@ -7,44 +7,16 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import clsx from "clsx"
-import { Calendar, } from "lucide-react"
 import { ReactNode } from "react"
-import EditField, { FieldType } from "./edit-field"
-import EditProfilePicture from "./edit-profile-picture"
-import EditUserCover from "./edit-user-cover"
+import EditProfilePicture from "./edit-user-image/edit-profile-picture"
+import EditUserCover from "./edit-user-image/edit-user-cover"
+import EditBio from "./edit-bio"
 
 type SectionWrapperProps = {
     title: string;
     children: ReactNode;
     className?: string;
 }
-
-const editFields: FieldType[] = [
-    {
-        field: 'hometown',
-        data: null,
-        icon: null,
-        type: 'text',
-    },
-    {
-        field: 'current city',
-        data: null,
-        icon: null,
-        type: 'text',
-    },
-    {
-        field: 'high school',
-        data: null,
-        icon: null,
-        type: 'text',
-    },
-    {
-        field: 'birth date',
-        data: '1992-05-30',
-        icon: <Calendar />,
-        type: 'date',
-    }
-];
 
 export const SectionWrapper = ({ title, children, className }: SectionWrapperProps) => {
     return (
@@ -55,18 +27,6 @@ export const SectionWrapper = ({ title, children, className }: SectionWrapperPro
                 {children}
             </div>
         </div>
-    )
-}
-
-const EditBio = () => {
-    return (
-        <SectionWrapper title="Edit your bio">
-            <ul className="w-full">
-                {editFields.map((field) => (
-                    <EditField key={field.field} field={field} />
-                ))}
-            </ul>
-        </SectionWrapper>
     )
 }
 
