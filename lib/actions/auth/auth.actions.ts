@@ -11,14 +11,15 @@ import { parseAndValidateSigninInput, parseAndValidateSignupInput, postLoginSucc
 
 type LoginStateType = {
     data: LoginSchemaType,
-    errors: LoginSchemaErrorType
+    errors: LoginSchemaErrorType,
+    success: boolean
 }
 
 export async function login(state: LoginStateType, formData: FormData) {
     const { data, result } = parseAndValidateSigninInput(formData);
 
     if (!result.success) {
-        return createFormResult(data as LoginSchemaType, result.error.formErrors as LoginSchemaErrorType)
+        return createFormResult(data as LoginSchemaType, result.error.formErrors as LoginSchemaErrorType, false)
     }
 
     try {
@@ -28,10 +29,10 @@ export async function login(state: LoginStateType, formData: FormData) {
             return createFormResult({
                 email: result.data.email,
                 password: '',
-            }, MESSAGES.authError.login.invalidCredentials)
+            }, MESSAGES.authError.login.invalidCredentials, false)
         }
 
-        return createFormResult(data as LoginSchemaType, MESSAGES.genericError)
+        return createFormResult(data as LoginSchemaType, MESSAGES.genericError, false)
     }
 
     return postLoginSuccess();
@@ -39,24 +40,25 @@ export async function login(state: LoginStateType, formData: FormData) {
 
 type SignupActionType = {
     data: SignupSchemaType,
-    errors: SignupSchemaErrorType
+    errors: SignupSchemaErrorType,
+    success: boolean
 }
 
 export async function signup(state: SignupActionType, formData: FormData) {
     const { result, data } = parseAndValidateSignupInput(formData);
 
     if (!result.success) {
-        return createFormResult(data as SignupSchemaType, result.error.formErrors as SignupSchemaErrorType)
+        return createFormResult(data as SignupSchemaType, result.error.formErrors as SignupSchemaErrorType, false)
     }
 
     try {
         await signupUser(result.data);
     } catch (error) {
         if (isAuthApiError(error)) {
-            return createFormResult(result.data, error.message)
+            return createFormResult(result.data, error.message, false)
         }
 
-        return createFormResult(result.data, MESSAGES.genericError)
+        return createFormResult(result.data, MESSAGES.genericError, false)
     }
 
     return postLoginSuccess();
