@@ -1,9 +1,9 @@
 'use client';
 
 import Image from "next/image";
-import { SectionWrapper } from ".";
+import { SectionWrapper } from "..";
 import { Camera } from "lucide-react";
-import EditUserImage from "./edit-user-image";
+import EditUserImage from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-user-image";
 import { useUser } from "@/lib/context/user.context";
 import { useCallback, useState } from "react";
 

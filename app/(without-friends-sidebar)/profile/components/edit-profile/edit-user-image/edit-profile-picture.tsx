@@ -1,11 +1,11 @@
 'use client';
 
 import Avatar from "@/components/user-avatar";
-import { SectionWrapper } from ".";
+import { SectionWrapper } from "..";
 import { Camera } from "lucide-react";
 import { useUser } from "@/lib/context/user.context";
 import { useCallback, useState } from "react";
-import EditUserImage from "./edit-user-image";
+import EditUserImage from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-user-image";
 
 export default function EditProfilePicture() {
     const { user } = useUser();
