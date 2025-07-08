@@ -13,18 +13,12 @@ import {
     UpdateBirthDateSchemaType
 } from "@/lib/validations/userSchema";
 import EditField from "./edit-field";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { Building2, Calendar, Home, School } from "lucide-react";
 import { FieldConfig } from "./types";
 
 export default function EditBio() {
-    const { user, updateUserBioField } = useUser();
-
-    const handleUpdateBioSuccess = useCallback((field: string, newValue: string) => {
-        updateUserBioField(field, newValue);
-    }, [updateUserBioField]);
-
-    const birthDate = user.biography.birthDate ? new Date(user.biography.birthDate) : undefined;
+    const { user } = useUser();
 
     const editFields: FieldConfig[] = useMemo(() => [
         {
@@ -85,7 +79,7 @@ export default function EditBio() {
             label: 'Birth date',
             initialState: {
                 data: {
-                    birthDate: birthDate,
+                    birthDate: user.biography.birthDate ? new Date(user.biography.birthDate) : undefined,
                 } as UpdateBirthDateSchemaType,
                 success: false,
                 errors: {} as UpdateBirthDateSchemaErrorType,
@@ -97,7 +91,7 @@ export default function EditBio() {
         <SectionWrapper title="Edit your bio">
             <ul className="w-full">
                 {editFields.map((field) => (
-                    <EditField key={field.name} config={field} callback={handleUpdateBioSuccess} />
+                    <EditField key={field.name} config={field} />
                 ))}
             </ul>
         </SectionWrapper>
