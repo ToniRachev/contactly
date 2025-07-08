@@ -17,7 +17,8 @@ const initialState = {
         password: '',
         confirmPassword: '',
     } as SignupSchemaType,
-    errors: {} as SignupSchemaErrorType
+    errors: {} as SignupSchemaErrorType,
+    success: false
 }
 
 export default function Signup() {
