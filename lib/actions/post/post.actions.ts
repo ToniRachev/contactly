@@ -91,11 +91,8 @@ export async function submitPost(path: string, state: SubmitPostState, formData:
     const { data, result } = parseAndValidateSubmitPostData(formData);
 
     if (!result.success) {
-        const formResult = createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType)
         return {
-            data: formResult.data,
-            errors: formResult.errors,
-            success: false,
+            ...createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType, false),
             newPost: null,
         }
     }
@@ -109,10 +106,8 @@ export async function submitPost(path: string, state: SubmitPostState, formData:
         }
 
         return {
-            data: '' as unknown as PostSchemaType,
-            success: true,
+            ...createFormResult({ body: '' } as PostSchemaType, null, true),
             newPost,
-            errors: {} as PostSchemaErrorType
         }
     } catch (error) {
         if (isRedirectError(error)) {
@@ -120,12 +115,8 @@ export async function submitPost(path: string, state: SubmitPostState, formData:
         }
 
         console.error('Failed to create post', error);
-        const formResult = createFormResult(data as PostSchemaType, MESSAGES.genericError);
-
         return {
-            data: formResult.data,
-            errors: formResult.errors,
-            success: false,
+            ...createFormResult(data as PostSchemaType, MESSAGES.genericError, false),
             newPost: null,
         }
     }
@@ -135,37 +126,22 @@ export async function editPostAction(postId: string, state: PostState, formData:
     const { data, result } = parseAndValidateSubmitPostData(formData);
 
     if (!result.success) {
-        const formResult = createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType);
-
         return {
-            ...formResult,
+            ...createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType, false),
             success: false,
         }
     }
 
     if (state.data.body === result.data.body) {
-        const formResult = createFormResult(result.data, {} as PostSchemaErrorType)
-        return {
-            ...formResult,
-            success: false,
-        }
+        return createFormResult(result.data, {} as PostSchemaErrorType, false)
     }
 
     try {
         await editPost(postId, result.data.body);
-        const formResult = createFormResult(result.data, {} as PostSchemaErrorType);
-
-        return {
-            ...formResult,
-            success: true,
-        }
+        return createFormResult(result.data, {} as PostSchemaErrorType, true)
     } catch (error) {
         console.error('Failed to edit post', error);
-        const formResult = createFormResult(result.data, MESSAGES.genericError);
-        return {
-            ...formResult,
-            success: false,
-        }
+        return createFormResult(result.data, MESSAGES.genericError, false)
     }
 }
 
