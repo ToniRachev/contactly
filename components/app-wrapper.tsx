@@ -3,6 +3,7 @@ import { fetchUserProfile } from "@/lib/actions/user/user.actions";
 import { createClient } from "@/lib/utils/supabase/server";
 import { ReactNode } from "react";
 import { SidebarProvider } from "./ui/sidebar";
+import FriendsContextProvider from "@/lib/context/friends.context";
 
 const getUserWithProfile = async () => {
     const supabase = await createClient();
@@ -15,11 +16,13 @@ export default async function AppWrapper({ children }: Readonly<{ children: Reac
 
     return (
         <UserProvider userData={userData}>
-            <SidebarProvider>
-                <main className="w-full">
-                    {children}
-                </main>
-            </SidebarProvider>
+            <FriendsContextProvider>
+                <SidebarProvider>
+                    <main className="w-full">
+                        {children}
+                    </main>
+                </SidebarProvider>
+            </FriendsContextProvider>
         </UserProvider>
     )
 }
