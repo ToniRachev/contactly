@@ -11,11 +11,12 @@ export const createFormError = (message: string) => {
     return zodError.formErrors
 }
 
-
 export const createFormResult = <T extends Record<string, unknown>>(
     data: T,
-    errorData: ZodError<T>['formErrors'] | string
+    errorData: ZodError<T>['formErrors'] | string | null,
+    success: boolean
 ) => ({
     data,
-    errors: typeof errorData === 'string' ? createFormError(errorData) : errorData
+    errors: typeof errorData === 'string' ? createFormError(errorData) : errorData ?? { fieldErrors: {}, formErrors: [] },
+    success
 })
