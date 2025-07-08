@@ -20,5 +20,21 @@ export const VALIDATION = {
     comment: {
         minLength: 1,
         maxLength: 500
+    },
+    user: {
+        bio: {
+            hometown: {
+                minLength: 2,
+                maxLength: 30,
+            },
+            currentCity: {
+                minLength: 2,
+                maxLength: 30,
+            },
+            highSchool: {
+                minLength: 2,
+                maxLength: 30,
+            },
+        }
     }
 }
