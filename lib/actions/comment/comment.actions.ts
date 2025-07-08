@@ -37,31 +37,25 @@ export async function createCommentAction(postId: string, authorId: string, stat
     const { data, result } = parseAndValidateSubmitCommentData(formData);
 
     if (!result.success) {
-        const formResult = createFormResult(data as CommentSchemaType, result.error.formErrors as CommentSchemaErrorType)
-
         return {
-            ...formResult,
-            success: false,
+            ...createFormResult(data as CommentSchemaType, result.error.formErrors as CommentSchemaErrorType, false),
             newComment: null,
         }
     }
 
     try {
         const newComment = await createComment(authorId, postId, result.data.body);
-        const formResult = createFormResult({ body: '' } as CommentSchemaType, {} as CommentSchemaErrorType);
 
         return {
-            ...formResult,
-            success: true,
+            ...createFormResult({ body: '' } as CommentSchemaType, null, true),
             newComment
         }
     } catch (error) {
         console.error('Failed to create comment', error);
-        const formResult = createFormResult(result.data as CommentSchemaType, MESSAGES.genericError);
+        const formResult = createFormResult(result.data as CommentSchemaType, MESSAGES.genericError, false);
 
         return {
             ...formResult,
-            success: false,
             newComment: null,
         }
     }
@@ -86,41 +80,21 @@ export async function editCommentAction(authorId: string, commentId: string, sta
     const { data, result } = parseAndValidateSubmitCommentData(formData);
 
     if (!result.success) {
-        const formResult = createFormResult(data as CommentSchemaType, result.error.formErrors as CommentSchemaErrorType)
-
-        return {
-            ...formResult,
-            success: false,
-        }
+        return createFormResult(data as CommentSchemaType, result.error.formErrors as CommentSchemaErrorType, false)
     }
 
     if (state.data.body === result.data.body) {
-        const formResult = createFormResult(result.data, {} as CommentSchemaErrorType);
-
-        return {
-            ...formResult,
-            success: false,
-        }
+        return createFormResult(result.data, {} as CommentSchemaErrorType, false);
     }
 
     try {
         await editComment(authorId, commentId, result.data.body);
 
-        const formResult = createFormResult(result.data, {} as CommentSchemaErrorType);
-
-        return {
-            ...formResult,
-            success: true,
-        }
+        return createFormResult(result.data, {} as CommentSchemaErrorType, true);
 
     } catch (error) {
         console.error('Failed to edit comment', error);
-        const formResult = createFormResult(result.data as CommentSchemaType, MESSAGES.genericError);
-
-        return {
-            ...formResult,
-            success: false,
-        }
+        return createFormResult(result.data as CommentSchemaType, MESSAGES.genericError, false);
     }
 }
 
