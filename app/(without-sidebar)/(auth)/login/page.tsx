@@ -15,7 +15,8 @@ export default function LoginPage() {
             email: '',
             password: '',
         } as LoginSchemaType,
-        errors: {} as LoginSchemaErrorType
+        errors: {} as LoginSchemaErrorType,
+        success: false,
     });
 
     return (
