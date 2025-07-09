@@ -33,6 +33,11 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
         setFriendRequests(prev => [...prev, sender]);
     }, [setFriendRequests])
 
+    const handleRemoveFriendRequest = useCallback(async (senderId: string) => {
+        setFriendRequests(prev => prev.filter(request => request.id !== senderId));
+    }, [setFriendRequests])
+
+
     const handleAddSendRequest = useCallback(async (receiverId: string) => {
         setSendRequests(prev => [...prev, receiverId]);
     }, [setSendRequests])
@@ -60,10 +65,8 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
                             handleAddFriendRequest(payload.new.sender_id);
                             break;
                         }
-                        case 'UPDATE':
-                            break;
                         case 'DELETE':
-                            console.log('DELETE', payload);
+                            handleRemoveFriendRequest(payload.old.sender_id);
                             break;
                     }
                 }
@@ -74,7 +77,7 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
         return () => {
             channels.unsubscribe();
         }
-    }, [user, isAuthenticated, handleAddFriendRequest])
+    }, [user, isAuthenticated, handleAddFriendRequest, handleRemoveFriendRequest])
 
     const contextValue: FriendsContextType = useMemo(() => ({
         friendRequests,
