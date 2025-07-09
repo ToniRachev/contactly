@@ -1,7 +1,7 @@
 export type CountType = { count: number }[];
 export type LikesType = { user: string }[];
 
-export type AuthorDBType = {
+export type BaseUserDBType = {
     id: string;
     email: string;
     first_name: string;
@@ -10,7 +10,7 @@ export type AuthorDBType = {
     avatar_url: string | null;
 }
 
-export type AuthorType = {
+export type BaseUserType = {
     id: string;
     email: string;
     firstName: string;
@@ -24,7 +24,7 @@ export type CommentDBType = {
     id: string;
     created_at: string;
     author_id: string;
-    author: AuthorDBType;
+    author: BaseUserDBType;
     post_id: string;
     body: string;
     likesCount: CountType;
@@ -35,7 +35,7 @@ export type CommentType = {
     id: string;
     createdAt: string;
     authorId: string;
-    author: AuthorType;
+    author: BaseUserType;
     postId: string;
     body: string;
     likes: string[];
@@ -45,7 +45,7 @@ export type CommentType = {
 export type PostDBType = {
     id: string;
     created_at: string;
-    author: AuthorDBType;
+    author: BaseUserDBType;
     body: string;
     commentsCount: CountType;
     likesCount: CountType;
@@ -55,7 +55,7 @@ export type PostDBType = {
 export type PostType = {
     postId: string;
     createdAt: string;
-    author: AuthorType;
+    author: BaseUserType;
     body: string;
     commentsCount: number;
     likesCount: number;
