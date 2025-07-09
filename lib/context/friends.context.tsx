@@ -8,23 +8,37 @@ import { UserType } from "@/lib/types/user";
 
 type FriendsContextType = {
     friendRequests: UserType[];
+    sendRequests: string[];
+    addSendRequest: (receiverId: string) => void;
+    removeSendRequest: (receiverId: string) => void;
 }
 
 const FriendsContext = createContext<FriendsContextType | null>(null);
 
 type FriendsContextProviderProps = {
+    friendSendRequests: string[];
     children: React.ReactNode;
 }
 
-export default function FriendsContextProvider({ children }: Readonly<FriendsContextProviderProps>) {
+export default function FriendsContextProvider({ children, friendSendRequests }: Readonly<FriendsContextProviderProps>) {
     const { user } = useUser();
+
     const [friendRequests, setFriendRequests] = useState<UserType[]>([]);
+    const [sendRequests, setSendRequests] = useState<string[]>(friendSendRequests);
 
     const handleAddFriendRequest = useCallback(async (senderId: string) => {
         const sender = await fetchUserProfile(senderId);
 
         setFriendRequests(prev => [...prev, sender]);
-    }, [])
+    }, [setFriendRequests])
+
+    const handleAddSendRequest = useCallback(async (receiverId: string) => {
+        setSendRequests(prev => [...prev, receiverId]);
+    }, [setSendRequests])
+
+    const handleRemoveSendRequest = useCallback(async (receiverId: string) => {
+        setSendRequests(prev => prev.filter(id => id !== receiverId));
+    }, [setSendRequests])
 
     useEffect(() => {
         const supabase = createClient();
@@ -61,8 +75,11 @@ export default function FriendsContextProvider({ children }: Readonly<FriendsCon
     }, [user.id, handleAddFriendRequest])
 
     const contextValue: FriendsContextType = useMemo(() => ({
-        friendRequests
-    }), [friendRequests])
+        friendRequests,
+        sendRequests,
+        addSendRequest: handleAddSendRequest,
+        removeSendRequest: handleRemoveSendRequest
+    }), [friendRequests, sendRequests, handleAddSendRequest, handleRemoveSendRequest])
 
     return (
         <FriendsContext.Provider value={contextValue}>
