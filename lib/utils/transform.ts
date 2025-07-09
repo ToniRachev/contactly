@@ -1,6 +1,6 @@
 import { formatFullName } from "@/lib/utils"
-import { AuthorDBType, CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "@/lib/types/post"
-import { UserDBType } from "@/lib/types/user"
+import { BaseUserDBType, CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "@/lib/types/post"
+import { FriendRequestUserDBType, UserDBType } from "@/lib/types/user"
 
 const extractCount = (item: CountType) => {
     return item?.[0]?.count ?? 0
@@ -10,7 +10,7 @@ const extractLikes = (likes: LikesType) => {
     return likes.map((like) => like.user)
 }
 
-export const transformAuthor = (author: AuthorDBType) => ({
+export const transformBaseUser = (author: BaseUserDBType) => ({
     id: author.id,
     email: author.email,
     firstName: author.first_name,
@@ -24,7 +24,7 @@ export const transformPosts = (posts: PostDBType[], userId?: string): PostType[]
     return posts.map((post: PostDBType) => ({
         postId: post.id,
         createdAt: post.created_at,
-        author: transformAuthor(post.author),
+        author: transformBaseUser(post.author),
         body: post.body,
         commentsCount: extractCount(post.commentsCount),
         likesCount: extractCount(post.likesCount),
@@ -59,10 +59,16 @@ export const transformPostComments = (comments: CommentDBType[]): CommentType[] 
         id: comment.id,
         createdAt: comment.created_at,
         authorId: comment.author_id,
-        author: transformAuthor(comment.author),
+        author: transformBaseUser(comment.author),
         postId: comment.post_id,
         body: comment.body,
         likes: extractLikes(comment.likes),
         likesCount: extractCount(comment.likesCount)
     }))
+}
+
+
+
+export const transformFriendRequestsUsers = (users: FriendRequestUserDBType[]) => {
+    return users.map((user) => transformBaseUser(user.user));
 }
