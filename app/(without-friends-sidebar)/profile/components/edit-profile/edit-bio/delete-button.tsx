@@ -2,7 +2,7 @@ import { useActionState, useEffect } from "react";
 import { Trash2 } from "lucide-react";
 import { deleteUserBioFieldAction } from "@/lib/actions/user/user.actions";
 import { FieldConfig } from "./types";
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 
 type DeleteButtonProps = {
     config: FieldConfig;
@@ -11,7 +11,7 @@ type DeleteButtonProps = {
 
 export default function DeleteButton({ config, closeEditing }: Readonly<DeleteButtonProps>) {
 
-    const { updateUserBioField } = useUser();
+    const { updateUserBioField } = useAuthenticatedUser();
     const deleteActionWrapper = deleteUserBioFieldAction.bind(null, config.dbField);
     const [deleteState, deleteFormAction, isDeletePending] = useActionState(deleteActionWrapper, {
         error: null,

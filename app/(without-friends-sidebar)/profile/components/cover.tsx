@@ -1,10 +1,10 @@
 'use client';
 
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 import Image from "next/image";
 
 export default function Cover() {
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
 
     return (
         user.coverUrl ? (

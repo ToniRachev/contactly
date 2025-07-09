@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { SectionWrapper } from "..";
 import {
     UpdateHometownSchemaType,
@@ -18,7 +18,7 @@ import { Building2, Calendar, Home, School } from "lucide-react";
 import { FieldConfig } from "./types";
 
 export default function EditBio() {
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
 
     const editFields: FieldConfig[] = useMemo(() => [
         {

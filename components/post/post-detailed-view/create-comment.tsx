@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { useActionState, useEffect, useRef } from "react";
 import { createCommentAction } from "@/lib/actions/comment/comment.actions";
 import { CommentSchemaErrorType, CommentSchemaType } from "@/lib/validations/postSchema";
@@ -14,7 +14,7 @@ type CreateCommentProps = {
 }
 
 export default function CreateComment({ postId, addComment }: Readonly<CreateCommentProps>) {
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
     const formRef = useRef<HTMLFormElement>(null);
 
     const createCommentActionWithUserAndPostId = createCommentAction.bind(null, postId, user.id);

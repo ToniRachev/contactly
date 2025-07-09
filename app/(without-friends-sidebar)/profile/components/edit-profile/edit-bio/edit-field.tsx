@@ -7,7 +7,7 @@ import { updateUserBioAction } from "@/lib/actions/user/user.actions";
 import FieldInput from "./field-input";
 import EmptyFieldPlaceholder from "./empty-field-placeholder";
 import FieldDisplayRow from "./field-display-row";
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 
 type ControlsProps = {
     close: () => void;
@@ -42,7 +42,7 @@ type FormFieldProps = {
 }
 
 const FormField = ({ field, closeEditing }: FormFieldProps) => {
-    const { updateUserBioField } = useUser();
+    const { updateUserBioField } = useAuthenticatedUser();
 
     const actionWrapper = updateUserBioAction.bind(null, field.name, field.dbField);
     const [state, formAction, isPending] = useActionState(actionWrapper, field.initialState);

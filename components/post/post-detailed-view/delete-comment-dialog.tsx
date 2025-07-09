@@ -2,7 +2,7 @@
 
 import { startTransition, useActionState } from "react";
 import { deleteCommentAction } from "@/lib/actions/comment/comment.actions";
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { flushSync } from "react-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ type DeleteCommentDialogProps = {
 }
 
 export default function DeleteCommentDialog({ open, setOpen, deleteComment, commentId }: Readonly<DeleteCommentDialogProps>) {
-    const {user} = useUser();
+    const {user} = useAuthenticatedUser();
 
     const deleteCommentActionWithUserAndCommentId = deleteCommentAction.bind(null, user.id, commentId);
     const [, formAction, isPending] = useActionState(deleteCommentActionWithUserAndCommentId, {

@@ -1,7 +1,7 @@
 'use client';
 import ImageUploadWrapper from "@/components/image-upload-wrapper";
 import { updateUserImageAction } from "@/lib/actions/user/user.actions";
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { updateUserImageSchema, UpdateUserImageSchemaErrorType, UpdateUserImageSchemaType } from "@/lib/validations/userSchema";
 import { ReactNode, useActionState, useEffect, useRef, useState } from "react";
 
@@ -13,7 +13,7 @@ type EditUserImageProps = {
 }
 
 export default function EditUserImage({ imageType, onImageChange, onSuccess, children }: Readonly<EditUserImageProps>) {
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
     const formRef = useRef<HTMLFormElement>(null);
     const [validateError, setValidateError] = useState<string | null>(null);
 

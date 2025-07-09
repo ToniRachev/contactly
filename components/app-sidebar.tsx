@@ -13,7 +13,7 @@ import {
 import { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import UserProfileCard from './user-profile-card'
-import { useUser } from '@/lib/context/user.context'
+import { useAuthenticatedUser } from '@/lib/context/user.context'
 import { NAVIGATION } from '@/lib/constants/navigation'
 import { useFriends } from '@/lib/context/friends.context';
 
@@ -61,7 +61,7 @@ const MenuItem = ({ children, url, onClick }: MenuItemProps) => {
 }
 
 export default function AppSidebar() {
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
     const { friendRequests } = useFriends();
 
     return (

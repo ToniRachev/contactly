@@ -4,11 +4,11 @@ import Image from "next/image";
 import { SectionWrapper } from "..";
 import { Camera } from "lucide-react";
 import EditUserImage from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-user-image";
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { useCallback, useState } from "react";
 
 export default function EditUserCover() {
-    const { user, updateUserCover } = useUser();
+    const { user, updateUserCover } = useAuthenticatedUser();
     const [image, setImage] = useState<string | null>(user.coverUrl);
 
     const handleImageChange = (imageUrl: string) => {
