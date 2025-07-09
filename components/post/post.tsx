@@ -1,7 +1,6 @@
 'use client';
 
 import { Heart, MessageCircle } from "lucide-react";
-import { Button } from "../ui/button";
 import Avatar from "../user-avatar"
 import { PostType } from "@/lib/types/post";
 import { formatRelativeTime } from "@/lib/utils";
@@ -11,6 +10,7 @@ import { startTransition, useActionState } from "react";
 import clsx from "clsx";
 import { postReaction } from "@/lib/actions/likes/likes.actions";
 import ReactionItem from "../reaction-item";
+import FriendRequestButton from "../friend-request-button";
 
 type PostAuthorProps = {
     post: PostType;
@@ -29,11 +29,7 @@ const PostAuthor = ({ post }: PostAuthorProps) => {
             </div>
         )
     } else {
-        controls = (<div>
-            <Button className="bg-stone-600 hover:bg-stone-500 min-w-[5vw]">
-                Add friend
-            </Button>
-        </div>)
+        controls = (<FriendRequestButton receiverId={post.author.id} />)
     }
 
     return (
