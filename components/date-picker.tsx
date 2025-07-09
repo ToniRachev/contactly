@@ -23,8 +23,6 @@ export function DatePicker({ value, name }: Readonly<DatePickerProps>) {
     const [open, setOpen] = React.useState(false);
     const [date, setDate] = React.useState<Date | undefined>(value);
 
-    console.log(date);
-
     return (
         <div className="flex flex-col gap-3">
             <Label htmlFor="date" className="px-1">
