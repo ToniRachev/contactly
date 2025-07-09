@@ -5,6 +5,7 @@ import { UserType } from "../types/user";
 
 type UserContextType = {
     user: UserType | null;
+    isAuthenticated: boolean;
     updateUserAvatar: (avatarUrl: string) => void;
     updateUserCover: (coverUrl: string) => void;
     updateUserBioField: (field: string, value: string) => void;
@@ -59,6 +60,7 @@ export default function UserProvider({ children, userData }: Readonly<UserProvid
 
     const contextValue = useMemo(() => ({
         user,
+        isAuthenticated: !!user,
         updateUserAvatar,
         updateUserCover,
         updateUserBioField
@@ -71,7 +73,7 @@ export default function UserProvider({ children, userData }: Readonly<UserProvid
     )
 }
 
-export function useUser() {
+export function useAuthenticatedUser() {
     const context = useContext(UserContext);
 
     if (!context) {
@@ -88,4 +90,14 @@ export function useUser() {
         updateUserCover: context.updateUserCover,
         updateUserBioField: context.updateUserBioField
     };
+}
+
+export function useUser() {
+    const context = useContext(UserContext);
+
+    if (!context) {
+        throw new Error('useUser must be used inside a UserProvider');
+    }
+
+    return context;
 }

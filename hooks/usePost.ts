@@ -1,4 +1,4 @@
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { PostType } from "@/lib/types/post"
 import { useCallback, useState } from "react"
 
@@ -6,7 +6,7 @@ export default function usePost(postData: PostType) {
     const [post, setPost] = useState<PostType>(postData);
     const [isDetailedViewOpen, setIsDetailedViewOpen] = useState(false);
 
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
 
     const isLikedPost = !!post.likes.find((userLikedPostId) => userLikedPostId === user.id);
 

@@ -3,14 +3,14 @@
 import { useFriends } from "@/lib/context/friends.context";
 import CancelRequest from "./cancel-request";
 import SendRequest from "./send-request";
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 
 type FriendRequestButtonProps = {
     receiverId: string;
 }
 
 export default function FriendRequestButton({ receiverId }: Readonly<FriendRequestButtonProps>) {
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
     const {
         sendRequests,
         addSendRequest,

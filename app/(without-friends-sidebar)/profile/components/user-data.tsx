@@ -1,10 +1,10 @@
 'use client';
 
 import UserProfileCard from "@/components/user-profile-card";
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 
 export default function UserData() {
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
 
     return (
         <div>

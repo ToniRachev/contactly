@@ -15,13 +15,13 @@ import { submitPost } from "@/lib/actions/post/post.actions";
 import { PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
 import { usePosts } from "@/lib/context/posts.context";
 import { usePathname } from "next/navigation";
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 
 export default function CreatePost() {
     const [open, setOpen] = useState(false);
 
     const path = usePathname();
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
 
     const { addPost } = usePosts();
 

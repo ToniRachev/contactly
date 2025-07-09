@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useUser } from "./user.context";
+import { useAuthenticatedUser } from "./user.context";
 import { createClient } from "../utils/supabase/client";
 import { fetchUserProfile } from "../actions/user/user.actions";
 import { UserType } from "@/lib/types/user";
@@ -21,7 +21,7 @@ type FriendsContextProviderProps = {
 }
 
 export default function FriendsContextProvider({ children, friendSendRequests }: Readonly<FriendsContextProviderProps>) {
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
 
     const [friendRequests, setFriendRequests] = useState<UserType[]>([]);
     const [sendRequests, setSendRequests] = useState<string[]>(friendSendRequests);

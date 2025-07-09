@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from "@/lib/context/user.context";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { CommentType } from "@/lib/types/post";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { commentReaction } from "@/lib/actions/likes/likes.actions";
@@ -114,7 +114,7 @@ export default function Comment({ comment, editComment, deleteComment, reactionC
     const formRef = useRef<HTMLFormElement>(null);
     const [isEditing, setIsEditing] = useState(false);
 
-    const { user } = useUser();
+    const { user } = useAuthenticatedUser();
 
     const isLikedComment = comment.likes.some((userLikedCommentId) => userLikedCommentId === user.id);
     const isCommentAuthor = user.id === comment.author.id;
