@@ -4,7 +4,7 @@ import { createClient } from "@/lib/utils/supabase/server";
 import { ReactNode } from "react";
 import { SidebarProvider } from "./ui/sidebar";
 import FriendsContextProvider from "@/lib/context/friends.context";
-import { getFriendsSendRequests } from "@/lib/actions/friendship/friendship.actions";
+import { getFriendRequests, getFriendsSendRequests } from "@/lib/actions/friendship/friendship.actions";
 
 const getUserWithProfile = async () => {
     const supabase = await createClient();
@@ -14,11 +14,19 @@ const getUserWithProfile = async () => {
 
 export default async function AppWrapper({ children }: Readonly<{ children: ReactNode }>) {
     const userData = await getUserWithProfile();
-    const friendsSendRequests = userData ? await getFriendsSendRequests(userData.id) : [];
+
+    const [friedsSendRequests, friendRequests] = userData
+        ? await Promise.all([
+            getFriendsSendRequests(userData.id),
+            getFriendRequests(userData.id)
+        ]) : [[], []];
 
     return (
         <UserProvider userData={userData}>
-            <FriendsContextProvider friendSendRequests={friendsSendRequests}>
+            <FriendsContextProvider
+                friendSendRequests={friedsSendRequests}
+                initialFriendRequests={friendRequests}
+            >
                 <SidebarProvider>
                     <main className="w-full">
                         {children}

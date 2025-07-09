@@ -1,4 +1,5 @@
 import { Session, User } from "@supabase/supabase-js"
+import { BaseUserDBType } from "./post";
 
 export type BiographyType = {
     school: string | null,
@@ -45,3 +46,7 @@ export type UserType = {
 }
 
 export type StatusType = 'online' | 'offline';
+
+export type FriendRequestUserDBType = {
+    user: BaseUserDBType;
+}

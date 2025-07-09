@@ -2,6 +2,8 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server"
+import { transformFriendRequestsUsers } from "@/lib/utils/transform";
+import { FriendRequestUserDBType } from "@/lib/types/user";
 
 export async function sendFriendRequest(senderId: string, receiverId: string) {
     const supabase = await createClient();
@@ -66,4 +68,16 @@ export async function getFriendsSendRequests(userId: string) {
     )
 
     return data.map((request) => request.receiver_id);
+}
+
+export async function getFriendRequests(userId: string) {
+    const supabase = await createClient();
+
+    const data = await baseFetcher(
+        supabase.from('friend_requests')
+            .select('user:sender_id(*)')
+            .eq('receiver_id', userId)
+    ) as unknown as FriendRequestUserDBType[];
+
+    return transformFriendRequestsUsers(data);
 }
