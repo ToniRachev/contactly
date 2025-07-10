@@ -15,20 +15,27 @@ import {
 import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
 import { ActionState } from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-bio/types";
+import { revalidateTag, unstable_cache } from "next/cache";
 
 export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();
 
-    const query = supabase.from('users')
-        .select(`*, biography(*)`)
-        .eq('id', userId)
-        .single();
+    return unstable_cache(
+        async (supabaseClient) => {
+            const query = supabaseClient.from('users')
+                .select(`*, biography(*)`)
+                .eq('id', userId)
+                .single();
 
-    const data = await baseFetcher<UserDBType>(query);
-
-    return transformUserData(data);
+            const data = await baseFetcher<UserDBType>(query);
+            return transformUserData(data);
+        },
+        [`user-profile-${userId}`],
+        {
+            revalidate: 60 * 60 * 24
+        }
+    )(supabase);
 }
-
 export async function getUserId() {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getUser();
@@ -90,6 +97,7 @@ export async function updateUserImageAction(userId: string, imageType: 'avatar' 
     try {
         const imageUrl = await updateUserImage(userId, result.data.image, imageType);
 
+        revalidateTag(`user-profile-${userId}`);
         return {
             ...createFormResult(result.data, null, true),
             imageUrl
@@ -144,6 +152,7 @@ export async function updateUserBioAction(field: string, dbField: string, state:
 
     try {
         await updateBioField(userId, dbField, fieldValue);
+        revalidateTag(`user-profile-${userId}`);
         return createFormResult(result.data, null, true);
     } catch (error) {
         console.error('Failed to update user bio', error);
@@ -156,6 +165,7 @@ export async function deleteUserBioFieldAction(field: string) {
 
     try {
         await deleteBioField(userId, field);
+        revalidateTag(`user-profile-${userId}`);
         return {
             error: null,
             success: true

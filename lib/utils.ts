@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge"
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { ZodTypeAny } from "zod";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -18,4 +19,24 @@ export const formatFullName = (firstName: string, lastName: string): string =>
 export const formatRelativeTime = (date: string): string => {
   const past = dayjs(date);
   return past.fromNow();
+}
+
+
+export function parseAndValidateFormData(
+  formData: FormData,
+  schema: ZodTypeAny,
+  fields: string[]
+): {
+  data: Record<string, FormDataEntryValue | null>,
+  result: ReturnType<typeof schema.safeParse>
+} {
+  const data: Record<string, FormDataEntryValue | null> = {};
+
+  for (const field of fields) {
+    data[field] = formData.get(field);
+  }
+
+  const result = schema.safeParse(data);
+
+  return { data, result };
 }

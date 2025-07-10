@@ -6,6 +6,7 @@ import { Camera } from "lucide-react";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { useCallback, useState } from "react";
 import EditUserImage from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-user-image";
+import LoadingOverlay from "./loading-overlay";
 
 export default function EditProfilePicture() {
     const { user } = useAuthenticatedUser();
@@ -29,15 +30,19 @@ export default function EditProfilePicture() {
                     onImageChange={handleImageChange}
                     onSuccess={handleImageSuccess}
                 >
-                    <div className="relative">
-                        <Avatar
-                            avatar={image}
-                            size={'lg'}
-                        />
-                        <div className="absolute bottom-0 right-0 bg-stone-600 p-1 rounded-full">
-                            <Camera />
+                    {({ isPending }) => (
+                        <div className="relative">
+                            <Avatar
+                                avatar={image}
+                                size={'lg'}
+                            />
+                            <div className="absolute bottom-0 right-0 bg-stone-600 p-1 rounded-full">
+                                <Camera />
+                            </div>
+
+                            {isPending && <LoadingOverlay className="rounded-full" />}
                         </div>
-                    </div>
+                    )}
                 </EditUserImage>
             </div>
         </SectionWrapper>

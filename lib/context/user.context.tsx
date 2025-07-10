@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useMemo, useState, useCallback } from "react";
+import { createContext, useContext, ReactNode, useMemo, useCallback, useOptimistic, startTransition } from "react";
 import { UserType } from "../types/user";
 
 type UserContextType = {
@@ -19,43 +19,48 @@ type UserProviderProps = {
 const UserContext = createContext<UserContextType | null>(null);
 
 export default function UserProvider({ children, userData }: Readonly<UserProviderProps>) {
-    const [user, setUser] = useState(userData);
+    const [user, setUser] = useOptimistic(userData);
 
     const updateUserAvatar = useCallback((avatarUrl: string) => {
-        setUser((prevState) => {
-            if (!prevState) return null;
+        startTransition(() => {
+            setUser((prevState) => {
+                if (!prevState) return null;
 
-            return {
-                ...prevState,
-                avatarUrl
-            }
+                return {
+                    ...prevState,
+                    avatarUrl
+                }
+            })
         })
     }, [setUser]);
 
     const updateUserCover = useCallback((coverUrl: string) => {
-        setUser((prevState) => {
-            if (!prevState) return null;
+        startTransition(() => {
+            setUser((prevState) => {
+                if (!prevState) return null;
 
-            return {
-                ...prevState,
-                coverUrl
-            }
+                return {
+                    ...prevState,
+                    coverUrl
+                }
+            })
         })
     }, [setUser]);
 
     const updateUserBioField = useCallback((field: string, value: string) => {
-        setUser((prevState) => {
-            if (!prevState) return null;
+        startTransition(() => {
+            setUser((prevState) => {
+                if (!prevState) return null;
 
-            return {
-                ...prevState,
-                biography: {
-                    ...prevState.biography,
-                    [field]: value
+                return {
+                    ...prevState,
+                    biography: {
+                        ...prevState.biography,
+                        [field]: value
+                    }
                 }
-            }
+            })
         })
-
     }, [setUser]);
 
     const contextValue = useMemo(() => ({

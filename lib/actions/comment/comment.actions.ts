@@ -3,11 +3,11 @@
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { transformPostComments } from "@/lib/utils/transform";
-import { CommentSchemaErrorType, CommentSchemaType } from "@/lib/validations/postSchema";
+import { commentSchema, CommentSchemaErrorType, CommentSchemaType } from "@/lib/validations/postSchema";
 import { createFormResult } from "@/lib/validations/utils";
-import { parseAndValidateSubmitCommentData } from "@/lib/actions/post/post.helpers";
 import { CommentType } from "@/lib/types/post";
 import { MESSAGES } from "@/lib/constants/messages";
+import { parseAndValidateFormData } from "@/lib/utils";
 
 export async function createComment(authorId: string, postId: string, body: string) {
     const supabase = await createClient();
@@ -34,7 +34,9 @@ type CommentState = {
 }
 
 export async function createCommentAction(postId: string, authorId: string, state: CommentState, formData: FormData) {
-    const { data, result } = parseAndValidateSubmitCommentData(formData);
+    const { data, result } = parseAndValidateFormData(formData, commentSchema, [
+        'body'
+    ]);
 
     if (!result.success) {
         return {
@@ -77,7 +79,9 @@ type EditCommentState = {
 }
 
 export async function editCommentAction(authorId: string, commentId: string, state: EditCommentState, formData: FormData) {
-    const { data, result } = parseAndValidateSubmitCommentData(formData);
+    const { data, result } = parseAndValidateFormData(formData, commentSchema, [
+        'body'
+    ]);
 
     if (!result.success) {
         return createFormResult(data as CommentSchemaType, result.error.formErrors as CommentSchemaErrorType, false)

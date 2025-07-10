@@ -1,20 +1,24 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import { FieldConfig } from "./types";
 import { updateUserBioAction } from "@/lib/actions/user/user.actions";
 import FieldInput from "./field-input";
 import EmptyFieldPlaceholder from "./empty-field-placeholder";
 import FieldDisplayRow from "./field-display-row";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
+import { parseAndValidateFormData } from "@/lib/utils";
+import { updateBioSchemas } from "@/lib/validations/userSchema";
+import { flushSync } from "react-dom";
 
 type ControlsProps = {
     close: () => void;
     isPending?: boolean;
+    formAction: (formData: FormData) => void;
 }
 
-const Controls = ({ close, isPending }: ControlsProps) => {
+const Controls = ({ close, isPending, formAction }: ControlsProps) => {
     return (
         <div className="w-full flex justify-end gap-4 items-center">
             <Button
@@ -29,6 +33,7 @@ const Controls = ({ close, isPending }: ControlsProps) => {
                 variant={'secondary'}
                 type="submit"
                 disabled={isPending}
+                formAction={formAction}
             >
                 Save
             </Button>
@@ -46,17 +51,26 @@ const FormField = ({ field, closeEditing }: FormFieldProps) => {
 
     const actionWrapper = updateUserBioAction.bind(null, field.name, field.dbField);
     const [state, formAction, isPending] = useActionState(actionWrapper, field.initialState);
+
     const error = state.errors?.fieldErrors?.[field.name]?.[0] ?? state.errors?.formErrors?.[0];
 
-    useEffect(() => {
-        if (state.success) {
-            updateUserBioField(field.name, state.data[field.name] as string);
-            closeEditing();
+    const handleUpdateUserBioField = async (formData: FormData) => {
+        const { data, result } = parseAndValidateFormData(formData, updateBioSchemas[field.name as keyof typeof updateBioSchemas], [field.name]);
+
+        if (!result.success) {
+            formAction(formData);
+            return;
         }
-    }, [state, field, closeEditing, updateUserBioField])
+
+        flushSync(() => {
+            updateUserBioField(field.name, data[field.name] as string);
+            closeEditing();
+        })
+        formAction(formData);
+    }
 
     return (
-        <form action={formAction}>
+        <form>
             <li className="py-4 grid grid-cols-2 items-end">
                 <FieldInput
                     field={field}
@@ -67,6 +81,7 @@ const FormField = ({ field, closeEditing }: FormFieldProps) => {
                 <Controls
                     close={closeEditing}
                     isPending={isPending}
+                    formAction={handleUpdateUserBioField}
                 />
             </li>
         </form >

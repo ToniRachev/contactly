@@ -1,33 +1,33 @@
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
 import { Trash2 } from "lucide-react";
 import { deleteUserBioFieldAction } from "@/lib/actions/user/user.actions";
 import { FieldConfig } from "./types";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
+import { flushSync } from "react-dom";
 
 type DeleteButtonProps = {
     config: FieldConfig;
-    closeEditing: () => void;
 }
 
-export default function DeleteButton({ config, closeEditing }: Readonly<DeleteButtonProps>) {
+export default function DeleteButton({ config }: Readonly<DeleteButtonProps>) {
 
     const { updateUserBioField } = useAuthenticatedUser();
     const deleteActionWrapper = deleteUserBioFieldAction.bind(null, config.dbField);
-    const [deleteState, deleteFormAction, isDeletePending] = useActionState(deleteActionWrapper, {
+    const [, deleteFormAction, isDeletePending] = useActionState(deleteActionWrapper, {
         error: null,
         success: false
     });
 
-    useEffect(() => {
-        if (deleteState.success) {
+    const handleDeleteUserBioField = async () => {
+        flushSync(() => {
             updateUserBioField(config.name, '');
-            closeEditing();
-        }
-    }, [deleteState, config.name, updateUserBioField, closeEditing])
+        })
+        deleteFormAction();
+    }
 
     return (
         <form className="w-full h-full">
-            <button formAction={deleteFormAction} disabled={isDeletePending}>
+            <button formAction={handleDeleteUserBioField} disabled={isDeletePending}>
                 <Trash2 width={20} className="cursor-pointer" />
             </button>
         </form>
