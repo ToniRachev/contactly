@@ -1,8 +1,10 @@
 import { MESSAGES } from '@/lib/constants/messages';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { parseAndValidateSigninInput, parseAndValidateSignupInput, signInUser } from '@/lib/actions/auth/auth.helpers';
+import { parseAndValidateFormData } from '@/lib/utils';
+import { loginSchema, signupSchema } from '@/lib/validations/authSchema';
 import * as serverModule from '@/lib/utils/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { signInUser } from './auth.actions';
 
 describe('parseAndValidateSigninInput', () => {
     it('should validate valid form data', () => {
@@ -13,7 +15,10 @@ describe('parseAndValidateSigninInput', () => {
         formData.append('email', email);
         formData.append('password', password);
 
-        const { data, result } = parseAndValidateSigninInput(formData);
+        const { data, result } = parseAndValidateFormData(formData, loginSchema, [
+            'email',
+            'password'
+        ]);
 
         expect(result.success).toBe(true);
         expect(data.email).toBe(email);
@@ -28,7 +33,10 @@ describe('parseAndValidateSigninInput', () => {
         formData.append('email', email);
         formData.append('password', password);
 
-        const { result } = parseAndValidateSigninInput(formData);
+        const { result } = parseAndValidateFormData(formData, loginSchema, [
+            'email',
+            'password'
+        ]);
 
         expect(result.success).toBe(false)
         expect(result.error?.formErrors.fieldErrors).toMatchObject({
@@ -54,7 +62,13 @@ describe('parseAndValidateSignupInput', () => {
             formData.append(key, value);
         }
 
-        const { data, result } = parseAndValidateSignupInput(formData);
+        const { data, result } = parseAndValidateFormData(formData, signupSchema, [
+            'firstName',
+            'lastName',
+            'email',
+            'password',
+            'confirmPassword'
+        ]);
 
         expect(result.success).toBe(true);
         expect(data).toMatchObject(credentials);
@@ -75,7 +89,13 @@ describe('parseAndValidateSignupInput', () => {
             formData.append(key, value);
         }
 
-        const { result } = parseAndValidateSignupInput(formData);
+        const { result } = parseAndValidateFormData(formData, signupSchema, [
+            'firstName',
+            'lastName',
+            'email',
+            'password',
+            'confirmPassword'
+        ]);
 
         expect(result.success).toBe(false);
         expect(result.error?.formErrors.fieldErrors).toMatchObject({
@@ -98,7 +118,13 @@ describe('parseAndValidateSignupInput', () => {
             formData.append(key, value);
         }
 
-        const { result } = parseAndValidateSignupInput(formData);
+        const { result } = parseAndValidateFormData(formData, signupSchema, [
+            'firstName',
+            'lastName',
+            'email',
+            'password',
+            'confirmPassword'
+        ]);
 
         expect(result.success).toBe(false);
         expect(result.error?.formErrors.fieldErrors).toMatchObject({
