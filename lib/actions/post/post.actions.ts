@@ -1,12 +1,12 @@
 'use server';
 
 import { MESSAGES } from "@/lib/constants/messages";
+import { parseAndValidateFormData } from "@/lib/utils";
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { transformPosts } from "@/lib/utils/transform";
-import { PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
+import { postSchema, PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
 import { createFormResult } from "@/lib/validations/utils";
-import { parseAndValidateSubmitPostData } from "@/lib/actions/post/post.helpers";
 import { PostType } from "@/lib/types/post";
 import { getUserId } from "@/lib/actions/user/user.actions";
 import { redirect } from "next/navigation";
@@ -88,7 +88,9 @@ export const deletePost = async (postId: string) => {
 }
 
 export async function submitPost(path: string, state: SubmitPostState, formData: FormData) {
-    const { data, result } = parseAndValidateSubmitPostData(formData);
+    const { data, result } = parseAndValidateFormData(formData, postSchema, [
+        'body'
+    ]);
 
     if (!result.success) {
         return {
@@ -123,7 +125,9 @@ export async function submitPost(path: string, state: SubmitPostState, formData:
 }
 
 export async function editPostAction(postId: string, state: PostState, formData: FormData) {
-    const { data, result } = parseAndValidateSubmitPostData(formData);
+    const { data, result } = parseAndValidateFormData(formData, postSchema, [
+        'body'
+    ]);
 
     if (!result.success) {
         return {
