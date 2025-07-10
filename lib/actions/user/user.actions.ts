@@ -97,6 +97,7 @@ export async function updateUserImageAction(userId: string, imageType: 'avatar' 
     try {
         const imageUrl = await updateUserImage(userId, result.data.image, imageType);
 
+        revalidateTag(`user-profile-${userId}`);
         return {
             ...createFormResult(result.data, null, true),
             imageUrl
