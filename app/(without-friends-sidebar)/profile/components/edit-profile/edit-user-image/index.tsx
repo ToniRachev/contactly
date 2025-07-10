@@ -9,7 +9,7 @@ type EditUserImageProps = {
     imageType: 'avatar' | 'cover';
     onImageChange: (imageUrl: string) => void;
     onSuccess: (imageUrl: string) => void;
-    children: ReactNode;
+    children: (args: { isPending: boolean }) => ReactNode;
 }
 
 export default function EditUserImage({ imageType, onImageChange, onSuccess, children }: Readonly<EditUserImageProps>) {
@@ -61,7 +61,7 @@ export default function EditUserImage({ imageType, onImageChange, onSuccess, chi
                 error={error}
                 disabled={isPending}
             >
-                {children}
+                {children({ isPending })}
             </ImageUploadWrapper>
         </form>
     )
