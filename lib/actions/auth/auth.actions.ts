@@ -3,11 +3,11 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-import { LoginSchemaErrorType, LoginSchemaType, SignupSchemaErrorType, SignupSchemaType } from "@/lib/validations/authSchema";
+import { loginSchema, LoginSchemaErrorType, LoginSchemaType, signupSchema, SignupSchemaErrorType, SignupSchemaType } from "@/lib/validations/authSchema";
 import { isAuthApiError } from "@supabase/supabase-js";
 import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
-import { parseAndValidateSigninInput, parseAndValidateSignupInput, postLoginSuccess, signInUser, signupUser } from "./auth.helpers";
+import { parseAndValidateFormData } from "@/lib/utils";
 
 type LoginStateType = {
     data: LoginSchemaType,
@@ -15,8 +15,26 @@ type LoginStateType = {
     success: boolean
 }
 
+const postLoginSuccess = () => {
+    revalidatePath('/', 'layout');
+    redirect('/');
+}
+
+export async function signInUser(data: LoginSchemaType) {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signInWithPassword(data);
+
+    if (error) {
+        throw error;
+    }
+}
+
+
 export async function login(state: LoginStateType, formData: FormData) {
-    const { data, result } = parseAndValidateSigninInput(formData);
+    const { data, result } = parseAndValidateFormData(formData, loginSchema, [
+        'email',
+        'password'
+    ])
 
     if (!result.success) {
         return createFormResult(data as LoginSchemaType, result.error.formErrors as LoginSchemaErrorType, false)
@@ -44,8 +62,44 @@ type SignupActionType = {
     success: boolean
 }
 
+export async function signupUser(data: SignupSchemaType) {
+    const supabase = await createClient();
+
+    const { email, password, firstName, lastName } = data;
+
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+        email, password
+    })
+
+    if (authError) {
+        throw authError;
+    }
+
+    const { data: userData, error: userError } = await supabase.from('users')
+        .insert([{
+            id: authData.user?.id,
+            first_name: firstName,
+            last_name: lastName,
+            email: authData.user?.email
+        }])
+        .select();
+
+
+    if (userError) {
+        throw userError;
+    }
+
+    return userData;
+}
+
 export async function signup(state: SignupActionType, formData: FormData) {
-    const { result, data } = parseAndValidateSignupInput(formData);
+    const { result, data } = parseAndValidateFormData(formData, signupSchema, [
+        'firstName',
+        'lastName',
+        'email',
+        'password',
+        'confirmPassword'
+    ])
 
     if (!result.success) {
         return createFormResult(data as SignupSchemaType, result.error.formErrors as SignupSchemaErrorType, false)
