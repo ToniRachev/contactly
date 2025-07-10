@@ -9,7 +9,7 @@ type FieldDisplayRowProps = {
     handleCloseEditing: () => void;
 }
 
-export default function FieldDisplayRow({ config, handleOpenEditing, handleCloseEditing }: Readonly<FieldDisplayRowProps>) {
+export default function FieldDisplayRow({ config, handleOpenEditing }: Readonly<FieldDisplayRowProps>) {
     return (
         <li className="flex justify-between py-2">
             <button
@@ -23,7 +23,6 @@ export default function FieldDisplayRow({ config, handleOpenEditing, handleClose
             <div className="grid grid-cols-2 gap-2">
                 <DeleteButton
                     config={config}
-                    closeEditing={handleCloseEditing}
                 />
 
                 <div>
