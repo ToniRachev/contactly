@@ -16,8 +16,6 @@ type PostAuthorProps = {
     post: PostType;
 }
 
-//TODO: Check if user and post author are friends
-
 const PostAuthor = ({ post }: PostAuthorProps) => {
     let controls;
 
