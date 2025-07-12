@@ -114,11 +114,13 @@ export async function deleteCommentAction(authorId: string, commentId: string) {
 
         return {
             success: true,
+            error: null
         }
     } catch (error) {
         console.error('Failed to delete comment', error);
         return {
             success: false,
+            error: MESSAGES.genericError
         }
     }
 }   
