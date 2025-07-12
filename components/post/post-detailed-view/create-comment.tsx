@@ -28,6 +28,8 @@ export default function CreateComment({ postId, addComment }: Readonly<CreateCom
         success: false
     })
 
+    const error = state.errors.fieldErrors?.body?.[0] ?? state.errors.formErrors?.[0];
+
     useEffect(() => {
         if (state.success) {
             addComment(state.newComment as CommentType);
@@ -43,7 +45,7 @@ export default function CreateComment({ postId, addComment }: Readonly<CreateCom
                 formAction={formAction}
                 isPending={isPending}
                 value={state.data.body}
-                error={state.errors.fieldErrors?.body?.[0]}
+                error={error}
             />
         </div>
     )
