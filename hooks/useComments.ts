@@ -8,6 +8,7 @@ export default function useComments(
     updateCommentsCount: (type: 'add' | 'remove') => void,
 ) {
     const [comments, setComments] = useState<CommentType[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const addComment = useCallback((comment: CommentType) => {
         setComments((prevComments) => [comment, ...prevComments]);
@@ -51,12 +52,14 @@ export default function useComments(
     useEffect(() => {
         if (isDetailedViewOpen) {
             (async function () {
+                setIsLoading(true);
                 const comments = await fetchPostComments(postId);
                 setComments(comments);
+                setIsLoading(false);
             })()
         }
     }, [isDetailedViewOpen, postId]);
 
 
-    return { comments, addComment, editComment, deleteComment, reactionComment };
+    return { comments, addComment, editComment, deleteComment, reactionComment, isLoading };
 }
