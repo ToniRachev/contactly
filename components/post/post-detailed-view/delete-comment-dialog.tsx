@@ -1,11 +1,11 @@
 'use client';
 
-import { startTransition, useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { deleteCommentAction } from "@/lib/actions/comment/comment.actions";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
-import { flushSync } from "react-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import ErrorMessage from "@/components/error-message";
 
 type DeleteCommentDialogProps = {
     open: boolean;
@@ -15,22 +15,21 @@ type DeleteCommentDialogProps = {
 }
 
 export default function DeleteCommentDialog({ open, setOpen, deleteComment, commentId }: Readonly<DeleteCommentDialogProps>) {
-    const {user} = useAuthenticatedUser();
+    const { user } = useAuthenticatedUser();
+
 
     const deleteCommentActionWithUserAndCommentId = deleteCommentAction.bind(null, user.id, commentId);
-    const [, formAction, isPending] = useActionState(deleteCommentActionWithUserAndCommentId, {
-        success: false
+    const [state, formAction, isPending] = useActionState(deleteCommentActionWithUserAndCommentId, {
+        success: false,
+        error: null
     })
 
-    const handleDeleteComment = () => {
-        flushSync(() => {
+    useEffect(() => {
+        if (state.success && open) {
             deleteComment(commentId);
-        });
+        }
 
-        startTransition(() => {
-            formAction();
-        })
-    }
+    }, [state.success, commentId, deleteComment, open])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -45,7 +44,7 @@ export default function DeleteCommentDialog({ open, setOpen, deleteComment, comm
                         <Button
                             variant={'secondary'}
                             className="w-full"
-                            formAction={handleDeleteComment}
+                            formAction={formAction}
                             disabled={isPending}
                         >
                             {isPending ? 'Deleting...' : 'Delete'}
@@ -54,6 +53,13 @@ export default function DeleteCommentDialog({ open, setOpen, deleteComment, comm
                     <DialogClose asChild>
                         <Button variant={'destructive'}>Cancel</Button>
                     </DialogClose>
+
+
+                    {state.error && (
+                        <div className="col-span-2">
+                            <ErrorMessage>{state.error}</ErrorMessage>
+                        </div>
+                    )}
                 </div>
             </DialogContent>
         </Dialog>

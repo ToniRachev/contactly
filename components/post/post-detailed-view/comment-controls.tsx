@@ -27,12 +27,14 @@ export default function CommentControls({ setIsEditing, commentId, deleteComment
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <DeleteCommentDialog
-                open={isDeleteDialogOpen}
-                setOpen={setIsDeleteDialogOpen}
-                deleteComment={deleteComment}
-                commentId={commentId}
-            />
+            {isDeleteDialogOpen && (
+                <DeleteCommentDialog
+                    open={isDeleteDialogOpen}
+                    setOpen={setIsDeleteDialogOpen}
+                    deleteComment={deleteComment}
+                    commentId={commentId}
+                />
+            )}
         </div>
     )
 }

@@ -36,12 +36,15 @@ type PostViewProps = {
     post: PostType;
     controls: Controls;
     reaction: () => void;
-    isLikedPost: boolean;
-    comments: CommentType[];
-    addComment: (comment: CommentType) => void;
-    editComment: (commentId: string, newContent: string) => void;
-    deleteComment: (commentId: string) => void;
-    reactionComment: (commentId: string, userId: string, isLikedComment: boolean) => void;
+    commentState: {
+        isLikedPost: boolean;
+        comments: CommentType[];
+        addComment: (comment: CommentType) => void;
+        editComment: (commentId: string, newContent: string) => void;
+        deleteComment: (commentId: string) => void;
+        reactionComment: (commentId: string, userId: string, isLikedComment: boolean) => void;
+        commentsLoading: boolean;
+    }
 }
 
 export function PostDetailedView(
@@ -49,12 +52,7 @@ export function PostDetailedView(
         post,
         controls,
         reaction,
-        isLikedPost,
-        comments,
-        addComment,
-        editComment,
-        deleteComment,
-        reactionComment
+        commentState
     }: Readonly<PostViewProps>) {
     return (
         <Dialog open={controls.open} onOpenChange={controls.setState}>
@@ -70,22 +68,23 @@ export function PostDetailedView(
                     [&::-webkit-scrollbar-thumb]:bg-[#8C8C8C]
                     [&::-webkit-scrollbar-button]:hidden
                 ">
-                    <Post post={post} reaction={reaction} isLikedPost={isLikedPost} />
+                    <Post post={post} reaction={reaction} isLikedPost={commentState.isLikedPost} />
 
                     <Separator className="opacity-25" />
                     <Filter filters={filters} />
 
-                    {comments.map((comment) => (
+
+                    {commentState.comments.map((comment) => (
                         <Comment
                             key={comment.id}
                             comment={comment}
-                            editComment={editComment}
-                            deleteComment={deleteComment}
-                            reactionComment={reactionComment}
+                            editComment={commentState.editComment}
+                            deleteComment={commentState.deleteComment}
+                            reactionComment={commentState.reactionComment}
                         />
                     ))}
 
-                    <CreateComment postId={post.postId} addComment={addComment} />
+                    <CreateComment postId={post.postId} addComment={commentState.addComment} />
                 </div>
             </DialogContent>
         </Dialog>

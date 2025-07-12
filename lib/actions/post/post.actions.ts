@@ -155,12 +155,14 @@ export async function deletePostAction(postId: string) {
 
         return {
             success: true,
+            error: null
         }
 
     } catch (error) {
         console.error('Failed to delete post', error);
         return {
-            success: false
+            success: false,
+            error: MESSAGES.genericError
         }
     }
 }

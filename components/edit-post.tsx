@@ -14,6 +14,7 @@ import { useActionState, useEffect, useState } from "react";
 import { editPostAction } from "@/lib/actions/post/post.actions";
 import { PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
 import { usePosts } from "@/lib/context/posts.context";
+import ErrorMessage from "./error-message";
 
 type EditPostProps = {
     postId: string;
@@ -33,6 +34,8 @@ export default function EditPost({ postId, postContent }: Readonly<EditPostProps
         errors: {} as PostSchemaErrorType,
         success: false
     })
+
+    const error = state.errors.fieldErrors?.body?.[0] ?? state.errors.formErrors?.[0];
 
     useEffect(() => {
         if (state.success) {
@@ -57,6 +60,8 @@ export default function EditPost({ postId, postContent }: Readonly<EditPostProps
                         name="body"
                         defaultValue={state.data.body}
                     />
+
+                    {error && <ErrorMessage className='pt-2'>{error}</ErrorMessage>}
 
                     <div className="grid grid-cols-2 gap-2 pt-4">
                         <Button
