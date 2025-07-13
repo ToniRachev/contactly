@@ -2,9 +2,10 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server"
-import { transformFriendRequestsUsers } from "@/lib/utils/transform";
+import { transformFriendRequestsUsers, transformFriends } from "@/lib/utils/transform";
 import { FriendRequestUserDBType } from "@/lib/types/user";
 import { MESSAGES } from "@/lib/constants/messages";
+import { BaseUserDBType } from "@/lib/types/post";
 
 export async function sendFriendRequest(senderId: string, receiverId: string) {
     const supabase = await createClient();
@@ -91,6 +92,43 @@ export async function deleteFriendRequest(senderId: string, receiverId: string) 
     }
 }
 
+export async function removeFriend(userId: string, friendId: string) {
+    const supabase = await createClient();
+
+    try {
+        await Promise.all([
+            await baseFetcher(
+                supabase.from('friends')
+                    .delete()
+                    .match({
+                        user_id: userId,
+                        friend_id: friendId
+                    })
+            ),
+            baseFetcher(
+                supabase.from('friends')
+                    .delete()
+                    .match({
+                        user_id: friendId,
+                        friend_id: userId
+                    })
+            )
+        ])
+
+        return {
+            success: true,
+            error: null,
+        }
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            error: MESSAGES.genericError,
+        }
+    }
+}
+
 export async function getFriendsSendRequests(userId: string) {
     const supabase = await createClient();
 
@@ -113,4 +151,16 @@ export async function getFriendRequests(userId: string) {
     ) as unknown as FriendRequestUserDBType[];
 
     return transformFriendRequestsUsers(data);
+}
+
+export async function getFriends(userId: string) {
+    const supabase = await createClient();
+
+    const data = await baseFetcher(
+        supabase.from('friends')
+            .select('friend:friend_id(*)')
+            .eq('user_id', userId)
+    ) as unknown as { friend: BaseUserDBType }[];
+
+    return transformFriends(data);
 }
