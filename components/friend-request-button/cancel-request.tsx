@@ -1,8 +1,7 @@
 'use client';
 
-import { cancelFriendRequest } from "@/lib/actions/friendship/friendship.actions";
 import { Button } from "../ui/button";
-import { useActionState, useEffect } from "react";
+import useFriendRequestAction from "@/hooks/useFriendRequestAction";
 
 type CancelRequestProps = {
     senderId: string;
@@ -11,21 +10,15 @@ type CancelRequestProps = {
 }
 
 export default function CancelRequest({ senderId, receiverId, removeSendRequest }: Readonly<CancelRequestProps>) {
-    const actionWrapper = cancelFriendRequest.bind(null, senderId, receiverId);
-
-    const [state, formAction, isPending] = useActionState(actionWrapper, {
-        success: false,
-        message: ''
+    const { formAction, isPending } = useFriendRequestAction({
+        type: 'decline',
+        senderId,
+        receiverId,
+        onSuccess: () => removeSendRequest(receiverId),
     });
 
-    useEffect(() => {
-        if (state.success) {
-            removeSendRequest(receiverId);
-        }
-    }, [state, removeSendRequest, receiverId])
-
     return (
-        <form >
+        <form>
             <Button
                 variant={'destructive'}
                 formAction={formAction}
@@ -35,4 +28,4 @@ export default function CancelRequest({ senderId, receiverId, removeSendRequest 
             </Button>
         </form>
     )
-}   
+}

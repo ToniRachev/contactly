@@ -4,6 +4,7 @@ import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server"
 import { transformFriendRequestsUsers } from "@/lib/utils/transform";
 import { FriendRequestUserDBType } from "@/lib/types/user";
+import { MESSAGES } from "@/lib/constants/messages";
 
 export async function sendFriendRequest(senderId: string, receiverId: string) {
     const supabase = await createClient();
@@ -19,19 +20,51 @@ export async function sendFriendRequest(senderId: string, receiverId: string) {
 
         return {
             success: true,
-            message: 'Friend request sent successfully'
+            error: null
         }
     } catch (error) {
         console.error(error);
 
         return {
             success: false,
-            message: 'Failed to send friend request'
+            error: MESSAGES.genericError
         }
     }
 }
 
-export async function cancelFriendRequest(senderId: string, receiverId: string) {
+export async function acceptFriendRequest(senderId: string, receiverId: string) {
+    const supabase = await createClient();
+
+    try {
+        await baseFetcher(
+            supabase.from('friends')
+                .insert([
+                    { user_id: receiverId, friend_id: senderId },
+                    { user_id: senderId, friend_id: receiverId }
+                ])
+        )
+
+        await baseFetcher(
+            supabase.from('friend_requests')
+                .delete()
+                .match({ sender_id: senderId, receiver_id: receiverId })
+        )
+
+        return {
+            success: true,
+            error: null,
+        }
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            error: MESSAGES.genericError,
+        }
+    }
+}
+
+export async function deleteFriendRequest(senderId: string, receiverId: string) {
     const supabase = await createClient();
 
     try {
@@ -46,14 +79,14 @@ export async function cancelFriendRequest(senderId: string, receiverId: string) 
 
         return {
             success: true,
-            message: 'Friend request cancelled successfully'
+            error: null,
         }
     } catch (error) {
         console.error(error);
 
         return {
             success: false,
-            message: 'Failed to cancel friend request'
+            error: MESSAGES.genericError,
         }
     }
 }

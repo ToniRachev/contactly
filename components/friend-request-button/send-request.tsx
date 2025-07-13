@@ -1,8 +1,7 @@
 'use client';
 
-import { useActionState, useEffect } from "react";
 import { Button } from "../ui/button";
-import { sendFriendRequest } from "@/lib/actions/friendship/friendship.actions";
+import useFriendRequestAction from "@/hooks/useFriendRequestAction";
 
 type SendRequestProps = {
     senderId: string;
@@ -11,18 +10,12 @@ type SendRequestProps = {
 }
 
 export default function SendRequest({ senderId, receiverId, addSendRequest }: Readonly<SendRequestProps>) {
-    const actionWrapper = sendFriendRequest.bind(null, senderId, receiverId);
-
-    const [state, formAction, isPending] = useActionState(actionWrapper, {
-        success: false,
-        message: ''
+    const { formAction, isPending } = useFriendRequestAction({
+        type: 'send',
+        senderId,
+        receiverId,
+        onSuccess: () => addSendRequest(receiverId),
     });
-
-    useEffect(() => {
-        if (state.success) {
-            addSendRequest(receiverId);
-        }
-    }, [state, addSendRequest, receiverId])
 
     return (
         <form>
