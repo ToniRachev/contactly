@@ -51,6 +51,8 @@ export const transformUserData = (user: UserDBType) => {
         fullName: formatFullName(user.first_name, user.last_name),
         avatarUrl: user.avatar_url,
         coverUrl: user.cover_url,
+        presenceStatus: user.presence_status,
+        lastSeen: user.last_seen,
     }
 }
 
