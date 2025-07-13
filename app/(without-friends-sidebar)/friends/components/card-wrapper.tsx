@@ -19,7 +19,7 @@ export default function CardWrapper({ avatar, name, children }: Readonly<CardWra
             <div className="py-4 px-2">
                 <h6>{name}</h6>
 
-                <div className="pt-4 grid grid-cols-2">
+                <div className="pt-4 grid grid-cols-2 gap-2">
                     {children}
                 </div>
             </div>
