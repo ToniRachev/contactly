@@ -1,28 +1,26 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
 import CardWrapper from "./card-wrapper";
 import SectionWrapper from "./section-wrapper";
 import { useFriends } from "@/lib/context/friends.context";
+import AcceptRequest from "./accept-request";
+import DeclineRequest from "./decline-request";
 
 type FriendRequestsProps = {
     friendAvatar: string | null;
     friendName: string;
+    senderId: string;
 }
 
-const CardRequest = ({ friendAvatar, friendName }: Readonly<FriendRequestsProps>) => {
+const CardRequest = ({ friendAvatar, friendName, senderId }: Readonly<FriendRequestsProps>) => {
     return (
         <CardWrapper
             avatar={friendAvatar}
             name={friendName}
         >
             <>
-                <Button variant="secondary" className="mr-2">
-                    Accept
-                </Button>
-                <Button variant="destructive">
-                    Decline
-                </Button>
+                <AcceptRequest senderId={senderId} />
+                <DeclineRequest senderId={senderId} />
             </>
         </CardWrapper>
     )
@@ -38,7 +36,12 @@ export default function FriendRequests() {
 
             <SectionWrapper>
                 {friendRequests.map((request) => (
-                    <CardRequest key={request.id} friendAvatar={request.avatarUrl} friendName={request.fullName} />
+                    <CardRequest
+                        key={request.id}
+                        friendAvatar={request.avatarUrl}
+                        friendName={request.fullName}
+                        senderId={request.id}
+                    />
                 ))}
             </SectionWrapper>
         </div>
