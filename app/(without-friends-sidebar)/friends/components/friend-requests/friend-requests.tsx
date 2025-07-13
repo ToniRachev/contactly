@@ -1,10 +1,10 @@
 'use client';
 
-import CardWrapper from "./card-wrapper";
-import SectionWrapper from "./section-wrapper";
 import { useFriends } from "@/lib/context/friends.context";
 import AcceptRequest from "./accept-request";
 import DeclineRequest from "./decline-request";
+import CardWrapper from "../card-wrapper";
+import SectionWrapper from "../section-wrapper";
 
 type FriendRequestsProps = {
     friendAvatar: string | null;

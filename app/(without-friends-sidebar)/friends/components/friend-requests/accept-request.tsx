@@ -13,8 +13,8 @@ export default function AcceptRequest({ senderId }: Readonly<AcceptRequestProps>
 
     const { formAction, isPending } = useFriendRequestAction({
         type: 'accept',
-        senderId,
-        receiverId: user.id
+        userId: senderId,
+        friendId: user.id
     })
 
     return (
