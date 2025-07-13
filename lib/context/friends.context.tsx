@@ -7,6 +7,7 @@ import { fetchUserProfile } from "../actions/user/user.actions";
 import { BaseUserType } from "../types/post";
 
 type FriendsContextType = {
+    friends: BaseUserType[];
     friendRequests: BaseUserType[];
     sendRequests: string[];
     addSendRequest: (receiverId: string) => void;
@@ -18,14 +19,17 @@ const FriendsContext = createContext<FriendsContextType | null>(null);
 type FriendsContextProviderProps = {
     friendSendRequests: string[];
     initialFriendRequests: BaseUserType[];
+    initialFriends: BaseUserType[];
     children: React.ReactNode;
 }
 
-export default function FriendsContextProvider({ children, friendSendRequests, initialFriendRequests }: Readonly<FriendsContextProviderProps>) {
+export default function FriendsContextProvider({ children, friendSendRequests, initialFriendRequests, initialFriends }: Readonly<FriendsContextProviderProps>) {
     const { user, isAuthenticated } = useUser();
 
     const [friendRequests, setFriendRequests] = useState<BaseUserType[]>(initialFriendRequests);
     const [sendRequests, setSendRequests] = useState<string[]>(friendSendRequests);
+
+    const [friends] = useState<BaseUserType[]>(initialFriends);
 
     const handleAddFriendRequest = useCallback(async (senderId: string) => {
         const sender = await fetchUserProfile(senderId);
@@ -101,11 +105,12 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
     }, [user, isAuthenticated, handleAddFriendRequest, handleRemoveFriendRequest, handleAddSendRequest, handleRemoveSendRequest])
 
     const contextValue: FriendsContextType = useMemo(() => ({
+        friends,
         friendRequests,
         sendRequests,
         addSendRequest: handleAddSendRequest,
         removeSendRequest: handleRemoveSendRequest
-    }), [friendRequests, sendRequests, handleAddSendRequest, handleRemoveSendRequest])
+    }), [friendRequests, sendRequests, handleAddSendRequest, handleRemoveSendRequest, friends])
 
     return (
         <FriendsContext.Provider value={contextValue}>
