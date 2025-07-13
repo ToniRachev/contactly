@@ -29,7 +29,7 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
     const [friendRequests, setFriendRequests] = useState<BaseUserType[]>(initialFriendRequests);
     const [sendRequests, setSendRequests] = useState<string[]>(friendSendRequests);
 
-    const [friends] = useState<BaseUserType[]>(initialFriends);
+    const [friends, setFriends] = useState<BaseUserType[]>(initialFriends);
 
     const handleAddFriendRequest = useCallback(async (senderId: string) => {
         const sender = await fetchUserProfile(senderId);
@@ -49,6 +49,16 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
     const handleRemoveSendRequest = useCallback(async (receiverId: string) => {
         setSendRequests(prev => prev.filter(id => id !== receiverId));
     }, [setSendRequests])
+
+    const handleAddFriend = useCallback(async (friendId: string) => {
+        const friend = await fetchUserProfile(friendId);
+
+        setFriends(prev => [...prev, friend]);
+    }, [setFriends])
+
+    const handleRemoveFriend = useCallback((friendId: string) => {
+        setFriends(prev => prev.filter(friend => friend.id !== friendId));
+    }, [setFriends])
 
     useEffect(() => {
         if (!isAuthenticated) return;
@@ -103,6 +113,42 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
             sendChannel.unsubscribe();
         }
     }, [user, isAuthenticated, handleAddFriendRequest, handleRemoveFriendRequest, handleAddSendRequest, handleRemoveSendRequest])
+
+    useEffect(() => {
+        if (!isAuthenticated) return;
+        const supabase = createClient();
+
+        const friendsChannel = supabase.channel('friends-channel')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'friends',
+                    filter: `user_id=eq.${user?.id}`
+                },
+                (payload) => {
+                    handleAddFriend(payload.new.friend_id);
+                }
+            )
+            .on(
+                'postgres_changes',
+                {
+                    event: 'DELETE',
+                    schema: 'public',
+                    table: 'friends',
+                    filter: `user_id=eq.${user?.id}`
+                },
+                (payload) => {
+                    handleRemoveFriend(payload.old.friend_id);
+                }
+            )
+            .subscribe();
+
+        return () => {
+            friendsChannel.unsubscribe();
+        }
+    }, [user, isAuthenticated, handleAddFriend, handleRemoveFriend])
 
     const contextValue: FriendsContextType = useMemo(() => ({
         friends,
