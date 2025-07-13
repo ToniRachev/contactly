@@ -15,11 +15,10 @@ const events = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart', 'moused
 export default function PresenceProvider({ children }: Readonly<{ children: React.ReactNode }>) {
     const { user } = useAuthenticatedUser();
     const idleTimer = useRef<NodeJS.Timeout | null>(null);
-    const [status, setStatus] = useState<PresenceStatusType>('online');
+    const [status, setStatus] = useState<PresenceStatusType | null>(null);
 
     const updateStatus = useCallback(async (newStatus: PresenceStatusType) => {
         const supabase = createClient();
-
         if (newStatus === status) return;
         setStatus(newStatus);
 
@@ -66,7 +65,6 @@ export default function PresenceProvider({ children }: Readonly<{ children: Reac
             events.forEach(event => {
                 window.removeEventListener(event, handleActivity);
             });
-            window.removeEventListener('beforeunload', handleBeforeUnload);
         }
     }, [user, updateStatus, handleActivity, handleBeforeUnload])
 
