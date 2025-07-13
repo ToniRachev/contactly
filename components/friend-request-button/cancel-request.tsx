@@ -6,15 +6,13 @@ import useFriendRequestAction from "@/hooks/useFriendRequestAction";
 type CancelRequestProps = {
     senderId: string;
     receiverId: string;
-    removeSendRequest: (receiverId: string) => void;
 }
 
-export default function CancelRequest({ senderId, receiverId, removeSendRequest }: Readonly<CancelRequestProps>) {
+export default function CancelRequest({ senderId, receiverId }: Readonly<CancelRequestProps>) {
     const { formAction, isPending } = useFriendRequestAction({
         type: 'decline',
         userId: senderId,
         friendId: receiverId,
-        onSuccess: () => removeSendRequest(receiverId),
     });
 
     return (
