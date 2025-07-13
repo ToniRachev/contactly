@@ -4,40 +4,40 @@ import {
     SidebarHeader,
 } from '@/components/ui/sidebar'
 import UserAvatarWithStatus from './user-avatar-with-status';
-import { StatusType } from '@/lib/types/user';
+import { PresenceStatusType } from '@/lib/types/user';
 
 const friends = [
     {
         avatar: '/user_avatar.webp',
         name: 'Ava Morales',
-        status: 'online' as StatusType
+        status: 'online' as PresenceStatusType
     },
     {
         avatar: '/user_avatar_2.png',
         name: 'Zoe Carter',
-        status: 'online' as StatusType
+        status: 'idle' as PresenceStatusType
     },
     {
         avatar: '/user_avatar_3.png',
         name: 'Maya Sinclair',
-        status: 'online' as StatusType
+        status: 'online' as PresenceStatusType
     },
     {
         avatar: '/user_avatar_4.png',
         name: 'Elise Romero',
-        status: 'offline' as StatusType
+        status: 'offline' as PresenceStatusType
     },
     {
         avatar: '/user_avatar_5.png',
         name: 'Isla Monroe',
-        status: 'offline' as StatusType
+        status: 'offline' as PresenceStatusType
     },
 ]
 
 type FriendCardProps = {
     avatar: string;
     name: string;
-    status: StatusType;
+    status: PresenceStatusType;
 }
 
 const FriendCard = ({ avatar, name, status }: FriendCardProps) => {
