@@ -1,3 +1,5 @@
+'use client';
+
 import {
     Sidebar,
     SidebarContent,
@@ -5,37 +7,10 @@ import {
 } from '@/components/ui/sidebar'
 import UserAvatarWithStatus from './user-avatar-with-status';
 import { PresenceStatusType } from '@/lib/types/user';
-
-const friends = [
-    {
-        avatar: '/user_avatar.webp',
-        name: 'Ava Morales',
-        status: 'online' as PresenceStatusType
-    },
-    {
-        avatar: '/user_avatar_2.png',
-        name: 'Zoe Carter',
-        status: 'idle' as PresenceStatusType
-    },
-    {
-        avatar: '/user_avatar_3.png',
-        name: 'Maya Sinclair',
-        status: 'online' as PresenceStatusType
-    },
-    {
-        avatar: '/user_avatar_4.png',
-        name: 'Elise Romero',
-        status: 'offline' as PresenceStatusType
-    },
-    {
-        avatar: '/user_avatar_5.png',
-        name: 'Isla Monroe',
-        status: 'offline' as PresenceStatusType
-    },
-]
+import { useFriends } from '@/lib/context/friends.context';
 
 type FriendCardProps = {
-    avatar: string;
+    avatar: string | null;
     name: string;
     status: PresenceStatusType;
 }
@@ -53,6 +28,8 @@ const FriendCard = ({ avatar, name, status }: FriendCardProps) => {
 }
 
 export default function FriendsSidebar() {
+    const { friends } = useFriends();
+
     return (
         <Sidebar className='!border-0' side='right'>
             <SidebarHeader className='py-12 pl-4'>
@@ -60,7 +37,7 @@ export default function FriendsSidebar() {
             </SidebarHeader>
             <SidebarContent className='flex gap-6  pl-8'>
                 {friends.map((friend) => (
-                    <FriendCard key={friend.name} {...friend} />
+                    <FriendCard key={friend.id} avatar={friend.avatarUrl} name={friend.fullName} status={friend.presenceStatus} />
                 ))}
             </SidebarContent>
         </Sidebar>
