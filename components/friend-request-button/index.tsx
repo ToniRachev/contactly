@@ -4,6 +4,7 @@ import { useFriends } from "@/lib/context/friends.context";
 import CancelRequest from "./cancel-request";
 import SendRequest from "./send-request";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
+import PendingFriendRequest from "./pending-friend-request";
 
 type FriendRequestButtonProps = {
     receiverId: string;
@@ -14,8 +15,15 @@ export default function FriendRequestButton({ receiverId }: Readonly<FriendReque
     const {
         sendRequests,
         addSendRequest,
-        removeSendRequest
+        removeSendRequest,
+        friendRequests
     } = useFriends();
+
+    const hasFriendRequest = friendRequests.some(request => request.id === receiverId);
+
+    if (hasFriendRequest) {
+        return <PendingFriendRequest receiverId={receiverId} />
+    }
 
     const isFriendRequestSent = sendRequests.includes(receiverId);
 
