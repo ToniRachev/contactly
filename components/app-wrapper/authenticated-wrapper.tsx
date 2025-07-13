@@ -4,6 +4,7 @@ import UserProvider from "@/lib/context/user.context";
 import { ReactNode } from "react";
 import { SidebarProvider } from "../ui/sidebar";
 import FriendsContextProvider from "@/lib/context/friends.context";
+import PresenceProvider from "@/lib/context/presence.context";
 
 type AuthenticatedWrapperProps = {
     children: ReactNode;
@@ -21,17 +22,19 @@ export default async function AuthenticatedWrapper({ children, userId }: Readonl
 
     return (
         <UserProvider userData={userData}>
-            <FriendsContextProvider
-                friendSendRequests={friedsSendRequests}
-                initialFriendRequests={friendRequests}
-                initialFriends={friends}
-            >
-                <SidebarProvider>
-                    <main className="w-full">
-                        {children}
-                    </main>
-                </SidebarProvider>
-            </FriendsContextProvider>
+            <PresenceProvider>
+                <FriendsContextProvider
+                    friendSendRequests={friedsSendRequests}
+                    initialFriendRequests={friendRequests}
+                    initialFriends={friends}
+                >
+                    <SidebarProvider>
+                        <main className="w-full">
+                            {children}
+                        </main>
+                    </SidebarProvider>
+                </FriendsContextProvider>
+            </PresenceProvider>
         </UserProvider>
     )
 }
