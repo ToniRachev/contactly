@@ -12,8 +12,8 @@ type SendRequestProps = {
 export default function SendRequest({ senderId, receiverId, addSendRequest }: Readonly<SendRequestProps>) {
     const { formAction, isPending } = useFriendRequestAction({
         type: 'send',
-        senderId,
-        receiverId,
+        userId: senderId,
+        friendId: receiverId,
         onSuccess: () => addSendRequest(receiverId),
     });
 
