@@ -1,6 +1,6 @@
 import UserAvatarWithStatus from "@/components/user-avatar-with-status";
 import Message from "./message";
-import { StatusType } from "@/lib/types/user";
+import { PresenceStatusType } from "@/lib/types/user";
 
 type MessageType = {
     id: string;
@@ -13,14 +13,14 @@ type ConversationProps = {
     conversation: {
         friend: {
             avatar: string;
-            status: StatusType;
+            status: PresenceStatusType;
             name: string;
         },
         messages: MessageType[];
     }
 }
 
-export default function Conversation({ conversation }: ConversationProps) {
+export default function Conversation({ conversation }: Readonly<ConversationProps>) {
     return (
         <div className="w-full">
             <div className="flex items-center gap-4">

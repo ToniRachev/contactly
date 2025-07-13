@@ -1,17 +1,19 @@
+import { PresenceStatusType } from "@/lib/types/user";
 import Avatar from "./user-avatar";
 import { cva } from "class-variance-authority";
 
 type UserAvatarWithStatusProps = {
     avatar: string;
     size?: 'sm' | 'md';
-    status: 'online' | 'offline';
+    status: PresenceStatusType;
 }
 
 const statusDot = cva('absolute bottom-0 right-1 rounded-full', {
     variants: {
         status: {
             online: 'bg-green-500',
-            offline: 'bg-gray-300'
+            offline: 'bg-gray-300',
+            idle: 'bg-yellow-500'
         },
         size: {
             sm: 'w-2 h-2',
