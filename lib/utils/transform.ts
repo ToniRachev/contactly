@@ -17,7 +17,9 @@ export const transformBaseUser = (user: BaseUserDBType) => ({
     lastName: user.last_name,
     createdAt: user.created_at,
     fullName: formatFullName(user.first_name, user.last_name),
-    avatarUrl: user.avatar_url
+    avatarUrl: user.avatar_url,
+    presenceStatus: user.presence_status,
+    lastSeen: user.last_seen
 })
 
 export const transformPosts = (posts: PostDBType[], userId?: string): PostType[] => {

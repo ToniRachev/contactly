@@ -106,8 +106,6 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
             )
             .subscribe();
 
-
-
         return () => {
             receiveChannel.unsubscribe();
             sendChannel.unsubscribe();
