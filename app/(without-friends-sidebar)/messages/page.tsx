@@ -1,9 +1,8 @@
 import Search from "@/components/search";
-import { StatusType } from "@/lib/types/user";
 import MessageCard from "./components/message-card";
 import Conversation from "./components/conversation";
 import MessageInput from "../../../components/message-input";
-
+import { PresenceStatusType } from "@/lib/types/user";
 
 const messages = [
     {
@@ -36,7 +35,7 @@ const conversation = {
     friend: {
         avatar: '/user_avatar.webp',
         name: 'Elias Monroe',
-        status: 'online' as StatusType
+        status: 'online' as PresenceStatusType
     },
     messages: [
         {

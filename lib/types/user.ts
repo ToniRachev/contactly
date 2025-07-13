@@ -1,6 +1,8 @@
 import { Session, User } from "@supabase/supabase-js"
 import { BaseUserDBType } from "./post";
 
+export type PresenceStatusType = 'online' | 'offline' | 'idle';
+
 export type BiographyType = {
     school: string | null,
     hometown: string | null,
@@ -31,6 +33,8 @@ export type UserDBType = {
     biography: UserBiographyDBType[],
     avatar_url: string | null;
     cover_url: string | null;
+    presence_status: PresenceStatusType;
+    last_seen: Date;
 }
 
 export type UserType = {
@@ -43,9 +47,9 @@ export type UserType = {
     fullName: string;
     avatarUrl: string | null;
     coverUrl: string | null;
+    presenceStatus: PresenceStatusType;
+    lastSeen: Date;
 }
-
-export type StatusType = 'online' | 'offline';
 
 export type FriendRequestUserDBType = {
     user: BaseUserDBType;
