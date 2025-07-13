@@ -50,34 +50,55 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
         if (!isAuthenticated) return;
         const supabase = createClient();
 
-        const channels = supabase.channel('custom-all-channel')
+        const receiveChannel = supabase.channel('receive-channel')
             .on(
                 'postgres_changes',
                 {
-                    event: '*',
+                    event: 'INSERT',
                     schema: 'public',
                     table: 'friend_requests',
                     filter: `receiver_id=eq.${user?.id}`
                 },
                 (payload) => {
-                    switch (payload.eventType) {
-                        case 'INSERT': {
-                            handleAddFriendRequest(payload.new.sender_id);
-                            break;
-                        }
-                        case 'DELETE':
-                            handleRemoveFriendRequest(payload.old.sender_id);
-                            break;
-                    }
+                    handleAddFriendRequest(payload.new.sender_id);
                 }
             )
-            .subscribe()
+            .on(
+                'postgres_changes',
+                {
+                    event: 'DELETE',
+                    schema: 'public',
+                    table: 'friend_requests',
+                    filter: `receiver_id=eq.${user?.id}`
+                },
+                (payload) => {
+                    handleRemoveFriendRequest(payload.old.sender_id);
+                }
+            )
+            .subscribe();
+
+        const sendChannel = supabase.channel('send-channel')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'DELETE',
+                    schema: 'public',
+                    table: 'friend_requests',
+                    filter: `sender_id=eq.${user?.id}`
+                },
+                (payload) => {
+                    handleRemoveSendRequest(payload.old.receiver_id);
+                }
+            )
+            .subscribe();
+
 
 
         return () => {
-            channels.unsubscribe();
+            receiveChannel.unsubscribe();
+            sendChannel.unsubscribe();
         }
-    }, [user, isAuthenticated, handleAddFriendRequest, handleRemoveFriendRequest])
+    }, [user, isAuthenticated, handleAddFriendRequest, handleRemoveFriendRequest, handleAddSendRequest, handleRemoveSendRequest])
 
     const contextValue: FriendsContextType = useMemo(() => ({
         friendRequests,
