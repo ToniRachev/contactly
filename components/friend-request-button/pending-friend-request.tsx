@@ -14,14 +14,14 @@ export default function PendingFriendRequest({ receiverId }: Readonly<PendingFri
 
     const { formAction: declineFormAction, isPending: isDeclinePending } = useFriendRequestAction({
         type: 'decline',
-        senderId: receiverId,
-        receiverId: user.id
+        userId: receiverId,
+        friendId: user.id
     })
 
     const { formAction: acceptFormAction, isPending: isAcceptPending } = useFriendRequestAction({
         type: 'accept',
-        senderId: receiverId,
-        receiverId: user.id
+        userId: receiverId,
+        friendId: user.id
     })
 
     return (
