@@ -12,8 +12,8 @@ type CancelRequestProps = {
 export default function CancelRequest({ senderId, receiverId, removeSendRequest }: Readonly<CancelRequestProps>) {
     const { formAction, isPending } = useFriendRequestAction({
         type: 'decline',
-        senderId,
-        receiverId,
+        userId: senderId,
+        friendId: receiverId,
         onSuccess: () => removeSendRequest(receiverId),
     });
 

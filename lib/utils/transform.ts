@@ -1,6 +1,6 @@
 import { formatFullName } from "@/lib/utils"
 import { BaseUserDBType, CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "@/lib/types/post"
-import { FriendRequestUserDBType, UserDBType } from "@/lib/types/user"
+import { UserDBType } from "@/lib/types/user"
 
 const extractCount = (item: CountType) => {
     return item?.[0]?.count ?? 0
@@ -10,14 +10,14 @@ const extractLikes = (likes: LikesType) => {
     return likes.map((like) => like.user)
 }
 
-export const transformBaseUser = (author: BaseUserDBType) => ({
-    id: author.id,
-    email: author.email,
-    firstName: author.first_name,
-    lastName: author.last_name,
-    createdAt: author.created_at,
-    fullName: formatFullName(author.first_name, author.last_name),
-    avatarUrl: author.avatar_url
+export const transformBaseUser = (user: BaseUserDBType) => ({
+    id: user.id,
+    email: user.email,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    createdAt: user.created_at,
+    fullName: formatFullName(user.first_name, user.last_name),
+    avatarUrl: user.avatar_url
 })
 
 export const transformPosts = (posts: PostDBType[], userId?: string): PostType[] => {
@@ -67,8 +67,10 @@ export const transformPostComments = (comments: CommentDBType[]): CommentType[] 
     }))
 }
 
-
-
-export const transformFriendRequestsUsers = (users: FriendRequestUserDBType[]) => {
+export const transformFriendRequestsUsers = (users: { user: BaseUserDBType }[]) => {
     return users.map((user) => transformBaseUser(user.user));
+}
+
+export const transformFriends = (friends: { friend: BaseUserDBType }[]) => {
+    return friends.map((friend) => transformBaseUser(friend.friend));
 }
