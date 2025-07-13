@@ -3,7 +3,7 @@ import Avatar from "./user-avatar";
 import { cva } from "class-variance-authority";
 
 type UserAvatarWithStatusProps = {
-    avatar: string;
+    avatar: string | null;
     size?: 'sm' | 'md';
     status: PresenceStatusType;
 }

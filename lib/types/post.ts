@@ -1,3 +1,5 @@
+import { PresenceStatusType } from "./user";
+
 export type CountType = { count: number }[];
 export type LikesType = { user: string }[];
 
@@ -8,6 +10,8 @@ export type BaseUserDBType = {
     last_name: string;
     created_at: string;
     avatar_url: string | null;
+    presence_status: PresenceStatusType;
+    last_seen: Date;
 }
 
 export type BaseUserType = {
@@ -18,6 +22,8 @@ export type BaseUserType = {
     createdAt: string;
     fullName: string;
     avatarUrl: string | null;
+    presenceStatus: PresenceStatusType;
+    lastSeen: Date;
 }
 
 export type CommentDBType = {
