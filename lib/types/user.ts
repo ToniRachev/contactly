@@ -1,7 +1,8 @@
 import { Session, User } from "@supabase/supabase-js"
 import { BaseUserDBType } from "./post";
+import { USER_PRESENCE_STATUS } from "../constants/user";
 
-export type PresenceStatusType = 'online' | 'offline' | 'idle';
+export type PresenceStatusType = typeof USER_PRESENCE_STATUS[keyof typeof USER_PRESENCE_STATUS];
 
 export type BiographyType = {
     school: string | null,
