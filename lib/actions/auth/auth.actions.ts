@@ -8,6 +8,9 @@ import { isAuthApiError } from "@supabase/supabase-js";
 import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
 import { parseAndValidateFormData } from "@/lib/utils";
+import { updateUserPresenceStatus } from "../user/user.actions";
+import { USER_PRESENCE_STATUS } from "@/lib/constants/user";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 type LoginStateType = {
     data: LoginSchemaType,
@@ -121,8 +124,21 @@ export async function signup(state: SignupActionType, formData: FormData) {
 export async function signout() {
     const supabase = await createClient();
 
-    await supabase.auth.signOut();
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
 
-    revalidatePath('/', 'layout');
-    redirect('/login');
+        if (user) {
+            await updateUserPresenceStatus(user.id, USER_PRESENCE_STATUS.OFFLINE);
+        }
+
+        supabase.auth.signOut();
+
+        revalidatePath('/', 'layout');
+        redirect('/login');
+    } catch (error) {
+        if (isRedirectError(error)) {
+            throw error;
+        }
+        console.error('Failed to sign out', error);
+    }
 }
