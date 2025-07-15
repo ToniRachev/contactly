@@ -4,6 +4,7 @@ import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { useAuthenticatedUser } from "./user.context";
 import { PresenceStatusType } from "../types/user";
 import { createClient } from "../utils/supabase/client";
+import { USER_PRESENCE_STATUS } from "../constants/user";
 
 const PresenceContext = createContext(null);
 
@@ -20,13 +21,14 @@ export default function PresenceProvider({ children }: Readonly<{ children: Reac
     const updateStatus = useCallback(async (newStatus: PresenceStatusType) => {
         const supabase = createClient();
         if (newStatus === status) return;
-        setStatus(newStatus);
 
         try {
             await supabase.from('users').update({
                 presence_status: newStatus,
                 last_seen: new Date()
             }).eq('id', user.id);
+            setStatus(newStatus);
+
         } catch (error) {
             console.error('Error updating presence status:', error);
         }
@@ -36,22 +38,22 @@ export default function PresenceProvider({ children }: Readonly<{ children: Reac
         if (idleTimer.current) {
             clearTimeout(idleTimer.current);
         }
-        updateStatus('online');
+        updateStatus(USER_PRESENCE_STATUS.ONLINE);
 
         idleTimer.current = setTimeout(() => {
-            updateStatus('idle');
+            updateStatus(USER_PRESENCE_STATUS.IDLE);
         }, IDLE_TIME);
     }, [updateStatus])
 
     const handleBeforeUnload = useCallback(() => {
-        updateStatus('offline');
+        updateStatus(USER_PRESENCE_STATUS.OFFLINE);
     }, [updateStatus])
 
     useEffect(() => {
-        updateStatus('online');
+        updateStatus(USER_PRESENCE_STATUS.ONLINE);
 
         const heartbeat = setInterval(async () => {
-            updateStatus('online');
+            updateStatus(USER_PRESENCE_STATUS.ONLINE);
         }, POLL_INTERVAL);
 
         events.forEach(event => {
