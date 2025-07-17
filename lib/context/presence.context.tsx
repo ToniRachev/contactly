@@ -8,7 +8,7 @@ import { USER_PRESENCE_STATUS } from "../constants/user";
 
 const moveEvents = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart', 'mousedown', 'touchmove'];
 
-const IDLE_TIME = 1000 * 60 * 0.05;
+const IDLE_TIME = 1000 * 60 * 5;
 
 const PresenceContext = createContext(null);
 
