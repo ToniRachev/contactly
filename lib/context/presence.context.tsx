@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useEffect, useRef } from "react";
 import { PresenceStatusType } from "../types/user";
 import { useAuthenticatedUser } from "./user.context";
 import { updateUserStatus } from "../client/user.client";
@@ -8,26 +8,25 @@ import { USER_PRESENCE_STATUS } from "../constants/user";
 
 const moveEvents = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart', 'mousedown', 'touchmove'];
 
-const IDLE_TIME = 1000 * 60 * 0.1;
+const IDLE_TIME = 1000 * 60 * 0.05;
 
 const PresenceContext = createContext(null);
 
 export default function PresenceProvider({ children }: Readonly<{ children: React.ReactNode }>) {
     const { user } = useAuthenticatedUser();
-    const [status, setStatus] = useState<PresenceStatusType | null>(null);
+    const statusRef = useRef<PresenceStatusType | null>(null);
     const idleTimer = useRef<NodeJS.Timeout | null>(null);
 
     const updateStatus = useCallback(async (newStatus: PresenceStatusType) => {
-        if (status === newStatus) return;
-        console.log('updateStatus', newStatus);
+        if (statusRef.current === newStatus) return;
 
         try {
             await updateUserStatus(newStatus, user.id);
-            setStatus(newStatus);
+            statusRef.current = newStatus;
         } catch (error) {
             console.error(error);
         }
-    }, [status, user.id])
+    }, [user.id])
 
     const setUserOffline = useCallback(() => {
         updateStatus(USER_PRESENCE_STATUS.OFFLINE);
@@ -62,8 +61,11 @@ export default function PresenceProvider({ children }: Readonly<{ children: Reac
             moveEvents.forEach(event => {
                 window.removeEventListener(event, handleActivity);
             });
+            if (idleTimer.current) {
+                clearTimeout(idleTimer.current);
+            }
         }
-    }, [])
+    }, [handleActivity, setUserOffline, updateStatus])
 
     return (
         <PresenceContext.Provider value={null}>
