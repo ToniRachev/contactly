@@ -6,15 +6,13 @@ import useFriendRequestAction from "@/hooks/useFriendRequestAction";
 type SendRequestProps = {
     senderId: string;
     receiverId: string;
-    addSendRequest: (receiverId: string) => void;
 }
 
-export default function SendRequest({ senderId, receiverId, addSendRequest }: Readonly<SendRequestProps>) {
+export default function SendRequest({ senderId, receiverId }: Readonly<SendRequestProps>) {
     const { formAction, isPending } = useFriendRequestAction({
         type: 'send',
         userId: senderId,
         friendId: receiverId,
-        onSuccess: () => addSendRequest(receiverId),
     });
 
     return (

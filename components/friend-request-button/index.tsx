@@ -14,8 +14,6 @@ export default function FriendRequestButton({ receiverId }: Readonly<FriendReque
     const { user } = useAuthenticatedUser();
     const {
         sendRequests,
-        addSendRequest,
-        removeSendRequest,
         friendRequests
     } = useFriends();
 
@@ -28,8 +26,8 @@ export default function FriendRequestButton({ receiverId }: Readonly<FriendReque
     const isFriendRequestSent = sendRequests.includes(receiverId);
 
     if (isFriendRequestSent) {
-        return <CancelRequest senderId={user.id} receiverId={receiverId} removeSendRequest={removeSendRequest} />
+        return <CancelRequest senderId={user.id} receiverId={receiverId} />
     }
 
-    return <SendRequest senderId={user.id} receiverId={receiverId} addSendRequest={addSendRequest} />
+    return <SendRequest senderId={user.id} receiverId={receiverId} />
 }

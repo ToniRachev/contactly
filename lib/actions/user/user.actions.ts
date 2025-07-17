@@ -2,7 +2,7 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
-import { UserDBType } from "@/lib/types/user";
+import { PresenceStatusType, UserDBType } from "@/lib/types/user";
 import { transformUserData } from "@/lib/utils/transform";
 import {
     UpdateHometownSchemaType,
@@ -177,4 +177,13 @@ export async function deleteUserBioFieldAction(field: string) {
             success: false
         }
     }
+}
+
+export async function updateUserPresenceStatus(userId: string, status: PresenceStatusType) {
+    const supabase = await createClient();
+    await baseFetcher(
+        supabase.from('users')
+            .update({ presence_status: status })
+            .eq('id', userId)
+    )
 }

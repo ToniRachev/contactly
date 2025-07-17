@@ -1,35 +1,25 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useUser } from "./user.context";
+import { useAuthenticatedUser } from "./user.context";
 import { createClient } from "../utils/supabase/client";
 import { fetchUserProfile } from "../actions/user/user.actions";
 import { BaseUserType } from "../types/post";
+import { PresenceStatusType } from "../types/user";
 
 type FriendsContextType = {
     friends: BaseUserType[];
     friendRequests: BaseUserType[];
     sendRequests: string[];
-    addSendRequest: (receiverId: string) => void;
-    removeSendRequest: (receiverId: string) => void;
 }
 
-const FriendsContext = createContext<FriendsContextType | null>(null);
-
-type FriendsContextProviderProps = {
-    friendSendRequests: string[];
-    initialFriendRequests: BaseUserType[];
-    initialFriends: BaseUserType[];
-    children: React.ReactNode;
-}
-
-export default function FriendsContextProvider({ children, friendSendRequests, initialFriendRequests, initialFriends }: Readonly<FriendsContextProviderProps>) {
-    const { user, isAuthenticated } = useUser();
-
+function useFriendRequestSubscription(
+    initialFriendRequests: BaseUserType[],
+    initialSendRequests: string[],
+    userId: string
+) {
     const [friendRequests, setFriendRequests] = useState<BaseUserType[]>(initialFriendRequests);
-    const [sendRequests, setSendRequests] = useState<string[]>(friendSendRequests);
-
-    const [friends, setFriends] = useState<BaseUserType[]>(initialFriends);
+    const [sendRequests, setSendRequests] = useState<string[]>(initialSendRequests);
 
     const handleAddFriendRequest = useCallback(async (senderId: string) => {
         const sender = await fetchUserProfile(senderId);
@@ -50,18 +40,8 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
         setSendRequests(prev => prev.filter(id => id !== receiverId));
     }, [setSendRequests])
 
-    const handleAddFriend = useCallback(async (friendId: string) => {
-        const friend = await fetchUserProfile(friendId);
-
-        setFriends(prev => [...prev, friend]);
-    }, [setFriends])
-
-    const handleRemoveFriend = useCallback((friendId: string) => {
-        setFriends(prev => prev.filter(friend => friend.id !== friendId));
-    }, [setFriends])
 
     useEffect(() => {
-        if (!isAuthenticated) return;
         const supabase = createClient();
 
         const receiveChannel = supabase.channel('receive-channel')
@@ -71,7 +51,7 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
                     event: 'INSERT',
                     schema: 'public',
                     table: 'friend_requests',
-                    filter: `receiver_id=eq.${user?.id}`
+                    filter: `receiver_id=eq.${userId}`
                 },
                 (payload) => {
                     handleAddFriendRequest(payload.new.sender_id);
@@ -83,7 +63,7 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
                     event: 'DELETE',
                     schema: 'public',
                     table: 'friend_requests',
-                    filter: `receiver_id=eq.${user?.id}`
+                    filter: `receiver_id=eq.${userId}`
                 },
                 (payload) => {
                     handleRemoveFriendRequest(payload.old.sender_id);
@@ -95,10 +75,22 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
             .on(
                 'postgres_changes',
                 {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'friend_requests',
+                    filter: `sender_id=eq.${userId}`
+                },
+                (payload) => {
+                    handleAddSendRequest(payload.new.receiver_id);
+                }
+            )
+            .on(
+                'postgres_changes',
+                {
                     event: 'DELETE',
                     schema: 'public',
                     table: 'friend_requests',
-                    filter: `sender_id=eq.${user?.id}`
+                    filter: `sender_id=eq.${userId}`
                 },
                 (payload) => {
                     handleRemoveSendRequest(payload.old.receiver_id);
@@ -110,10 +102,28 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
             receiveChannel.unsubscribe();
             sendChannel.unsubscribe();
         }
-    }, [user, isAuthenticated, handleAddFriendRequest, handleRemoveFriendRequest, handleAddSendRequest, handleRemoveSendRequest])
+    }, [handleAddFriendRequest, handleRemoveFriendRequest, handleAddSendRequest, handleRemoveSendRequest, userId])
+
+    return {
+        friendRequests,
+        sendRequests,
+    }
+}
+
+function useFriendSubscription(initialFriends: BaseUserType[], userId: string) {
+    const [friends, setFriends] = useState<BaseUserType[]>(initialFriends);
+
+    const handleAddFriend = useCallback(async (friendId: string) => {
+        const friend = await fetchUserProfile(friendId);
+
+        setFriends(prev => [...prev, friend]);
+    }, [setFriends])
+
+    const handleRemoveFriend = useCallback((friendId: string) => {
+        setFriends(prev => prev.filter(friend => friend.id !== friendId));
+    }, [setFriends])
 
     useEffect(() => {
-        if (!isAuthenticated) return;
         const supabase = createClient();
 
         const friendsChannel = supabase.channel('friends-channel')
@@ -123,7 +133,7 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
                     event: 'INSERT',
                     schema: 'public',
                     table: 'friends',
-                    filter: `user_id=eq.${user?.id}`
+                    filter: `user_id=eq.${userId}`
                 },
                 (payload) => {
                     handleAddFriend(payload.new.friend_id);
@@ -135,7 +145,7 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
                     event: 'DELETE',
                     schema: 'public',
                     table: 'friends',
-                    filter: `user_id=eq.${user?.id}`
+                    filter: `user_id=eq.${userId}`
                 },
                 (payload) => {
                     handleRemoveFriend(payload.old.friend_id);
@@ -146,15 +156,75 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
         return () => {
             friendsChannel.unsubscribe();
         }
-    }, [user, isAuthenticated, handleAddFriend, handleRemoveFriend])
+    }, [handleAddFriend, handleRemoveFriend, userId])
+
+    return {
+        friends,
+        setFriends
+    }
+}
+
+function useFriendPresenceSubscription(
+    userId: string,
+    friendsIds: string[],
+    handleUpdateFriendPresenceStatus: (friendId: string, presenceStatus: PresenceStatusType, lastSeen: Date) => void) {
+    useEffect(() => {
+        const supabase = createClient();
+
+        const presenceChannel = supabase.channel('presence-channel')
+            .on('postgres_changes', {
+                event: 'UPDATE',
+                schema: 'public',
+                table: 'users',
+                filter: `id=in.(${friendsIds.join(', ')})`
+            },
+                (payload) => {
+                    handleUpdateFriendPresenceStatus(payload.new.id, payload.new.presence_status, payload.new.last_seen);
+                })
+            .subscribe();
+
+        return () => {
+            presenceChannel.unsubscribe();
+        }
+    }, [userId, friendsIds, handleUpdateFriendPresenceStatus])
+}
+
+const FriendsContext = createContext<FriendsContextType | null>(null);
+
+type FriendsContextProviderProps = {
+    friendSendRequests: string[];
+    initialFriendRequests: BaseUserType[];
+    initialFriends: BaseUserType[];
+    children: React.ReactNode;
+}
+
+export default function FriendsContextProvider({ children, friendSendRequests, initialFriendRequests, initialFriends }: Readonly<FriendsContextProviderProps>) {
+    const { user } = useAuthenticatedUser();
+
+    const { friendRequests, sendRequests } = useFriendRequestSubscription(initialFriendRequests, friendSendRequests, user.id);
+    const { friends, setFriends } = useFriendSubscription(initialFriends, user.id);
+
+    const handleUpdateFriendPresenceStatus = useCallback((friendId: string, presenceStatus: PresenceStatusType, lastSeen: Date) => {
+        setFriends((prevState) => {
+            const friendIndex = prevState.findIndex(friend => friend.id === friendId);
+            if (friendIndex === -1) return prevState;
+
+            const friend = { ...prevState[friendIndex] };
+            friend.presenceStatus = presenceStatus;
+            friend.lastSeen = lastSeen;
+
+            return [...prevState.slice(0, friendIndex), friend, ...prevState.slice(friendIndex + 1)];
+        })
+    }, [setFriends])
+
+    useFriendPresenceSubscription(user.id, friends.map(friend => friend.id), handleUpdateFriendPresenceStatus);
+
 
     const contextValue: FriendsContextType = useMemo(() => ({
         friends,
         friendRequests,
         sendRequests,
-        addSendRequest: handleAddSendRequest,
-        removeSendRequest: handleRemoveSendRequest
-    }), [friendRequests, sendRequests, handleAddSendRequest, handleRemoveSendRequest, friends])
+    }), [friendRequests, sendRequests, friends])
 
     return (
         <FriendsContext.Provider value={contextValue}>

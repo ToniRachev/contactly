@@ -11,15 +11,19 @@ import clsx from "clsx";
 import { postReaction } from "@/lib/actions/likes/likes.actions";
 import ReactionItem from "../reaction-item";
 import FriendRequestButton from "../friend-request-button";
+import { useFriends } from "@/lib/context/friends.context";
 
 type PostAuthorProps = {
     post: PostType;
+    isFriendWithPostAuthor: boolean;
 }
 
-const PostAuthor = ({ post }: PostAuthorProps) => {
+const PostAuthor = ({ post, isFriendWithPostAuthor }: PostAuthorProps) => {
     let controls;
 
-    if (post.postOwner) {
+    if (isFriendWithPostAuthor) {
+        controls = null;
+    } else if (post.postOwner) {
         controls = (
             <div className="grid grid-cols-2 gap-2">
                 <EditPost postId={post.postId} postContent={post.body} />
@@ -113,11 +117,14 @@ export default function Post({
     isLikedPost,
     reaction
 }: Readonly<PostProp>) {
+    const { friends } = useFriends();
+    const isFriendWithPostAuthor = friends.some(friend => friend.id === post.author.id);
 
     return (
         <div className="flex flex-col gap-4">
             <PostAuthor
                 post={post}
+                isFriendWithPostAuthor={isFriendWithPostAuthor}
             />
 
             <PostContent
