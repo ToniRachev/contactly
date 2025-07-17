@@ -1,74 +1,69 @@
 'use client';
 
 import { createContext, useCallback, useEffect, useRef, useState } from "react";
-import { useAuthenticatedUser } from "./user.context";
 import { PresenceStatusType } from "../types/user";
-import { createClient } from "../utils/supabase/client";
+import { useAuthenticatedUser } from "./user.context";
+import { updateUserStatus } from "../client/user.client";
 import { USER_PRESENCE_STATUS } from "../constants/user";
+
+const moveEvents = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart', 'mousedown', 'touchmove'];
+
+const IDLE_TIME = 1000 * 60 * 0.1;
 
 const PresenceContext = createContext(null);
 
-const IDLE_TIME = 1000 * 60 * 5;
-const POLL_INTERVAL = 1000 * 60;
-
-const events = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart', 'mousedown', 'touchmove'];
-
 export default function PresenceProvider({ children }: Readonly<{ children: React.ReactNode }>) {
     const { user } = useAuthenticatedUser();
-    const idleTimer = useRef<NodeJS.Timeout | null>(null);
     const [status, setStatus] = useState<PresenceStatusType | null>(null);
+    const idleTimer = useRef<NodeJS.Timeout | null>(null);
 
     const updateStatus = useCallback(async (newStatus: PresenceStatusType) => {
-        const supabase = createClient();
-        if (newStatus === status) return;
+        if (status === newStatus) return;
+        console.log('updateStatus', newStatus);
 
         try {
-            await supabase.from('users').update({
-                presence_status: newStatus,
-                last_seen: new Date()
-            }).eq('id', user.id);
+            await updateUserStatus(newStatus, user.id);
             setStatus(newStatus);
-
         } catch (error) {
-            console.error('Error updating presence status:', error);
+            console.error(error);
         }
-    }, [user, status])
+    }, [status, user.id])
+
+    const setUserOffline = useCallback(() => {
+        updateStatus(USER_PRESENCE_STATUS.OFFLINE);
+    }, [updateStatus])
+
+    const setUserIdle = useCallback(() => {
+        updateStatus(USER_PRESENCE_STATUS.IDLE);
+    }, [updateStatus])
 
     const handleActivity = useCallback(() => {
         if (idleTimer.current) {
             clearTimeout(idleTimer.current);
         }
+
         updateStatus(USER_PRESENCE_STATUS.ONLINE);
 
         idleTimer.current = setTimeout(() => {
-            updateStatus(USER_PRESENCE_STATUS.IDLE);
+            setUserIdle();
         }, IDLE_TIME);
-    }, [updateStatus])
-
-    const handleBeforeUnload = useCallback(() => {
-        updateStatus(USER_PRESENCE_STATUS.OFFLINE);
-    }, [updateStatus])
+    }, [setUserIdle, updateStatus])
 
     useEffect(() => {
         updateStatus(USER_PRESENCE_STATUS.ONLINE);
 
-        const heartbeat = setInterval(async () => {
-            updateStatus(USER_PRESENCE_STATUS.ONLINE);
-        }, POLL_INTERVAL);
-
-        events.forEach(event => {
+        window.addEventListener('beforeunload', setUserOffline);
+        moveEvents.forEach(event => {
             window.addEventListener(event, handleActivity);
         });
 
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
         return () => {
-            clearInterval(heartbeat);
-            events.forEach(event => {
+            window.removeEventListener('beforeunload', setUserOffline);
+            moveEvents.forEach(event => {
                 window.removeEventListener(event, handleActivity);
             });
         }
-    }, [user, updateStatus, handleActivity, handleBeforeUnload])
+    }, [])
 
     return (
         <PresenceContext.Provider value={null}>
