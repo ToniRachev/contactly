@@ -3,9 +3,9 @@
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server"
 import { transformFriendRequestsUsers, transformFriends } from "@/lib/utils/transform";
-import { FriendRequestUserDBType } from "@/lib/types/user";
 import { MESSAGES } from "@/lib/constants/messages";
-import { BaseUserDBType } from "@/lib/types/post";
+import { BaseUserDBType, UserWithPresenceStatusDBType } from "@/lib/types/user";
+import { userQueryWithPresenceStatus } from "@/lib/utils/supabase/queries";
 
 export async function sendFriendRequest(senderId: string, receiverId: string) {
     const supabase = await createClient();
@@ -146,9 +146,9 @@ export async function getFriendRequests(userId: string) {
 
     const data = await baseFetcher(
         supabase.from('friend_requests')
-            .select('user:sender_id(*)')
+            .select('user:sender_id()')
             .eq('receiver_id', userId)
-    ) as unknown as FriendRequestUserDBType[];
+    ) as unknown as { user: BaseUserDBType }[];
 
     return transformFriendRequestsUsers(data);
 }
@@ -158,9 +158,9 @@ export async function getFriends(userId: string) {
 
     const data = await baseFetcher(
         supabase.from('friends')
-            .select('friend:friend_id(*)')
+            .select(`friend:friend_id(${userQueryWithPresenceStatus})`)
             .eq('user_id', userId)
-    ) as unknown as { friend: BaseUserDBType }[];
+    ) as unknown as { friend: UserWithPresenceStatusDBType }[];
 
     return transformFriends(data);
 }
