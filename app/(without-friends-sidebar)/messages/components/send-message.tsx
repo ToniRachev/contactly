@@ -33,6 +33,7 @@ export default function SendMessage({ addOptimisticMessage, conversationId, addL
                     senderId: user.id,
                     conversationId: conversationId,
                     createdAt: new Date(Date.now()),
+                    sended: false,
                 })
 
                 formRef?.current?.reset();
