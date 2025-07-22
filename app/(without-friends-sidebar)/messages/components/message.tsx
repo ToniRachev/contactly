@@ -35,8 +35,9 @@ export default function Message({ message, isLastMessage }: Readonly<MessageProp
                 </div>
 
                 {isLastMessage && (
-                    <div className="flex justify-end items-center pt-4 w-full">
+                    <div className="flex flex-col justify-end items-end pt-4 w-full">
                         <p>{formatHour(message.createdAt)}</p>
+                        <p>{message.sended ? 'Sended' : 'Sending...'}</p>
                     </div>
                 )}
             </div>
