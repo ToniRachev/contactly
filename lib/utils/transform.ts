@@ -82,7 +82,8 @@ export const transformMessage = (message: MessageDBType) => {
         conversationId: message.conversation_id,
         senderId: message.sender_id,
         content: message.content,
-        createdAt: message.created_at
+        createdAt: message.created_at,
+        sended: true,
     }
 }
 
