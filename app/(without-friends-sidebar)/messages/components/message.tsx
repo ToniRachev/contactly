@@ -1,12 +1,10 @@
+import { useAuthenticatedUser } from "@/lib/context/user.context";
+import { MessageType } from "@/lib/types/conversation";
+import { formatHour } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 
 type MessageProps = {
-    message: {
-        id: string;
-        senderId: string;
-        message: string;
-        sendedAt: string;
-    }
+    message: MessageType;
     isLastMessage: boolean;
 }
 
@@ -20,9 +18,9 @@ const messageStyle = cva('p-4 rounded-md', {
 })
 
 export default function Message({ message, isLastMessage }: Readonly<MessageProps>) {
-    const currentUserId = 'user_2';
+    const { user } = useAuthenticatedUser();
 
-    const messageVariant = message.senderId === currentUserId ? 'outgoing' : 'incoming';
+    const messageVariant = message.senderId === user.id ? 'outgoing' : 'incoming';
     const alignItems = messageVariant === 'incoming' ? 'start' : 'end';
 
     return (
@@ -33,13 +31,12 @@ export default function Message({ message, isLastMessage }: Readonly<MessageProp
         >
             <div className="max-w-[25vw]">
                 <div className={messageStyle({ variant: messageVariant })}>
-                    <p>{message.message}</p>
+                    <p>{message.content}</p>
                 </div>
 
                 {isLastMessage && (
                     <div className="flex justify-end items-center pt-4 w-full">
-                        {/* <UserAvatar avatar={'/user_avatar.webp'} width={30} height={30} /> */}
-                        <p>{message.sendedAt}</p>
+                        <p>{formatHour(message.createdAt)}</p>
                     </div>
                 )}
             </div>
