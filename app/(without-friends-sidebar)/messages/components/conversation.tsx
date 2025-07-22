@@ -1,49 +1,45 @@
-import UserAvatarWithStatus from "@/components/user-avatar-with-status";
+'use client';
+
 import Message from "./message";
-import { PresenceStatusType } from "@/lib/types/user";
+import { useMessageContext } from "@/lib/context/message.context";
+import { ConversationType, MessageType } from "@/lib/types/conversation";
+import { useOptimistic } from "react";
+import SendMessage from "./send-message";
+import useMessage from "@/hooks/useMessage";
+import ActiveConversationUserCard from "./active-conversation-user-card";
 
-type MessageType = {
-    id: string;
-    senderId: string;
-    message: string;
-    sendedAt: string;
-}
+export default function Conversation() {
+    const { activeConversationUserId } = useMessageContext();
+    const { activeConversation, loading, addLocalMessage } = useMessage(activeConversationUserId);
 
-type ConversationProps = {
-    conversation: {
-        friend: {
-            avatar: string;
-            status: PresenceStatusType;
-            name: string;
-        },
-        messages: MessageType[];
+    const [optimisticConversation, addOptimisticMessage] = useOptimistic(
+        activeConversation,
+        (state: ConversationType | null, newMessage: MessageType) => {
+            if (!state) return state;
+
+            return {
+                ...state,
+                messages: [...state.messages, newMessage]
+            }
+        }
+    )
+
+    if (loading || !activeConversation) {
+        return <div>Loading...</div>
     }
-}
 
-export default function Conversation({ conversation }: Readonly<ConversationProps>) {
     return (
         <div className="w-full">
-            <div className="flex items-center gap-4">
-                <UserAvatarWithStatus
-                    avatar={conversation.friend.avatar}
-                    status={conversation.friend.status}
-                    size='md'
-                />
-                <div>
-                    <h6>{conversation.friend.name}</h6>
-                    <p className="first-letter:uppercase">{conversation.friend.status}</p>
-                </div>
-            </div>
-
+            <ActiveConversationUserCard />
             <div className="max-h-[70vh] h-[70vh] flex mt-6 mb-6 justify-end overflow-hidden">
                 <div
-                    className="flex flex-col-reverse gap-8 w-full h-full overflow-y-scroll pr-4 
-                    [&::-webkit-scrollbar]:w-2 
+                    className="flex flex-col-reverse gap-8 w-full h-full overflow-y-scroll pr-4
+                    [&::-webkit-scrollbar]:w-2
                     [&::-webkit-scrollbar-track]:bg-surface
                     [&::-webkit-scrollbar-thumb]:bg-[#8C8C8C]
                     [&::-webkit-scrollbar-button]:hidden"
                 >
-                    {conversation.messages.slice().reverse().map((message, index) => {
+                    {optimisticConversation?.messages.slice().reverse().map((message, index) => {
                         const isLastMessage = index === 0;
 
                         return (
@@ -56,6 +52,12 @@ export default function Conversation({ conversation }: Readonly<ConversationProp
                     })}
                 </div>
             </div>
+
+            <SendMessage
+                addOptimisticMessage={addOptimisticMessage}
+                conversationId={activeConversation.id}
+                addLocalMessage={addLocalMessage}
+            />
         </div >
     )
 }
