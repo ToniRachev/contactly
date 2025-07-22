@@ -1,30 +1,7 @@
-import { PresenceStatusType } from "./user";
+import { BaseUserDBType, BaseUserType } from "./user";
 
 export type CountType = { count: number }[];
 export type LikesType = { user: string }[];
-
-export type BaseUserDBType = {
-    id: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    created_at: string;
-    avatar_url: string | null;
-    presence_status: PresenceStatusType;
-    last_seen: Date;
-}
-
-export type BaseUserType = {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    createdAt: string;
-    fullName: string;
-    avatarUrl: string | null;
-    presenceStatus: PresenceStatusType;
-    lastSeen: Date;
-}
 
 export type CommentDBType = {
     id: string;
