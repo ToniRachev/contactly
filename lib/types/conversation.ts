@@ -12,6 +12,7 @@ export type MessageType = {
     senderId: string;
     content: string;
     createdAt: Date;
+    sended: boolean;
 }
 
 export type ConversationDBType = {
