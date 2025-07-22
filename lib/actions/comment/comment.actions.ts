@@ -8,6 +8,7 @@ import { createFormResult } from "@/lib/validations/utils";
 import { CommentType } from "@/lib/types/post";
 import { MESSAGES } from "@/lib/constants/messages";
 import { parseAndValidateFormData } from "@/lib/utils";
+import { baseUserQuery } from "@/lib/utils/supabase/queries";
 
 export async function createComment(authorId: string, postId: string, body: string) {
     const supabase = await createClient();
@@ -18,7 +19,7 @@ export async function createComment(authorId: string, postId: string, body: stri
             author_id: authorId,
             body
         }])
-        .select(`*, author:author_id(*), likes:likes_comments(user:user_id), likesCount:likes_comments(count)`)
+        .select(`*, author:author_id(${baseUserQuery}), likes:likes_comments(user:user_id), likesCount:likes_comments(count)`)
     )
 
     const transformedComment = transformPostComments(data);
