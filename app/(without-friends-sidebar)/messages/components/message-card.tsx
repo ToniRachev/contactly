@@ -21,11 +21,14 @@ const formatMessagesCount = (newMessagesCount: number) => {
 
 }
 
-export default function MessageCard({ avatar,
-    username,
-    lastMessage,
-    date,
-    newMessagesCount }: Readonly<MessageCardProps>) {
+export default function MessageCard(
+    {
+        avatar,
+        username,
+        lastMessage,
+        date,
+        newMessagesCount
+    }: Readonly<MessageCardProps>) {
     const messagesCount = formatMessagesCount(newMessagesCount);
     const formatedLastMessage = lastMessage.length > 27 ? `${lastMessage.slice(0, 27)}...` : lastMessage;
 
