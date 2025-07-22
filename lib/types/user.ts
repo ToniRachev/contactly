@@ -1,8 +1,26 @@
 import { Session, User } from "@supabase/supabase-js"
-import { BaseUserDBType } from "./post";
 import { USER_PRESENCE_STATUS } from "../constants/user";
 
 export type PresenceStatusType = typeof USER_PRESENCE_STATUS[keyof typeof USER_PRESENCE_STATUS];
+
+export type BaseUserDBType = {
+    id: string;
+    first_name: string;
+    last_name: string;
+    avatar_url: string | null;
+    created_at: string;
+    email: string;
+}
+
+export type BaseUserType = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+    createdAt: string;
+    email: string;
+    fullName: string;
+}
 
 export type BiographyType = {
     school: string | null,
@@ -10,6 +28,7 @@ export type BiographyType = {
     birthDate: string | null,
     currentCity: string | null,
 }
+
 
 export type AuthDataType = {
     user: User,
@@ -25,33 +44,22 @@ export type UserBiographyDBType = {
     current_city: string | null,
 }
 
-export type UserDBType = {
-    id: string;
-    created_at: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    biography: UserBiographyDBType[],
-    avatar_url: string | null;
-    cover_url: string | null;
+export type UserWithPresenceStatusDBType = BaseUserDBType & {
     presence_status: PresenceStatusType;
     last_seen: Date;
 }
 
-export type UserType = {
-    id: string;
-    createdAt: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    biography: BiographyType;
-    fullName: string;
-    avatarUrl: string | null;
-    coverUrl: string | null;
+export type UserWithPresenceStatusType = BaseUserType & {
     presenceStatus: PresenceStatusType;
     lastSeen: Date;
 }
 
-export type FriendRequestUserDBType = {
-    user: BaseUserDBType;
+export type UserProfileDBType = UserWithPresenceStatusDBType & {
+    biography: UserBiographyDBType[];
+    cover_url: string | null;
+}
+
+export type UserProfileType = UserWithPresenceStatusType & {
+    biography: BiographyType;
+    coverUrl: string | null;
 }
