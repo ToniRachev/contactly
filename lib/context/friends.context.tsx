@@ -4,11 +4,10 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useAuthenticatedUser } from "./user.context";
 import { createClient } from "../utils/supabase/client";
 import { fetchUserProfile } from "../actions/user/user.actions";
-import { BaseUserType } from "../types/post";
-import { PresenceStatusType } from "../types/user";
+import { BaseUserType, PresenceStatusType, UserWithPresenceStatusType } from "../types/user";
 
 type FriendsContextType = {
-    friends: BaseUserType[];
+    friends: UserWithPresenceStatusType[];
     friendRequests: BaseUserType[];
     sendRequests: string[];
 }
@@ -110,8 +109,8 @@ function useFriendRequestSubscription(
     }
 }
 
-function useFriendSubscription(initialFriends: BaseUserType[], userId: string) {
-    const [friends, setFriends] = useState<BaseUserType[]>(initialFriends);
+function useFriendSubscription(initialFriends: UserWithPresenceStatusType[], userId: string) {
+    const [friends, setFriends] = useState<UserWithPresenceStatusType[]>(initialFriends);
 
     const handleAddFriend = useCallback(async (friendId: string) => {
         const friend = await fetchUserProfile(friendId);
@@ -194,7 +193,7 @@ const FriendsContext = createContext<FriendsContextType | null>(null);
 type FriendsContextProviderProps = {
     friendSendRequests: string[];
     initialFriendRequests: BaseUserType[];
-    initialFriends: BaseUserType[];
+    initialFriends: UserWithPresenceStatusType[];
     children: React.ReactNode;
 }
 

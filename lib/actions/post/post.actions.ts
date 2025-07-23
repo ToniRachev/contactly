@@ -11,6 +11,7 @@ import { PostType } from "@/lib/types/post";
 import { getUserId } from "@/lib/actions/user/user.actions";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { baseUserQuery } from "@/lib/utils/supabase/queries";
 
 type PostState = {
     data: PostSchemaType;
@@ -26,7 +27,7 @@ export async function fetchPosts(currentUserId: string, limit: number = 10) {
 
     const data = await baseFetcher(
         supabase.from('posts')
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`)
+            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`)
             .neq('author_id', currentUserId)
             .limit(limit)
             .order('created_at', { ascending: false })
@@ -40,7 +41,7 @@ export async function fetchUserPosts(userId: string, limit: number = 10) {
 
     const data = await baseFetcher(
         supabase.from('posts')
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`)
+            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`)
             .eq('author_id', userId)
             .limit(limit)
             .order('created_at', { ascending: false })
@@ -59,7 +60,7 @@ export async function createPost(authorId: string, body: string) {
                 author_id: authorId,
                 body
             }])
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`)
+            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`)
     )
 
     const transformedPost = transformPosts(data, authorId);
@@ -74,7 +75,7 @@ export async function editPost(postId: string, postContent: string) {
         supabase.from('posts')
             .update({ body: postContent })
             .match({ id: postId, author_id: userId })
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(*)`));
+            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`));
 
     const transformedPost = transformPosts(data, userId);
     return transformedPost[0];

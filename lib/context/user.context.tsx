@@ -1,10 +1,10 @@
 'use client';
 
 import { createContext, useContext, ReactNode, useMemo, useCallback, useOptimistic, startTransition } from "react";
-import { UserType } from "../types/user";
+import { UserProfileType } from "../types/user";
 
 type UserContextType = {
-    user: UserType | null;
+    user: UserProfileType | null;
     isAuthenticated: boolean;
     updateUserAvatar: (avatarUrl: string) => void;
     updateUserCover: (coverUrl: string) => void;
@@ -13,7 +13,7 @@ type UserContextType = {
 
 type UserProviderProps = {
     children: ReactNode;
-    userData: UserType | null;
+    userData: UserProfileType | null;
 }
 
 const UserContext = createContext<UserContextType | null>(null);

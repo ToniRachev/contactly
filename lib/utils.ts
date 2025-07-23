@@ -3,10 +3,12 @@ import { twMerge } from "tailwind-merge"
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
 import { ZodTypeAny } from "zod";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -19,6 +21,10 @@ export const formatFullName = (firstName: string, lastName: string): string =>
 export const formatRelativeTime = (date: string): string => {
   const past = dayjs(date);
   return past.fromNow();
+}
+
+export const formatHour = (date: Date) => {
+  return dayjs.utc(date).local().format('HH:mm');
 }
 
 

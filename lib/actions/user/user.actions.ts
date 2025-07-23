@@ -2,8 +2,7 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
-import { PresenceStatusType, UserDBType } from "@/lib/types/user";
-import { transformUserData } from "@/lib/utils/transform";
+import { PresenceStatusType, UserProfileDBType } from "@/lib/types/user";
 import {
     UpdateHometownSchemaType,
     UpdateHometownSchemaErrorType,
@@ -16,6 +15,8 @@ import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
 import { ActionState } from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-bio/types";
 import { revalidateTag, unstable_cache } from "next/cache";
+import { transformUserProfile } from "@/lib/utils/transform";
+import { userQueryWithBiography } from "@/lib/utils/supabase/queries";
 
 export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();
@@ -23,12 +24,12 @@ export async function fetchUserProfile(userId: string) {
     return unstable_cache(
         async (supabaseClient) => {
             const query = supabaseClient.from('users')
-                .select(`*, biography(*)`)
+                .select(`${userQueryWithBiography}`)
                 .eq('id', userId)
                 .single();
 
-            const data = await baseFetcher<UserDBType>(query);
-            return transformUserData(data);
+            const data = await baseFetcher<UserProfileDBType>(query);
+            return transformUserProfile(data);
         },
         [`user-profile-${userId}`],
         {
