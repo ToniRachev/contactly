@@ -1,10 +1,12 @@
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { MessageType } from "@/lib/types/conversation";
-import { formatHour } from "@/lib/utils";
 import { cva } from "class-variance-authority";
+import MessageState from "./message-state";
 
 type MessageProps = {
     message: MessageType;
+    lastUserMessageId: string | undefined;
+    isSeen: boolean;
     isLastMessage: boolean;
 }
 
@@ -17,7 +19,7 @@ const messageStyle = cva('p-4 rounded-md', {
     }
 })
 
-export default function Message({ message, isLastMessage }: Readonly<MessageProps>) {
+export default function Message({ message, lastUserMessageId, isSeen, isLastMessage }: Readonly<MessageProps>) {
     const { user } = useAuthenticatedUser();
 
     const messageVariant = message.senderId === user.id ? 'outgoing' : 'incoming';
@@ -34,12 +36,13 @@ export default function Message({ message, isLastMessage }: Readonly<MessageProp
                     <p>{message.content}</p>
                 </div>
 
-                {isLastMessage && (
-                    <div className="flex flex-col justify-end items-end pt-4 w-full">
-                        <p>{formatHour(message.createdAt)}</p>
-                        <p>{message.sended ? 'Sended' : 'Sending...'}</p>
-                    </div>
-                )}
+                <MessageState
+                    isSeen={isSeen}
+                    isLastUserMessage={lastUserMessageId === message.id}
+                    messageDate={message.createdAt}
+                    isLastMessage={isLastMessage}
+                    isSended={message.sended}
+                />
             </div>
         </div>
     )

@@ -1,12 +1,64 @@
 'use client';
 
 import { useCallback, useEffect, useState } from "react";
-import { ConversationType, MessageDBType, MessageType } from "@/lib/types/conversation";
+import { ConversationParticipantDBType, ConversationParticipantType, ConversationType, MessageDBType, MessageType } from "@/lib/types/conversation";
 import { createOrFindConversation } from "@/lib/client/message.client";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
-import { transformMessage } from "@/lib/utils/transform";
+import { transformConversationParticipant, transformMessage } from "@/lib/utils/transform";
 import { createClient } from "@/lib/utils/supabase/client";
 import { useFriends } from "@/lib/context/friends.context";
+
+function useConversationParticipantsSubscription(conversationId: string | undefined, handleUpdateReadMessage: (newState: ConversationParticipantType) => void) {
+
+    useEffect(() => {
+        const supabase = createClient();
+
+        if (!conversationId) return;
+
+        const channel = supabase.channel(`conversation-participants:${conversationId}`)
+            .on('postgres_changes', {
+                event: 'UPDATE',
+                schema: 'public',
+                table: 'conversation_participants',
+                filter: `conversation_id=eq.${conversationId}`,
+            }, (payload) => {
+                handleUpdateReadMessage(transformConversationParticipant(payload.new as ConversationParticipantDBType));
+            })
+            .subscribe();
+
+        return () => {
+            channel.unsubscribe();
+        }
+    }, [conversationId, handleUpdateReadMessage])
+}
+
+function useMessagesSubscription(activeConversationId: string | undefined, handleIncomingMessage: (message: MessageDBType) => void) {
+    const { user } = useAuthenticatedUser();
+
+    useEffect(() => {
+        if (!activeConversationId) return;
+
+        const supabase = createClient();
+
+        const channel = supabase
+            .channel(`conversation:${activeConversationId}`)
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'messages',
+                filter: `conversation_id=eq.${activeConversationId}`,
+            }, (payload) => {
+                if (payload.new.sender_id !== user.id) {
+                    handleIncomingMessage(payload.new as MessageDBType);
+                }
+            })
+            .subscribe();
+
+        return () => {
+            channel.unsubscribe();
+        }
+    }, [activeConversationId, user.id, handleIncomingMessage])
+}
 
 export default function useMessage(activeConversationUserId: string | null) {
     const { user } = useAuthenticatedUser();
@@ -14,6 +66,41 @@ export default function useMessage(activeConversationUserId: string | null) {
     const [activeConversation, setActiveConversation] = useState<ConversationType | null>(null);
 
     const [loading, setLoading] = useState(false);
+
+    const handleIncomingMessage = useCallback((message: MessageDBType) => {
+        const newMessage = transformMessage(message);
+
+        setActiveConversation((prevState) => {
+            if (!prevState) return prevState;
+
+            return {
+                ...prevState,
+                messages: [...prevState.messages, newMessage]
+            }
+        })
+    }, [])
+
+    const handleUpdateReadMessage = useCallback((newState: ConversationParticipantType) => {
+        setActiveConversation((prevState) => {
+            if (!prevState) return prevState;
+
+            const participants = [...prevState.participants].map((participant) => {
+                if (participant.userId === newState.userId) {
+                    return newState;
+                }
+
+                return participant;
+            })
+
+            return {
+                ...prevState,
+                participants,
+            }
+        })
+    }, [setActiveConversation])
+
+    useMessagesSubscription(activeConversation?.id, handleIncomingMessage);
+    useConversationParticipantsSubscription(activeConversation?.id, handleUpdateReadMessage);
 
     const fetchInitialData = useCallback(async () => {
         if (!activeConversationUserId) return;
@@ -31,19 +118,6 @@ export default function useMessage(activeConversationUserId: string | null) {
         setLoading(false);
     }, [activeConversationUserId, user.id, setActiveConversation, friends])
 
-    const handleIncomingMessage = useCallback((message: MessageDBType) => {
-        const newMessage = transformMessage(message);
-
-        setActiveConversation((prevState) => {
-            if (!prevState) return prevState;
-
-            return {
-                ...prevState,
-                messages: [...prevState.messages, newMessage]
-            }
-        })
-    }, [])
-
     const addLocalMessage = useCallback((message: MessageType) => {
         setActiveConversation((prevState) => {
             if (!prevState) return prevState;
@@ -58,30 +132,6 @@ export default function useMessage(activeConversationUserId: string | null) {
     useEffect(() => {
         fetchInitialData();
     }, [fetchInitialData, activeConversationUserId])
-
-    useEffect(() => {
-        if (!activeConversation?.id) return;
-
-        const supabase = createClient();
-
-        const channel = supabase
-            .channel(`conversation:${activeConversation.id}`)
-            .on('postgres_changes', {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'messages',
-                filter: `conversation_id=eq.${activeConversation.id}`,
-            }, (payload) => {
-                if (payload.new.sender_id !== user.id) {
-                    handleIncomingMessage(payload.new as MessageDBType);
-                }
-            })
-            .subscribe();
-
-        return () => {
-            channel.unsubscribe();
-        }
-    }, [activeConversation?.id, handleIncomingMessage, user.id])
 
     return {
         activeConversation,
