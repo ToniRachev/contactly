@@ -1,6 +1,6 @@
 import { formatFullName } from "@/lib/utils"
 import { CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "@/lib/types/post"
-import { ConversationDBType, MessageDBType } from "../types/conversation"
+import { ConversationDBType, ConversationParticipantDBType, MessageDBType } from "../types/conversation"
 import { BaseUserDBType, BaseUserType, UserBiographyDBType, UserProfileDBType, UserProfileType, UserWithPresenceStatusDBType, UserWithPresenceStatusType } from "../types/user"
 
 const extractCount = (item: CountType) => {
@@ -87,12 +87,22 @@ export const transformMessage = (message: MessageDBType) => {
     }
 }
 
+export const transformConversationParticipant = (participant: ConversationParticipantDBType) => {
+    return {
+        conversationId: participant.conversation_id,
+        lastReadAt: participant.last_read_at,
+        lastReadMessageId: participant.last_read_message_id,
+        userId: participant.user_id
+    }
+}
+
 export const transformConversation = (conversation: ConversationDBType) => {
     return {
         id: conversation.id,
         user1Id: conversation.user1_id,
         user2Id: conversation.user2_id,
         createdAt: conversation.created_at,
-        messages: conversation.messages.map((message) => transformMessage(message))
+        messages: conversation.messages.map((message) => transformMessage(message)),
+        participants: conversation.conversation_participants.map((participant) => transformConversationParticipant(participant))
     }
 }
