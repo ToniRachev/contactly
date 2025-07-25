@@ -1,6 +1,6 @@
 import { formatFullName } from "@/lib/utils"
 import { CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "@/lib/types/post"
-import { ConversationDBType, ConversationParticipantDBType, MessageDBType } from "../types/conversation"
+import { BaseConversationOverviewDBType, ConversationDBType, ConversationOverviewDBType, ConversationOverviewType, ConversationParticipantDBType, MessageDBType } from "../types/conversation"
 import { BaseUserDBType, BaseUserType, UserBiographyDBType, UserProfileDBType, UserProfileType, UserWithPresenceStatusDBType, UserWithPresenceStatusType } from "../types/user"
 
 const extractCount = (item: CountType) => {
@@ -96,6 +96,18 @@ export const transformConversationParticipant = (participant: ConversationPartic
     }
 }
 
+export const transformBaseConversationOverview = (overview: BaseConversationOverviewDBType) => {
+    return {
+        id: overview.id,
+        userId: overview.user_id,
+        conversationId: overview.conversation_id,
+        lastMessageId: overview.last_message_id,
+        lastMessagePreview: overview.last_message_preview,
+        lastMessageAt: overview.last_message_at,
+        unreadCount: overview.unread_count,
+    }
+}
+
 export const transformConversation = (conversation: ConversationDBType) => {
     return {
         id: conversation.id,
@@ -104,5 +116,14 @@ export const transformConversation = (conversation: ConversationDBType) => {
         createdAt: conversation.created_at,
         messages: conversation.messages.map((message) => transformMessage(message)),
         participants: conversation.conversation_participants.map((participant) => transformConversationParticipant(participant))
+    }
+}
+
+export const transformConversationOverview = (overview: ConversationOverviewDBType, userId: string): ConversationOverviewType => {
+    const participant = overview.conversation_participants.user1.id !== userId ? overview.conversation_participants.user1 : overview.conversation_participants.user2;
+
+    return {
+        ...transformBaseConversationOverview(overview),
+        participant: transformUserWithPresenceStatus(participant),
     }
 }
