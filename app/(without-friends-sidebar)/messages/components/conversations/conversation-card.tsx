@@ -39,7 +39,7 @@ export default function ConversationCard({ conversation }: Readonly<Conversation
                 </div>
 
                 <div className="flex flex-col justify-center items-center gap-1">
-                    {conversation.lastMessageAt && <p>{formatHour(conversation.lastMessageAt)}</p>}
+                    {conversation.lastMessageAt && <p>{formatHour(new Date(conversation.lastMessageAt))}</p>}
                     {messagesCount && (
                         <div className="w-7 h-7 rounded-full flex justify-center items-center bg-green-600">{messagesCount}</div>
                     )}
