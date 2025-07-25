@@ -50,7 +50,7 @@ export default function ConversationsProvider({ children, initialConversations }
         if (shouldFetchNewConversationOverview) {
             addConversation(conversation.conversationId);
         }
-    }, [])
+    }, [addConversation])
 
     useEffect(() => {
         const supabase = createClient();
