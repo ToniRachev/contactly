@@ -9,6 +9,8 @@ import ActiveConversationUserCard from "./active-conversation-user-card";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import MessageList from "./message-list";
 import useMarkConversationRead from "../hooks/useMarkConversationRead";
+import { Inbox } from "lucide-react";
+import ConversationSkeleton from "./conversation-skeleton";
 
 export default function Conversation() {
     const { user } = useAuthenticatedUser();
@@ -31,8 +33,17 @@ export default function Conversation() {
         }
     )
 
-    if (loading || !activeConversation) {
-        return <div>Loading...</div>
+    if (loading) {
+        return <ConversationSkeleton />
+    }
+
+    if (!activeConversation) {
+        return (
+            <div className="absolute top-1/2 left-1/2 flex flex-col items-center gap-4">
+                <Inbox className="w-10 h-10" />
+                <h6 className="text-2xl font-bold">Nothing here yet—choose a chat to see the messages.</h6>
+            </div>
+        )
     }
 
     return (
