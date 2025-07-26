@@ -3,7 +3,7 @@ import clsx from "clsx";
 
 const ColoredSkeleton = ({ className }: { className: string }) => {
     return (
-        <Skeleton className={clsx(className, 'bg-stone-600')} />
+        <Skeleton className={clsx(className, 'bg-surface')} />
     )
 }
 
