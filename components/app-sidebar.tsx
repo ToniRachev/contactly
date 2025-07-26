@@ -90,12 +90,13 @@ export default function AppSidebar() {
 
                             <MenuItem url={NAVIGATION.MESSAGES.url}>
                                 <MenuItemIcon icon={NAVIGATION.MESSAGES.icon} title={NAVIGATION.MESSAGES.title} />
+                                <div className='w-3 h-3 bg-red-400 rounded-full' />
                             </MenuItem>
 
                             <MenuItem url={NAVIGATION.FRIENDS.url}>
                                 <div className='flex items-center gap-3 w-full'>
                                     <MenuItemIcon icon={NAVIGATION.FRIENDS.icon} title={NAVIGATION.FRIENDS.title} />
-                                    <span className='text-lg text-red-500'>{friendRequests.length}</span>
+                                    {friendRequests.length > 0 && <div className='w-3 h-3 bg-red-400 rounded-full' />}
                                 </div>
                             </MenuItem>
 
