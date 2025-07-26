@@ -16,6 +16,7 @@ import UserProfileCard from './user-profile-card'
 import { useAuthenticatedUser } from '@/lib/context/user.context'
 import { NAVIGATION } from '@/lib/constants/navigation'
 import { useFriends } from '@/lib/context/friends.context';
+import { useConversations } from '@/lib/context/conversations.context';
 
 type MenuItemProps = {
     children: React.ReactNode
@@ -63,6 +64,7 @@ const MenuItem = ({ children, url, onClick }: MenuItemProps) => {
 export default function AppSidebar() {
     const { user } = useAuthenticatedUser();
     const { friendRequests } = useFriends();
+    const { hasNewMessage } = useConversations();
 
     return (
         <Sidebar className='!border-0'>
@@ -90,7 +92,7 @@ export default function AppSidebar() {
 
                             <MenuItem url={NAVIGATION.MESSAGES.url}>
                                 <MenuItemIcon icon={NAVIGATION.MESSAGES.icon} title={NAVIGATION.MESSAGES.title} />
-                                <div className='w-3 h-3 bg-red-400 rounded-full' />
+                                {hasNewMessage && <div className='w-3 h-3 bg-red-400 rounded-full' />}
                             </MenuItem>
 
                             <MenuItem url={NAVIGATION.FRIENDS.url}>
