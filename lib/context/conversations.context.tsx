@@ -9,6 +9,7 @@ import { getConversationOverview } from "../client/conversation.client";
 
 type ConversationsContextType = {
     conversations: ConversationOverviewType[];
+    hasNewMessage: boolean;
 }
 
 type ConversationsProviderProps = {
@@ -21,6 +22,7 @@ const ConversationsContext = createContext<ConversationsContextType | null>(null
 export default function ConversationsProvider({ children, initialConversations }: Readonly<ConversationsProviderProps>) {
     const { user } = useAuthenticatedUser();
     const [conversations, setConversations] = useState<ConversationOverviewType[]>(initialConversations);
+    const hasNewMessage = conversations.some((conversation) => conversation.unreadCount > 0);
 
     const addConversation = useCallback(async (conversationId: string) => {
         const conversationOverview = await getConversationOverview(conversationId, user.id);
@@ -74,7 +76,8 @@ export default function ConversationsProvider({ children, initialConversations }
 
     const contextValue = useMemo(() => ({
         conversations: conversations.toSorted((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime()),
-    }), [conversations])
+        hasNewMessage,
+    }), [conversations, hasNewMessage])
 
     return (
         <ConversationsContext.Provider value={contextValue}>

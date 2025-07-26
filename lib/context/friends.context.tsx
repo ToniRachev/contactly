@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useAuthenticatedUser } from "./user.context";
 import { createClient } from "../utils/supabase/client";
-import { fetchUserProfile } from "../actions/user/user.actions";
+import { fetchBaseUser, fetchUserWithPresenceStatus } from "../actions/user/user.actions";
 import { BaseUserType, PresenceStatusType, UserWithPresenceStatusType } from "../types/user";
 
 type FriendsContextType = {
@@ -21,7 +21,7 @@ function useFriendRequestSubscription(
     const [sendRequests, setSendRequests] = useState<string[]>(initialSendRequests);
 
     const handleAddFriendRequest = useCallback(async (senderId: string) => {
-        const sender = await fetchUserProfile(senderId);
+        const sender = await fetchBaseUser(senderId);
 
         setFriendRequests(prev => [...prev, sender]);
     }, [setFriendRequests])
@@ -113,7 +113,7 @@ function useFriendSubscription(initialFriends: UserWithPresenceStatusType[], use
     const [friends, setFriends] = useState<UserWithPresenceStatusType[]>(initialFriends);
 
     const handleAddFriend = useCallback(async (friendId: string) => {
-        const friend = await fetchUserProfile(friendId);
+        const friend = await fetchUserWithPresenceStatus(friendId);
 
         setFriends(prev => [...prev, friend]);
     }, [setFriends])
@@ -217,7 +217,6 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
     }, [setFriends])
 
     useFriendPresenceSubscription(user.id, friends.map(friend => friend.id), handleUpdateFriendPresenceStatus);
-
 
     const contextValue: FriendsContextType = useMemo(() => ({
         friends,

@@ -2,7 +2,7 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
-import { PresenceStatusType, UserProfileDBType } from "@/lib/types/user";
+import { PresenceStatusType, UserProfileDBType, BaseUserDBType, UserWithPresenceStatusDBType } from "@/lib/types/user";
 import {
     UpdateHometownSchemaType,
     UpdateHometownSchemaErrorType,
@@ -15,8 +15,8 @@ import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
 import { ActionState } from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-bio/types";
 import { revalidateTag, unstable_cache } from "next/cache";
-import { transformUserProfile } from "@/lib/utils/transform";
-import { userQueryWithBiography } from "@/lib/utils/supabase/queries";
+import { transformUserProfile, transformBaseUser, transformUserWithPresenceStatus } from "@/lib/utils/transform";
+import { userQueryWithBiography, baseUserQuery, userQueryWithPresenceStatus } from "@/lib/utils/supabase/queries";
 
 export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();
@@ -36,6 +36,32 @@ export async function fetchUserProfile(userId: string) {
             revalidate: 60 * 60 * 24
         }
     )(supabase);
+}
+
+export async function fetchBaseUser(userId: string) {
+    const supabase = await createClient();
+
+    const data = await baseFetcher(
+        supabase.from('users')
+            .select(`${baseUserQuery}`)
+            .eq('id', userId)
+            .single()
+    ) as unknown as BaseUserDBType;
+
+    return transformBaseUser(data);
+}
+
+export async function fetchUserWithPresenceStatus(userId: string) {
+    const supabase = await createClient();
+
+    const data = await baseFetcher(
+        supabase.from('users')
+            .select(`${userQueryWithPresenceStatus}`)
+            .eq('id', userId)
+            .single()
+    ) as unknown as UserWithPresenceStatusDBType;
+
+    return transformUserWithPresenceStatus(data);
 }
 export async function getUserId() {
     const supabase = await createClient();
