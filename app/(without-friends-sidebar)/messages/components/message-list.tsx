@@ -17,7 +17,7 @@ export default function MessageList({ conversation, recipient }: Readonly<Messag
     return (
         <div className="max-h-[70vh] h-[70vh] flex mt-6 mb-6 justify-end overflow-hidden">
             <div
-                className="flex flex-col-reverse gap-4 w-full h-full overflow-y-scroll pr-4
+                className="flex flex-col-reverse gap-4 w-full h-full overflow-y-auto pr-4
             [&::-webkit-scrollbar]:w-2
             [&::-webkit-scrollbar-track]:bg-surface
             [&::-webkit-scrollbar-thumb]:bg-[#8C8C8C]
