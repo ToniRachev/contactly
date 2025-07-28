@@ -218,11 +218,23 @@ export default function FriendsContextProvider({ children, friendSendRequests, i
 
     useFriendPresenceSubscription(user.id, friends.map(friend => friend.id), handleUpdateFriendPresenceStatus);
 
+    const sortedFriendsByPresenceStatus = useMemo(() => {
+        return friends.sort((a, b) => {
+            const aOnline = a.presenceStatus === 'online';
+            const bOnline = b.presenceStatus === 'online';
+
+            if (aOnline && !bOnline) return -1;
+            if (!aOnline && bOnline) return 1;
+
+            return 0;
+        })
+    }, [friends])
+
     const contextValue: FriendsContextType = useMemo(() => ({
-        friends,
+        friends: sortedFriendsByPresenceStatus,
         friendRequests,
         sendRequests,
-    }), [friendRequests, sendRequests, friends])
+    }), [friendRequests, sendRequests, sortedFriendsByPresenceStatus])
 
     return (
         <FriendsContext.Provider value={contextValue}>
