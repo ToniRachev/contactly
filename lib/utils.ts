@@ -23,6 +23,19 @@ export const formatRelativeTime = (date: string): string => {
   return past.fromNow();
 }
 
+export const formatRecentOrDateTime = (date: Date) => {
+  const now = dayjs();
+  const inputDate = dayjs.utc(date).local()
+
+  const isOlderThan24h = now.diff(inputDate, 'hour') >= 24;
+
+  if (isOlderThan24h) {
+    return inputDate.format('MMM D, HH:mm')
+  }
+
+  return inputDate.format('HH:mm');
+}
+
 export const formatHour = (date: Date) => {
   return dayjs.utc(date).local().format('HH:mm');
 }
