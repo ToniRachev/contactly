@@ -1,4 +1,4 @@
-import { formatHour } from "@/lib/utils";
+import { formatHour, formatRecentOrDateTime } from "@/lib/utils";
 
 type MessageStateProps = {
     isSeen: boolean;
@@ -21,7 +21,7 @@ export default function MessageState({ isSeen, isLastUserMessage, messageDate, i
 
             {isLastMessage && (
                 <div className="flex flex-col justify-end items-end pt-4 w-full">
-                    <p>{formatHour(messageDate)}</p>
+                    <p>{formatRecentOrDateTime(messageDate)}</p>
                 </div>
             )}
         </div>
