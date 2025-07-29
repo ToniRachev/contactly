@@ -1,25 +1,29 @@
 import UserAvatarWithStatus from "@/components/user-avatar-with-status";
-import { useFriends } from "@/lib/context/friends.context";
-import { useMessageContext } from "@/lib/context/message.context";
+import { BaseUserType, UserWithPresenceStatusType } from "@/lib/types/user";
 
-export default function ActiveConversationUserCard() {
-    const { activeConversationUserId } = useMessageContext();
-    const { friends } = useFriends();
+type ActiveConversationUserCardProps = {
+    conversationParticipant: BaseUserType | UserWithPresenceStatusType | null;
+}
 
-    const activeConversationUser = friends.find((friend) => friend.id === activeConversationUserId);
+const checkIfUserWithPresenceStatus = (user: BaseUserType | UserWithPresenceStatusType): user is UserWithPresenceStatusType => {
+    return 'presenceStatus' in user && user.presenceStatus !== undefined;
+};
 
-    if (!activeConversationUser) return null;
+export default function ActiveConversationUserCard({ conversationParticipant }: Readonly<ActiveConversationUserCardProps>) {
+    if (!conversationParticipant) return null;
+
+    const isUserWithPresenceStatus = checkIfUserWithPresenceStatus(conversationParticipant);
 
     return (
         <div className="flex items-center gap-4">
             <UserAvatarWithStatus
-                avatar={activeConversationUser.avatarUrl}
-                status={activeConversationUser.presenceStatus}
+                avatar={conversationParticipant?.avatarUrl ?? null}
+                status={isUserWithPresenceStatus ? conversationParticipant.presenceStatus : null}
                 size='md'
             />
             <div>
-                <h6>{activeConversationUser.fullName}</h6>
-                <p className="first-letter:uppercase">{activeConversationUser.presenceStatus}</p>
+                <h6>{conversationParticipant?.fullName}</h6>
+                {isUserWithPresenceStatus && <p className="first-letter:uppercase">{conversationParticipant.presenceStatus}</p>}
             </div>
         </div>
     )
