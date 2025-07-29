@@ -7,6 +7,8 @@ import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { transformConversationParticipant, transformMessage } from "@/lib/utils/transform";
 import { createClient } from "@/lib/utils/supabase/client";
 import { useFriends } from "@/lib/context/friends.context";
+import { fetchBaseUser } from "@/lib/client/user.client";
+import { BaseUserType, UserWithPresenceStatusType } from "@/lib/types/user";
 
 function useConversationParticipantsSubscription(conversationId: string | undefined, handleUpdateReadMessage: (newState: ConversationParticipantType) => void) {
 
@@ -60,17 +62,18 @@ function useMessagesSubscription(activeConversationId: string | undefined, handl
     }, [activeConversationId, user.id, handleIncomingMessage])
 }
 
-export default function useMessage(activeConversationUserId: string | null) {
+export default function useConversation(activeConversationUserId: string | null) {
     const { user } = useAuthenticatedUser();
     const { friends } = useFriends();
-    const [activeConversation, setActiveConversation] = useState<ConversationType | null>(null);
+    const [conversation, setConversation] = useState<ConversationType | null>(null);
+    const [conversationParticipant, setConversationParticipant] = useState<BaseUserType | UserWithPresenceStatusType | null>(null);
 
     const [loading, setLoading] = useState(false);
 
     const handleIncomingMessage = useCallback((message: MessageDBType) => {
         const newMessage = transformMessage(message);
 
-        setActiveConversation((prevState) => {
+        setConversation((prevState) => {
             if (!prevState) return prevState;
 
             return {
@@ -81,7 +84,7 @@ export default function useMessage(activeConversationUserId: string | null) {
     }, [])
 
     const handleUpdateReadMessage = useCallback((newState: ConversationParticipantType) => {
-        setActiveConversation((prevState) => {
+        setConversation((prevState) => {
             if (!prevState) return prevState;
 
             const participants = [...prevState.participants].map((participant) => {
@@ -97,10 +100,10 @@ export default function useMessage(activeConversationUserId: string | null) {
                 participants,
             }
         })
-    }, [setActiveConversation])
+    }, [setConversation])
 
-    useMessagesSubscription(activeConversation?.id, handleIncomingMessage);
-    useConversationParticipantsSubscription(activeConversation?.id, handleUpdateReadMessage);
+    useMessagesSubscription(conversation?.id, handleIncomingMessage);
+    useConversationParticipantsSubscription(conversation?.id, handleUpdateReadMessage);
 
     const fetchInitialData = useCallback(async () => {
         if (!activeConversationUserId) return;
@@ -111,15 +114,20 @@ export default function useMessage(activeConversationUserId: string | null) {
 
         const activeConversationUser = friends.find((friend) => friend.id === activeConversationUserId);
 
-        if (!activeConversationUser) return;
+        if (!activeConversationUser) {
+            const participant = await fetchBaseUser(activeConversationUserId);
+            setConversationParticipant(participant);
+        } else {
+            setConversationParticipant(activeConversationUser);
+        }
 
-        setActiveConversation(conversation);
+        setConversation(conversation);
 
         setLoading(false);
-    }, [activeConversationUserId, user.id, setActiveConversation, friends])
+    }, [activeConversationUserId, user.id, setConversation, friends])
 
     const addLocalMessage = useCallback((message: MessageType) => {
-        setActiveConversation((prevState) => {
+        setConversation((prevState) => {
             if (!prevState) return prevState;
 
             return {
@@ -134,8 +142,9 @@ export default function useMessage(activeConversationUserId: string | null) {
     }, [fetchInitialData, activeConversationUserId])
 
     return {
-        activeConversation,
+        conversation,
         loading,
         addLocalMessage,
+        conversationParticipant,
     }
 }
