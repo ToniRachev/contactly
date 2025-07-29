@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import { SidebarProvider } from "../ui/sidebar";
 import FriendsContextProvider from "@/lib/context/friends.context";
 import PresenceProvider from "@/lib/context/presence.context";
-import MessageProvider from "@/lib/context/message.context";
+import MessageProvider from "@/lib/context/conversation.context";
 import { getConversations } from "@/lib/actions/conversation/conversation.actions";
 import ConversationsProvider from "@/lib/context/conversations.context";
 
