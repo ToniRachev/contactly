@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
 type UserAvatarWithStatusProps = {
     avatar: string | null;
     size?: 'sm' | 'md';
-    status: PresenceStatusType;
+    status: PresenceStatusType | null;
 }
 
 const statusDot = cva('absolute bottom-0 right-1 rounded-full', {
@@ -34,7 +34,7 @@ export default function UserAvatarWithStatus({
     return (
         <div className='relative'>
             <Avatar avatar={avatar} size={size} />
-            <div className={statusDot({ status, size })} />
+            {status && <div className={statusDot({ status, size })} />}
         </div>
     )
 }
