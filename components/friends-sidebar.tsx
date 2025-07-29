@@ -9,7 +9,7 @@ import UserAvatarWithStatus from './user-avatar-with-status';
 import { PresenceStatusType } from '@/lib/types/user';
 import { useFriends } from '@/lib/context/friends.context';
 import { useCallback } from 'react';
-import { useMessageContext } from '@/lib/context/message.context';
+import { useConversationContext } from '@/lib/context/conversation.context';
 import { useRouter } from 'next/navigation';
 import { NAVIGATION } from '@/lib/constants/navigation';
 
@@ -23,7 +23,7 @@ type FriendCardProps = {
 const FriendCard = ({ avatar, name, status, id }: FriendCardProps) => {
     const router = useRouter();
 
-    const { handleSetActiveConversationUserId } = useMessageContext();
+    const { handleSetActiveConversationUserId } = useConversationContext();
 
     const handleNavigateToConversation = useCallback(() => {
         handleSetActiveConversationUserId(id);
