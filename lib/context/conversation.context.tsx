@@ -2,18 +2,18 @@
 
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
-type MessageContextType = {
+type ConversationContextType = {
     activeConversationUserId: string | null;
     handleSetActiveConversationUserId: (userId: string) => void;
 }
 
-type MessageProviderProps = {
+type ConversationProviderProps = {
     children: React.ReactNode;
 }
 
-const MessageContext = createContext<MessageContextType | null>(null);
+const ConversationContext = createContext<ConversationContextType | null>(null);
 
-export default function MessageProvider({ children }: Readonly<MessageProviderProps>) {
+export default function ConversationProvider({ children }: Readonly<ConversationProviderProps>) {
     const [activeConversationUserId, setActiveConversationUserId] = useState<string | null>(null);
 
     const handleSetActiveConversationUserId = useCallback((userId: string) => {
@@ -29,16 +29,16 @@ export default function MessageProvider({ children }: Readonly<MessageProviderPr
     ]);
 
     return (
-        <MessageContext.Provider value={contextValue}>
+        <ConversationContext.Provider value={contextValue}>
             {children}
-        </MessageContext.Provider>
+        </ConversationContext.Provider>
     )
 }
 
-export function useMessageContext() {
-    const context = useContext(MessageContext);
+export function useConversationContext() {
+    const context = useContext(ConversationContext);
     if (!context) {
-        throw new Error('useMessageContext must be used within a MessageProvider');
+        throw new Error('useConversationContext must be used within a ConversationProvider');
     }
     return context;
 }
