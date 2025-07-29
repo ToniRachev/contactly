@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { cva } from "class-variance-authority";
+import { resolveAvatarUrl } from "@/lib/utils";
 
 type AvatarProps = {
     avatar: string | null;
@@ -24,12 +25,10 @@ export default function Avatar(
         avatar,
         size = 'md'
     }: Readonly<AvatarProps>) {
-    const src = avatar ?? '/user_placeholder.png';
-
     return (
         <div className="flex items-center justify-center">
             <Image
-                src={src}
+                src={resolveAvatarUrl(avatar)}
                 alt="User avatar"
                 width={120}
                 height={120}
