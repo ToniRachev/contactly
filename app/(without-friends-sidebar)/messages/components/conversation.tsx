@@ -1,10 +1,10 @@
 'use client';
 
-import { useMessageContext } from "@/lib/context/message.context";
+import { useConversationContext } from "@/lib/context/conversation.context";
 import { ConversationType, MessageType } from "@/lib/types/conversation";
 import { useOptimistic } from "react";
 import SendMessage from "./send-message";
-import useMessage from "@/hooks/useMessage";
+import useConversation from "@/hooks/useConversation";
 import ActiveConversationUserCard from "./active-conversation-user-card";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import MessageList from "./message-list";
@@ -14,15 +14,15 @@ import ConversationSkeleton from "./conversation-skeleton";
 
 export default function Conversation() {
     const { user } = useAuthenticatedUser();
-    const { activeConversationUserId } = useMessageContext();
-    const { activeConversation, loading, addLocalMessage } = useMessage(activeConversationUserId);
+    const { activeConversationUserId } = useConversationContext();
+    const { conversation, loading, addLocalMessage, conversationParticipant } = useConversation(activeConversationUserId);
 
-    useMarkConversationRead(activeConversation, user.id);
+    useMarkConversationRead(conversation, user.id);
 
-    const recipient = activeConversation?.participants.find((participant) => participant.userId !== user.id);
+    const recipient = conversation?.participants.find((participant) => participant.userId !== user.id);
 
     const [optimisticConversation, addOptimisticMessage] = useOptimistic(
-        activeConversation,
+        conversation,
         (state: ConversationType | null, newMessage: MessageType) => {
             if (!state) return state;
 
@@ -37,7 +37,7 @@ export default function Conversation() {
         return <ConversationSkeleton />
     }
 
-    if (!activeConversation) {
+    if (!conversation) {
         return (
             <div className="absolute top-1/2 left-1/2 flex flex-col items-center gap-4">
                 <Inbox className="w-10 h-10" />
@@ -48,14 +48,14 @@ export default function Conversation() {
 
     return (
         <div className="w-full">
-            <ActiveConversationUserCard />
+            <ActiveConversationUserCard conversationParticipant={conversationParticipant} />
             <MessageList
                 conversation={optimisticConversation}
                 recipient={recipient}
             />
             <SendMessage
                 addOptimisticMessage={addOptimisticMessage}
-                conversationId={activeConversation.id}
+                conversationId={conversation.id}
                 addLocalMessage={addLocalMessage}
             />
         </div >
