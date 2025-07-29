@@ -1,7 +1,8 @@
 import { PresenceStatusType, UserProfileDBType } from "../types/user";
 import { createClient } from "../utils/supabase/client";
 import { baseFetcher } from "../utils/supabase/helpers";
-import { transformUserProfile } from "../utils/transform";
+import { baseUserQuery } from "../utils/supabase/queries";
+import { transformBaseUser, transformUserProfile } from "../utils/transform";
 
 export async function updateUserStatus(newStatus: PresenceStatusType, userId: string) {
     const supabase = createClient();
@@ -20,4 +21,13 @@ export async function fetchUserProfile(userId: string) {
 
     const data = await baseFetcher<UserProfileDBType>(query);
     return transformUserProfile(data);
+}
+
+export async function fetchBaseUser(userId: string) {
+    const supabase = createClient();
+    const data = await baseFetcher(
+        supabase.from('users').select(baseUserQuery).eq('id', userId).single()
+    )
+
+    return transformBaseUser(data);
 }
