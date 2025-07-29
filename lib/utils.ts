@@ -59,3 +59,5 @@ export function parseAndValidateFormData(
 
   return { data, result };
 }
+
+export const resolveAvatarUrl = (avatar: string | null) => avatar ?? '/user_placeholder.png';
