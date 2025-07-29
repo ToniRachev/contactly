@@ -1,7 +1,7 @@
 'use client';
 
 import Avatar from "@/components/user-avatar";
-import { useMessageContext } from "@/lib/context/message.context";
+import { useConversationContext } from "@/lib/context/conversation.context";
 import { ConversationOverviewType } from "@/lib/types/conversation";
 import { formatRecentOrDateTime } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ const formatMessagesCount = (newMessagesCount: number) => {
 }
 
 export default function ConversationCard({ conversation }: Readonly<ConversationCardProps>) {
-    const { handleSetActiveConversationUserId } = useMessageContext();
+    const { handleSetActiveConversationUserId } = useConversationContext();
     const messagesCount = formatMessagesCount(conversation.unreadCount);
 
     return (
