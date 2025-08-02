@@ -30,9 +30,9 @@ export default function EditUserImage({ imageType, onImageChange, onSuccess, chi
 
     const error = validateError ?? state.errors?.fieldErrors?.image?.[0] ?? state.errors?.formErrors?.[0];
 
-    const handleImageChange = (file: File) => {
+    const handleImageChange = (file: FileList) => {
         const validateFile = updateUserImageSchema.safeParse({
-            image: file,
+            image: file[0],
         })
 
         if (!validateFile.success) {
@@ -42,7 +42,7 @@ export default function EditUserImage({ imageType, onImageChange, onSuccess, chi
 
         if (formRef.current) {
             setValidateError(null);
-            onImageChange(URL.createObjectURL(file));
+            onImageChange(URL.createObjectURL(file[0]));
             formRef.current.requestSubmit();
         }
     }
