@@ -8,10 +8,11 @@ type ImageUploadWrapperProps = {
     children: ReactNode;
     name: string;
     error?: string;
-    onImageChange: (image: File) => void;
+    multiple?: boolean;
+    onImageChange: (image: FileList) => void;
 } & InputHTMLAttributes<HTMLInputElement>
 
-export default function ImageUploadWrapper({ children, name, onImageChange, error, ...props }: Readonly<ImageUploadWrapperProps>) {
+export default function ImageUploadWrapper({ children, name, onImageChange, error, multiple = false, ...props }: Readonly<ImageUploadWrapperProps>) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleClick = () => {
@@ -21,9 +22,9 @@ export default function ImageUploadWrapper({ children, name, onImageChange, erro
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            onImageChange(file);
+        const files = e.target.files;
+        if (files) {
+            onImageChange(files);
         }
     }
 
@@ -37,6 +38,8 @@ export default function ImageUploadWrapper({ children, name, onImageChange, erro
                     name={name}
                     type='file'
                     onChange={handleChange}
+                    multiple={multiple}
+                    accept="image/*"
                     {...props}
                 />
             </button>
