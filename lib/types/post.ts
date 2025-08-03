@@ -33,6 +33,7 @@ export type PostDBType = {
     commentsCount: CountType;
     likesCount: CountType;
     likes: LikesType;
+    images: string[]
 }
 
 export type PostType = {
@@ -44,4 +45,5 @@ export type PostType = {
     likesCount: number;
     likes: string[];
     postOwner: boolean;
+    images: string[];
 }
