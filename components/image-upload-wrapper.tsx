@@ -9,7 +9,7 @@ type ImageUploadWrapperProps = {
     name: string;
     error?: string;
     multiple?: boolean;
-    onImageChange: (image: FileList) => void;
+    onImageChange: (image: File[]) => void;
 } & InputHTMLAttributes<HTMLInputElement>
 
 export default function ImageUploadWrapper({ children, name, onImageChange, error, multiple = false, ...props }: Readonly<ImageUploadWrapperProps>) {
@@ -24,7 +24,8 @@ export default function ImageUploadWrapper({ children, name, onImageChange, erro
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files) {
-            onImageChange(files);
+            const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+            onImageChange(imageFiles);
         }
     }
 
