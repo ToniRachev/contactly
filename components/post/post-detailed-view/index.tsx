@@ -56,7 +56,7 @@ export function PostDetailedView(
     }: Readonly<PostViewProps>) {
     return (
         <Dialog open={controls.open} onOpenChange={controls.setState}>
-            <DialogContent className="min-w-[50vw] border-none">
+            <DialogContent className="min-w-[35vw] border-none">
                 <DialogHeader>
                     <VisuallyHidden>
                         <DialogTitle>Post view</DialogTitle>
