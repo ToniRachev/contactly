@@ -12,6 +12,7 @@ import { getUserId } from "@/lib/actions/user/user.actions";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { baseUserQuery } from "@/lib/utils/supabase/queries";
+import { uploadPostImages } from "../images/images.actions";
 
 type PostState = {
     data: PostSchemaType;
@@ -50,7 +51,7 @@ export async function fetchUserPosts(userId: string, limit: number = 10) {
     return transformPosts(data, userId);
 }
 
-export async function createPost(authorId: string, body: string) {
+export async function createPost(authorId: string, postData: { body: string, images: string[] | null }) {
     const supabase = await createClient();
 
     const data = await baseFetcher(
@@ -58,7 +59,7 @@ export async function createPost(authorId: string, body: string) {
             .from('posts')
             .insert([{
                 author_id: authorId,
-                body
+                ...postData
             }])
             .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`)
     )
@@ -89,20 +90,27 @@ export const deletePost = async (postId: string) => {
 }
 
 export async function submitPost(path: string, state: SubmitPostState, formData: FormData) {
-    const { data, result } = parseAndValidateFormData(formData, postSchema, [
-        'body'
-    ]);
+    const data = {
+        body: formData.get('body'),
+        images: formData.getAll('images')
+    }
+
+    const result = postSchema.safeParse(data);
 
     if (!result.success) {
         return {
-            ...createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType, false),
+            ...createFormResult(data as unknown as PostSchemaType, result.error.formErrors as PostSchemaErrorType, false),
             newPost: null,
         }
     }
 
     try {
         const userId = await getUserId();
-        const newPost = await createPost(userId, result.data.body);
+        const imagesUrls = data.images ? await uploadPostImages(data.images, userId) : [];
+        const newPost = await createPost(userId, {
+            body: result.data.body,
+            images: imagesUrls
+        });
 
         if (path === '/') {
             redirect('/profile');
@@ -119,7 +127,7 @@ export async function submitPost(path: string, state: SubmitPostState, formData:
 
         console.error('Failed to create post', error);
         return {
-            ...createFormResult(data as PostSchemaType, MESSAGES.genericError, false),
+            ...createFormResult(data as unknown as PostSchemaType, MESSAGES.genericError, false),
             newPost: null,
         }
     }
@@ -132,7 +140,7 @@ export async function editPostAction(postId: string, state: PostState, formData:
 
     if (!result.success) {
         return {
-            ...createFormResult(data as PostSchemaType, result.error.formErrors as PostSchemaErrorType, false),
+            ...createFormResult(data as unknown as PostSchemaType, result.error.formErrors as PostSchemaErrorType, false),
             success: false,
         }
     }
