@@ -30,7 +30,7 @@ export default function EditUserImage({ imageType, onImageChange, onSuccess, chi
 
     const error = validateError ?? state.errors?.fieldErrors?.image?.[0] ?? state.errors?.formErrors?.[0];
 
-    const handleImageChange = (file: FileList) => {
+    const handleImageChange = (file: File[]) => {
         const validateFile = updateUserImageSchema.safeParse({
             image: file[0],
         })
