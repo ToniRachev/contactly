@@ -1,4 +1,4 @@
-import { formatHour, formatRecentOrDateTime } from "@/lib/utils";
+import { formatRecentOrDateTime } from "@/lib/utils";
 
 type MessageStateProps = {
     isSeen: boolean;
