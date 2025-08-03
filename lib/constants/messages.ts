@@ -25,7 +25,9 @@ export const MESSAGES = {
         },
         post: {
             minLength: 'Post is too short to share.',
-            maxLength: 'Post is too long. Please keep it under 500 characters'
+            maxLength: 'Post is too long. Please keep it under 500 characters',
+            maxFileSize: 'File size is too large. Please keep it under 5MB',
+            invalidFileType: 'Invalid file type. Please upload an image'
         },
         comment: {
             minLength: 'Comment is too short to share.',
