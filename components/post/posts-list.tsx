@@ -13,7 +13,7 @@ const PostsList = () => {
     const { posts } = usePosts();
 
     return (
-        <div className="w-[50vw] grid gap-24">
+        <div className="grid gap-24">
             {posts.map((post) => (
                 <PostWrapper
                     key={post.postId}
@@ -27,8 +27,10 @@ const PostsList = () => {
 export default function PostsListWrapper({ posts }: Readonly<PostsListWrapperProps>) {
     return (
         <PostsProvider postsData={posts}>
-            <CreatePost />
-            <PostsList />
+            <div className="space-y-24 max-w-[35vw] w-full">
+                <CreatePost />
+                <PostsList />
+            </div>
         </PostsProvider>
     )
 }
