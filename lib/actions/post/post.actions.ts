@@ -28,7 +28,7 @@ export async function fetchPosts(currentUserId: string, limit: number = 10) {
 
     const data = await baseFetcher(
         supabase.from('posts')
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`)
+            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), images, author:author_id(${baseUserQuery})`)
             .neq('author_id', currentUserId)
             .limit(limit)
             .order('created_at', { ascending: false })
@@ -42,7 +42,7 @@ export async function fetchUserPosts(userId: string, limit: number = 10) {
 
     const data = await baseFetcher(
         supabase.from('posts')
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`)
+            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), images, author:author_id(${baseUserQuery})`)
             .eq('author_id', userId)
             .limit(limit)
             .order('created_at', { ascending: false })
