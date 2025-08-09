@@ -11,8 +11,8 @@ import { PostType } from "@/lib/types/post";
 import { getUserId } from "@/lib/actions/user/user.actions";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { baseUserQuery } from "@/lib/utils/supabase/queries";
-import { uploadPostImages } from "../images/images.actions";
+import { baseUserQuery, postQuery } from "@/lib/utils/supabase/queries";
+import { addPostPhotos } from "../photos/photos.actions";
 
 type PostState = {
     data: PostSchemaType;
@@ -28,7 +28,7 @@ export async function fetchPosts(currentUserId: string, limit: number = 10) {
 
     const data = await baseFetcher(
         supabase.from('posts')
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), images, author:author_id(${baseUserQuery})`)
+            .select(postQuery)
             .neq('author_id', currentUserId)
             .limit(limit)
             .order('created_at', { ascending: false })
@@ -42,7 +42,7 @@ export async function fetchUserPosts(userId: string, limit: number = 10) {
 
     const data = await baseFetcher(
         supabase.from('posts')
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), images, author:author_id(${baseUserQuery})`)
+            .select(postQuery)
             .eq('author_id', userId)
             .limit(limit)
             .order('created_at', { ascending: false })
@@ -51,7 +51,7 @@ export async function fetchUserPosts(userId: string, limit: number = 10) {
     return transformPosts(data, userId);
 }
 
-export async function createPost(authorId: string, postData: { body: string, images: string[] | null }) {
+export async function createPost(authorId: string, postData: { body: string, albumId: string }) {
     const supabase = await createClient();
 
     const data = await baseFetcher(
@@ -59,7 +59,8 @@ export async function createPost(authorId: string, postData: { body: string, ima
             .from('posts')
             .insert([{
                 author_id: authorId,
-                ...postData
+                body: postData.body,
+                album_id: postData.albumId,
             }])
             .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`)
     )
@@ -106,10 +107,15 @@ export async function submitPost(path: string, state: SubmitPostState, formData:
 
     try {
         const userId = await getUserId();
-        const imagesUrls = data.images ? await uploadPostImages(data.images, userId) : [];
+        const albumId = await addPostPhotos({
+            album: null,
+            author: userId,
+            images: data.images
+        })
+
         const newPost = await createPost(userId, {
             body: result.data.body,
-            images: imagesUrls
+            albumId,
         });
 
         if (path === '/') {
