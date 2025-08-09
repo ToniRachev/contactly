@@ -13,6 +13,7 @@ import ReactionItem from "../reaction-item";
 import FriendRequestButton from "../friend-request-button";
 import { useFriends } from "@/lib/context/friends.context";
 import { ColumnsPhotoAlbum } from "react-photo-album";
+import { AlbumType } from "@/lib/types/photos";
 
 type PostAuthorProps = {
     post: PostType;
@@ -54,23 +55,21 @@ const PostAuthor = ({ post, isFriendWithPostAuthor }: PostAuthorProps) => {
 
 type PostContentProps = {
     content: string;
-    images: string[];
+    album: AlbumType;
 }
 
-const PostContent = ({ content, images }: PostContentProps) => {
-    const photos = images.map((image) => ({
-        src: image,
-        width: 1000,
-        height: 1000,
-    }))
-
+const PostContent = ({ content, album }: PostContentProps) => {
     return (
         <div className="space-y-4">
             <p>{content}</p>
             <div>
                 <ColumnsPhotoAlbum
-                    columns={images && images.length > 1 ? 2 : 1}
-                    photos={photos}
+                    columns={album.photos.length > 1 ? 2 : 1}
+                    photos={album.photos.map((photo) => ({
+                        src: photo.url,
+                        width: 100,
+                        height: 100,
+                    }))}
                 />
             </div>
         </div>
@@ -143,7 +142,7 @@ export default function Post({
 
             <PostContent
                 content={post.body}
-                images={post.images}
+                album={post.album}
             />
 
             <PostReactions
