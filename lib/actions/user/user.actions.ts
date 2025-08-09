@@ -17,6 +17,8 @@ import { ActionState } from "@/app/(without-friends-sidebar)/profile/components/
 import { revalidateTag, unstable_cache } from "next/cache";
 import { transformUserProfile, transformBaseUser, transformUserWithPresenceStatus } from "@/lib/utils/transform";
 import { userQueryWithBiography, baseUserQuery, userQueryWithPresenceStatus } from "@/lib/utils/supabase/queries";
+import { createPhoto, getOrCreateAlbumId } from "../photos/photos.actions";
+import { AlbumTypeEnum } from "@/lib/types/photos";
 
 export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();
@@ -96,6 +98,17 @@ export async function updateUserImage(userId: string, image: File, imageType: 'a
             .update({ [imageType + '_url']: imageUrl })
             .eq('id', userId)
     )
+
+    const albumId = await getOrCreateAlbumId({
+        author: userId,
+        type: imageType === 'avatar' ? AlbumTypeEnum.AVATAR : AlbumTypeEnum.COVER,
+    })
+
+    await createPhoto({
+        url: imageUrl,
+        author: userId,
+        album: albumId,
+    })
 
     return imageUrl;
 }
