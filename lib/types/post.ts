@@ -1,3 +1,4 @@
+import { AlbumDBType, AlbumType } from "./photos";
 import { BaseUserDBType, BaseUserType } from "./user";
 
 export type CountType = { count: number }[];
@@ -33,7 +34,7 @@ export type PostDBType = {
     commentsCount: CountType;
     likesCount: CountType;
     likes: LikesType;
-    images: string[]
+    album: AlbumDBType;
 }
 
 export type PostType = {
@@ -45,5 +46,5 @@ export type PostType = {
     likesCount: number;
     likes: string[];
     postOwner: boolean;
-    images: string[];
+    album: AlbumType;
 }

@@ -2,6 +2,7 @@ import { formatFullName } from "@/lib/utils"
 import { CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "@/lib/types/post"
 import { BaseConversationOverviewDBType, ConversationDBType, ConversationOverviewDBType, ConversationOverviewType, ConversationParticipantDBType, MessageDBType } from "../types/conversation"
 import { BaseUserDBType, BaseUserType, UserBiographyDBType, UserProfileDBType, UserProfileType, UserWithPresenceStatusDBType, UserWithPresenceStatusType } from "../types/user"
+import { AlbumDBType, AlbumType, PhotoDBType, PhotoType } from "../types/photos"
 
 const extractCount = (item: CountType) => {
     return item?.[0]?.count ?? 0
@@ -52,7 +53,7 @@ export const transformPosts = (posts: PostDBType[], userId?: string): PostType[]
         likesCount: extractCount(post.likesCount),
         likes: extractLikes(post.likes),
         postOwner: userId ? userId === post.author.id : true,
-        images: post.images
+        album: transformAlbum(post.album),
     }))
 }
 
@@ -126,5 +127,27 @@ export const transformConversationOverview = (overview: ConversationOverviewDBTy
     return {
         ...transformBaseConversationOverview(overview),
         participant: transformUserWithPresenceStatus(participant),
+    }
+}
+
+export const transformAlbum = (album: AlbumDBType): AlbumType => {
+    return {
+        id: album.id,
+        authorId: album.author_id,
+        type: album.type,
+        createdAt: album.created_at,
+        photos: album.photos.map((photo) => transformPhoto(photo)),
+        author: transformBaseUser(album.author),
+    }
+}
+
+export const transformPhoto = (photo: PhotoDBType): PhotoType => {
+    return {
+        id: photo.id,
+        albumId: photo.album_id,
+        authorId: photo.author_id,
+        url: photo.url,
+        caption: photo.caption,
+        createdAt: photo.created_at,
     }
 }
