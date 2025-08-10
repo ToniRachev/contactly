@@ -1,51 +1,22 @@
 'use client';
 
-import { PhotoType } from "@/lib/types/photos";
+import { AlbumAuthorType, PhotoType } from "@/lib/types/photos";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-
-
+import CloseButton from "./close-button";
+import Navigation from "./navigation";
+import PhotoMetadata from "./photo-metadata";
+import Photo from "./photo";
 
 type GalleryProps = {
     photos: PhotoType[];
     activePhotoId: string;
-}
-
-type NavigationButtonProps = {
-    children: React.ReactNode;
-    onClick: () => void;
-}
-
-
-const NavigationButton = ({ children, onClick }: Readonly<NavigationButtonProps>) => {
-    return (
-        <button
-            onClick={onClick}
-            className="p-2 rounded-full bg-white/30 backdrop-blur-sm hover:bg-white/50 transition-all duration-300 cursor-pointer z-50"
-        >
-            {children}
-        </button>
-    )
-}
-
-const CloseButton = () => {
-    const router = useRouter();
-
-    return (
-        <button
-            onClick={() => router.back()}
-            className="absolute top-4 left-6 p-2 rounded-full bg-white/30 backdrop-blur-sm hover:bg-white/50 transition-all duration-300 cursor-pointer z-50"
-        >
-            <X />
-        </button>
-    )
+    author: AlbumAuthorType;
 }
 
 // TODO: Add photo alt
 
-export default function Gallery({ photos, activePhotoId }: Readonly<GalleryProps>) {
+export default function Gallery({ photos, activePhotoId, author }: Readonly<GalleryProps>) {
     const [activePhotoIndex, setActivePhotoIndex] = useState(photos.findIndex(photo => photo.id === activePhotoId));
 
     const activePhoto = photos[activePhotoIndex];
@@ -78,23 +49,16 @@ export default function Gallery({ photos, activePhotoId }: Readonly<GalleryProps
         <div className="w-full flex justify-center items-center relative">
             <CloseButton />
 
-            <Image
-                src={activePhoto.url}
-                alt="Add Alt later"
-                width={500}
-                height={500}
-                className="h-[100svh] w-[40svw] object-cover"
+            <Photo
+                url={activePhoto.url}
+                author={author}
+                createdAt={activePhoto.createdAt}
             />
 
-            <div className="absolute top-0 left-0 w-full h-full flex justify-between items-center px-6">
-                <NavigationButton onClick={handlePreviousPhoto}>
-                    <ChevronLeft />
-                </NavigationButton>
-
-                <NavigationButton onClick={handleNextPhoto}>
-                    <ChevronRight />
-                </NavigationButton>
-            </div>
+            <Navigation
+                handlePreviousPhoto={handlePreviousPhoto}
+                handleNextPhoto={handleNextPhoto}
+            />
         </div>
     )
 }
