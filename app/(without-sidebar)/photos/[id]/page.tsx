@@ -27,6 +27,7 @@ export default async function Photos({ params }: Readonly<PhotosProps>) {
             <Gallery
                 photos={album.photos}
                 activePhotoId={id}
+                author={album.author}
             />
         </div>
     )
