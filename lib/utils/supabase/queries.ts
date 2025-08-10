@@ -4,6 +4,8 @@ export const userQueryWithPresenceStatus = `${baseUserQuery}, presence_status, l
 
 export const userQueryWithBiography = `${baseUserQuery}, biography(*), cover_url`;
 
+export const albumQuery = `*, author:author_id(id, first_name, last_name, avatar_url), photos(*)`
+
 export const postQuery = `
   *,
   commentsCount:comments(count), 
@@ -13,7 +15,6 @@ export const postQuery = `
     ${baseUserQuery}
   ),
   album:album_id(
-    *, 
-    photos(*)
+    ${albumQuery}
   )
 `;
