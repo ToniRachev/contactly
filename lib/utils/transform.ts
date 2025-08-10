@@ -137,6 +137,7 @@ export const transformAlbum = (album: AlbumDBType): AlbumType => {
         type: album.type,
         createdAt: album.created_at,
         photos: album.photos.map((photo) => transformPhoto(photo)),
+        author: transformBaseUser(album.author),
     }
 }
 
