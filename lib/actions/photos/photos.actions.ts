@@ -3,7 +3,7 @@
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { AlbumType, AlbumTypeEnum } from "@/lib/types/photos";
-import { transformAlbum } from "@/lib/utils/transform";
+import { transformAlbum, transformPhoto } from "@/lib/utils/transform";
 
 type CreatePhotoProps = {
     url: string;
@@ -23,7 +23,7 @@ type AddPostPhotosProps = {
     images: FormDataEntryValue[];
 }
 
-export async function getAlbum({ author, type }: GetOrCreateAlbumProps): Promise<AlbumType | null> {
+export async function getAlbumByTypeAndAuthor({ author, type }: GetOrCreateAlbumProps): Promise<AlbumType | null> {
     const supabase = await createClient();
 
     const data = await baseFetcher(
@@ -32,6 +32,20 @@ export async function getAlbum({ author, type }: GetOrCreateAlbumProps): Promise
             .eq('author_id', author)
             .eq('type', type)
             .maybeSingle()
+    )
+
+    return data ? transformAlbum(data) : null;
+}
+
+type GetAlbumByIdProps = {
+    id: string;
+}
+
+export async function getAlbumById({ id }: GetAlbumByIdProps): Promise<AlbumType | null> {
+    const supabase = await createClient();
+
+    const data = await baseFetcher(
+        supabase.from('albums').select('*, photos(*)').eq('id', id).maybeSingle()
     )
 
     return data ? transformAlbum(data) : null;
@@ -53,7 +67,7 @@ export async function createAlbum({ author, type }: GetOrCreateAlbumProps): Prom
 }
 
 export async function getOrCreateAlbumId({ author, type }: GetOrCreateAlbumProps) {
-    const existing = await getAlbum({ author, type });
+    const existing = await getAlbumByTypeAndAuthor({ author, type });
 
     if (existing) {
         return existing.id;
@@ -107,4 +121,18 @@ export async function addPostPhotos({ album, author, images }: AddPostPhotosProp
     )
 
     return albumId;
+}
+
+type GetPhotoProps = {
+    id: string;
+}
+
+export async function getPhoto({ id }: GetPhotoProps) {
+    const supabase = await createClient();
+
+    const data = await baseFetcher(
+        supabase.from('photos').select('*').eq('id', id).single()
+    )
+
+    return data ? transformPhoto(data) : null;
 }
