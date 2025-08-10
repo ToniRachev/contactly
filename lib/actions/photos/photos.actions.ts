@@ -4,6 +4,7 @@ import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { AlbumType, AlbumTypeEnum } from "@/lib/types/photos";
 import { transformAlbum, transformPhoto } from "@/lib/utils/transform";
+import { albumQuery } from "@/lib/utils/supabase/queries";
 
 type CreatePhotoProps = {
     url: string;
@@ -28,7 +29,7 @@ export async function getAlbumByTypeAndAuthor({ author, type }: GetOrCreateAlbum
 
     const data = await baseFetcher(
         supabase.from('albums')
-            .select('*')
+            .select(albumQuery)
             .eq('author_id', author)
             .eq('type', type)
             .maybeSingle()
@@ -45,7 +46,7 @@ export async function getAlbumById({ id }: GetAlbumByIdProps): Promise<AlbumType
     const supabase = await createClient();
 
     const data = await baseFetcher(
-        supabase.from('albums').select('*, photos(*)').eq('id', id).maybeSingle()
+        supabase.from('albums').select(albumQuery).eq('id', id).maybeSingle()
     )
 
     return data ? transformAlbum(data) : null;
@@ -59,7 +60,7 @@ export async function createAlbum({ author, type }: GetOrCreateAlbumProps): Prom
             author_id: author,
             type,
         })
-            .select('*')
+            .select(albumQuery)
             .single()
     )
 
