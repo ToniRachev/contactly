@@ -1,17 +1,16 @@
 'use client';
 
-import { AlbumAuthorType, PhotoType } from "@/lib/types/photos";
-import Image from "next/image";
+import { PhotoType } from "@/lib/types/photos";
 import { useEffect, useState } from "react";
 import CloseButton from "./close-button";
 import Navigation from "./navigation";
-import PhotoMetadata from "./photo-metadata";
 import Photo from "./photo";
+import { BaseUserType } from "@/lib/types/user";
 
 type GalleryProps = {
     photos: PhotoType[];
     activePhotoId: string;
-    author: AlbumAuthorType;
+    author: BaseUserType;
 }
 
 // TODO: Add photo alt

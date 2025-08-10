@@ -1,10 +1,10 @@
-import { AlbumAuthorType } from "@/lib/types/photos";
+import { BaseUserType } from "@/lib/types/user";
 import Image from "next/image";
 import PhotoMetadata from "./photo-metadata";
 
 type PhotoProps = {
     url: string;
-    author: AlbumAuthorType;
+    author: BaseUserType;
     createdAt: string;
 }
 

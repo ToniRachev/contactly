@@ -1,6 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
-
 type NavigationButtonProps = {
     children: React.ReactNode;
     onClick: () => void;

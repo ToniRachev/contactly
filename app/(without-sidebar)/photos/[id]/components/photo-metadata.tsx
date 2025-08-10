@@ -1,9 +1,9 @@
 import Avatar from "@/components/user-avatar";
-import { AlbumAuthorType } from "@/lib/types/photos";
+import { BaseUserType } from "@/lib/types/user";
 import { formatFullName, formatRelativeTime } from "@/lib/utils";
 
 type PhotoMetadataProps = {
-    author: AlbumAuthorType;
+    author: BaseUserType;
     createdAt: string;
 }
 
