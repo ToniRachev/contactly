@@ -12,8 +12,10 @@ import { postReaction } from "@/lib/actions/likes/likes.actions";
 import ReactionItem from "../reaction-item";
 import FriendRequestButton from "../friend-request-button";
 import { useFriends } from "@/lib/context/friends.context";
-import { ColumnsPhotoAlbum } from "react-photo-album";
+import { ColumnsPhotoAlbum, Photo, RenderImageContext, RenderImageProps } from "react-photo-album";
 import { AlbumType } from "@/lib/types/photos";
+import Image from "next/image";
+import Link from "next/link";
 
 type PostAuthorProps = {
     post: PostType;
@@ -58,6 +60,33 @@ type PostContentProps = {
     album: AlbumType;
 }
 
+type CustomPhoto = {
+    id: string;
+} & Photo;
+
+function renderNextImage(
+    { alt = "", title, sizes }: RenderImageProps,
+    { photo, width, height }: RenderImageContext<CustomPhoto>
+) {
+    return (
+        <Link href={`/photos/${photo.id}`} className="w-full h-full">
+            <Image
+                alt={alt}
+                title={title}
+                sizes={sizes}
+                src={photo.src}
+                width={width}
+                height={height}
+                style={{
+                    width: width,
+                    height: height,
+                    objectFit: 'cover'
+                }}
+            />
+        </Link>
+    )
+}
+
 const PostContent = ({ content, album }: PostContentProps) => {
     return (
         <div className="space-y-4">
@@ -69,7 +98,9 @@ const PostContent = ({ content, album }: PostContentProps) => {
                         src: photo.url,
                         width: 100,
                         height: 100,
+                        id: photo.id
                     }))}
+                    render={{ image: renderNextImage }}
                 />
             </div>
         </div>
