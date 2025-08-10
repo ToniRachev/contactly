@@ -62,7 +62,7 @@ export async function createPost(authorId: string, postData: { body: string, alb
                 body: postData.body,
                 album_id: postData.albumId,
             }])
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`)
+            .select(postQuery)
     )
 
     const transformedPost = transformPosts(data, authorId);
