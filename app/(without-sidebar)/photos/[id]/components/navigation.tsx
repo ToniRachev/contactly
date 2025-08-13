@@ -6,8 +6,10 @@ type NavigationButtonProps = {
 }
 
 type NavigationProps = {
-    handlePreviousPhoto: () => void;
-    handleNextPhoto: () => void;
+    navigation: {
+        handlePreviousPhoto: () => void;
+        handleNextPhoto: () => void;
+    }
 }
 
 const NavigationButton = ({ children, onClick }: Readonly<NavigationButtonProps>) => {
@@ -21,14 +23,14 @@ const NavigationButton = ({ children, onClick }: Readonly<NavigationButtonProps>
     )
 }
 
-export default function Navigation({ handlePreviousPhoto, handleNextPhoto }: Readonly<NavigationProps>) {
+export default function Navigation({ navigation }: Readonly<NavigationProps>) {
     return (
         <div className="absolute top-0 left-0 w-full h-full flex justify-between items-center px-6">
-            <NavigationButton onClick={handlePreviousPhoto}>
+            <NavigationButton onClick={navigation.handlePreviousPhoto}>
                 <ChevronLeft />
             </NavigationButton>
 
-            <NavigationButton onClick={handleNextPhoto}>
+            <NavigationButton onClick={navigation.handleNextPhoto}>
                 <ChevronRight />
             </NavigationButton>
         </div>

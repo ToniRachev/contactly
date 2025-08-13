@@ -93,7 +93,8 @@ export const deletePost = async (postId: string) => {
 export async function submitPost(path: string, state: SubmitPostState, formData: FormData) {
     const data = {
         body: formData.get('body'),
-        images: formData.getAll('images')
+        images: formData.getAll('images'),
+        captions: formData.getAll('captions')
     }
 
     const result = postSchema.safeParse(data);
@@ -105,12 +106,17 @@ export async function submitPost(path: string, state: SubmitPostState, formData:
         }
     }
 
+    const mappedPhotosWithCaptions = data.images.map((image, index) => ({
+        file: image,
+        caption: data.captions[index] as string
+    }));
+
     try {
         const userId = await getUserId();
         const albumId = await addPostPhotos({
             album: null,
             author: userId,
-            images: data.images
+            photos: mappedPhotosWithCaptions
         })
 
         const newPost = await createPost(userId, {

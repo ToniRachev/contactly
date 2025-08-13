@@ -23,12 +23,10 @@ export default async function Photos({ params }: Readonly<PhotosProps>) {
     }
 
     return (
-        <div>
-            <Gallery
-                photos={album.photos}
-                activePhotoId={id}
-                author={album.author}
-            />
-        </div>
+        <Gallery
+            initialPhotos={album.photos}
+            activePhotoId={id}
+            author={album.author}
+        />
     )
 }

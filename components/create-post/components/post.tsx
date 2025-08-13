@@ -13,7 +13,7 @@ export default function Post({ closeDialog, postImages, openEditImages }: Readon
     const { user } = useAuthenticatedUser();
 
     return (
-        <div>
+        <div className="w-[25svw]">
             <UserHeader
                 avatarUrl={user.avatarUrl}
                 fullName={user.fullName}

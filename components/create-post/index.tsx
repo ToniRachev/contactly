@@ -25,7 +25,7 @@ export default function CreatePost() {
             <DialogTrigger className="w-full max-w-[50svw]">
                 <Trigger avatarUrl={user.avatarUrl} />
             </DialogTrigger>
-            <DialogContent className="border-none">
+            <DialogContent className="border-none !w-auto !max-w-[70svw]">
                 <DialogHeader className="border-b-1 border-stone-500 pb-4">
                     <DialogTitle className="!text-lg text-center relative">
                         {dialog.isEditingImages && (
@@ -45,7 +45,11 @@ export default function CreatePost() {
                         openEditImages={() => dialog.setIsEditingImages(true)}
                     />
                 ) : (
-                    <EditImages images={postImages.images} removeImage={postImages.handleRemoveImage} />
+                    <EditImages
+                        images={postImages.images}
+                        removeImage={postImages.handleRemoveImage}
+                        addImageCaption={postImages.handleAddImageCaption}
+                    />
                 )}
             </DialogContent>
         </Dialog>

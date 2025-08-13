@@ -1,63 +1,44 @@
 'use client';
 
 import { PhotoType } from "@/lib/types/photos";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CloseButton from "./close-button";
 import Navigation from "./navigation";
 import Photo from "./photo";
 import { BaseUserType } from "@/lib/types/user";
+import usePhotos from "../hooks/usePhotos";
 
 type GalleryProps = {
-    photos: PhotoType[];
+    initialPhotos: PhotoType[];
     activePhotoId: string;
     author: BaseUserType;
 }
 
 // TODO: Add photo alt
 
-export default function Gallery({ photos, activePhotoId, author }: Readonly<GalleryProps>) {
-    const [activePhotoIndex, setActivePhotoIndex] = useState(photos.findIndex(photo => photo.id === activePhotoId));
 
-    const activePhoto = photos[activePhotoIndex];
-
-    const handleNextPhoto = () => {
-        setActivePhotoIndex((prev) => {
-            if (prev === photos.length - 1) {
-                return 0;
-            }
-
-            return prev + 1;
-        });
-    }
-
-    const handlePreviousPhoto = () => {
-        setActivePhotoIndex((prev) => {
-            if (prev === 0) {
-                return photos.length - 1;
-            }
-
-            return prev - 1;
-        });
-    }
+export default function Gallery({ initialPhotos, activePhotoId, author }: Readonly<GalleryProps>) {
+    const { photos, galleryNavigation, photoReaction } = usePhotos(initialPhotos, activePhotoId);
 
     useEffect(() => {
-        window.history.replaceState(null, '', `/photos/${photos[activePhotoIndex].id}`);
-    }, [activePhotoIndex, photos])
+        window.history.replaceState(null, '', `/photos/${photos[galleryNavigation.activePhotoIndex].id}`);
+    }, [galleryNavigation.activePhotoIndex, photos])
+
+    const albumHasMoreThanOnePhoto = photos.length > 1;
 
     return (
         <div className="w-full flex justify-center items-center relative">
             <CloseButton />
 
             <Photo
-                url={activePhoto.url}
                 author={author}
-                createdAt={activePhoto.createdAt}
+                photo={photos[galleryNavigation.activePhotoIndex]}
+                photoReaction={photoReaction}
             />
 
-            <Navigation
-                handlePreviousPhoto={handlePreviousPhoto}
-                handleNextPhoto={handleNextPhoto}
-            />
+            {albumHasMoreThanOnePhoto && (
+                <Navigation navigation={galleryNavigation} />
+            )}
         </div>
     )
 }
