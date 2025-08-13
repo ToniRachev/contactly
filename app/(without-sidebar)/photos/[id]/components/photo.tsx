@@ -5,6 +5,7 @@ import { PhotoType } from "@/lib/types/photos";
 import Image from "next/image";
 import PhotoMetadata from "./photo-metadata";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
+import PhotoReaction from "./photo-reaction";
 
 type PhotoProps = {
     author: BaseUserType;
@@ -29,17 +30,22 @@ export default function Photo({ photo, author, photoReaction }: Readonly<PhotoPr
                 className="h-[100svh] object-cover"
             />
 
-            <PhotoMetadata
-                author={author}
-                photoData={{
-                    createdAt: photo.createdAt,
-                    caption: photo.caption,
-                    photoId: photo.id,
-                    isLikedPhoto,
-                    likesCount: photo.likes.length,
-                }}
-                photoReaction={photoReaction}
-            />
+            <div className="absolute top-4 left-[72%] max-w-[20svw]">
+                <PhotoMetadata
+                    author={author}
+                    photoData={{
+                        createdAt: photo.createdAt,
+                        caption: photo.caption,
+                    }}
+                />
+
+                <PhotoReaction
+                    photoId={photo.id}
+                    isLikedPhoto={isLikedPhoto}
+                    likesCount={photo.likes.length}
+                    photoReaction={photoReaction}
+                />
+            </div>
         </div>
     )
 }
