@@ -4,7 +4,8 @@ import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { AlbumType, AlbumTypeEnum } from "@/lib/types/photos";
 import { transformAlbum, transformPhoto } from "@/lib/utils/transform";
-import { albumQuery } from "@/lib/utils/supabase/queries";
+import { albumQuery, photoQuery } from "@/lib/utils/supabase/queries";
+import { revalidatePath } from "next/cache";
 
 type CreatePhotoProps = {
     url: string;
@@ -21,7 +22,16 @@ type GetOrCreateAlbumProps = {
 type AddPostPhotosProps = {
     album: string | null;
     author: string;
-    images: FormDataEntryValue[];
+    photos: {
+        file: FormDataEntryValue;
+        caption: string;
+    }[];
+}
+
+type PhotoReactionProps = {
+    id: string;
+    userId: string;
+    isLikedPhoto: boolean;
 }
 
 export async function getAlbumByTypeAndAuthor({ author, type }: GetOrCreateAlbumProps): Promise<AlbumType | null> {
@@ -105,14 +115,15 @@ export async function uploadPostImagesToStorage(images: FormDataEntryValue[]) {
     return results.map((result) => `${process.env.IMAGE_PATH}${result.data?.fullPath}`)
 }
 
-export async function addPostPhotos({ album, author, images }: AddPostPhotosProps) {
+export async function addPostPhotos({ album, author, photos }: AddPostPhotosProps) {
     const albumId = album ?? (await createAlbum({ author, type: AlbumTypeEnum.TIMELINE })).id;
 
-    const photosUrls = await uploadPostImagesToStorage(images);
-    const photosToInsert = photosUrls.map((url) => ({
+    const photosUrls = await uploadPostImagesToStorage(photos.map((photo) => photo.file));
+    const photosToInsert = photosUrls.map((url, index) => ({
         url,
         author_id: author,
         album_id: albumId,
+        caption: photos[index].caption
     }));
 
     const supabase = await createClient();
@@ -132,8 +143,39 @@ export async function getPhoto({ id }: GetPhotoProps) {
     const supabase = await createClient();
 
     const data = await baseFetcher(
-        supabase.from('photos').select('*').eq('id', id).single()
+        supabase.from('photos').select(photoQuery).eq('id', id).single()
     )
 
     return data ? transformPhoto(data) : null;
+}
+
+export async function photoReaction({ id, userId, isLikedPhoto }: PhotoReactionProps) {
+    const supabase = await createClient();
+
+    try {
+        if (isLikedPhoto) {
+            await baseFetcher(
+                supabase.from('likes_photos').delete().eq('photo_id', id).eq('user_id', userId)
+            )
+        } else {
+            await baseFetcher(
+                supabase.from('likes_photos')
+                    .insert({
+                        photo_id: id,
+                        user_id: userId,
+                    })
+                    .select('*')
+                    .single()
+            )
+        }
+        return {
+            success: true,
+        }
+
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+        }
+    }
 }
