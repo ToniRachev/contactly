@@ -5,10 +5,10 @@ export type PresenceStatusType = typeof USER_PRESENCE_STATUS[keyof typeof USER_P
 
 export type BaseUserDBType = {
     id: string;
-    first_name: string;
-    last_name: string;
-    avatar_url: string | null;
-    created_at: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+    createdAt: string;
     email: string;
 }
 
