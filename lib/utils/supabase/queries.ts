@@ -1,12 +1,14 @@
-export const baseUserQuery = 'id, first_name, last_name, avatar_url, created_at, email';
+export const baseUserQuery = 'id, firstName:first_name, lastName:last_name, avatarUrl:avatar_url, createdAt:created_at, email';
 
-export const userQueryWithPresenceStatus = `${baseUserQuery}, presence_status, last_seen`;
+const biographyQuery = 'id, school, userId:user_id, hometown, birthDate:birth_date, createdAt:created_at, currentCity:current_city';
 
-export const userQueryWithBiography = `${baseUserQuery}, biography(*), cover_url`;
+export const userQueryWithPresenceStatus = `${baseUserQuery}, presenceStatus:presence_status, lastSeen:last_seen`;
+
+export const userQueryWithBiography = `${baseUserQuery}, biography(${biographyQuery}), coverUrl:cover_url`;
 
 export const photoQuery = `*, likes:likes_photos(userId:user_id)`;
 
-export const albumQuery = `*, author:author_id(id, first_name, last_name, avatar_url), photos(${photoQuery})`
+export const albumQuery = `*, author:author_id(${baseUserQuery}), photos(${photoQuery})`
 
 export const postQuery = `
   *,
