@@ -8,6 +8,8 @@ export interface CustomPhoto extends Photo {
 export type PostImageType = {
     file: File;
     url: string;
+    id: string;
+    caption: string | null;
 }
 
 export type PostImagesType = {
