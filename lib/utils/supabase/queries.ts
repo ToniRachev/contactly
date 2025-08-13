@@ -4,7 +4,9 @@ export const userQueryWithPresenceStatus = `${baseUserQuery}, presence_status, l
 
 export const userQueryWithBiography = `${baseUserQuery}, biography(*), cover_url`;
 
-export const albumQuery = `*, author:author_id(id, first_name, last_name, avatar_url), photos(*)`
+export const photoQuery = `*, likes:likes_photos(userId:user_id)`;
+
+export const albumQuery = `*, author:author_id(id, first_name, last_name, avatar_url), photos(${photoQuery})`
 
 export const postQuery = `
   *,
