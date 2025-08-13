@@ -14,6 +14,9 @@ export type PhotoDBType = {
     url: string;
     caption: string | null;
     created_at: string;
+    likes: {
+        userId: string;
+    }[];
 }
 
 export type AlbumDBType = {
@@ -32,6 +35,8 @@ export type PhotoType = {
     url: string;
     caption: string | null;
     createdAt: string;
+    likes: string[];
+    likesCount: number;
 }
 
 export type AlbumType = {
@@ -42,4 +47,3 @@ export type AlbumType = {
     photos: PhotoType[];
     author: BaseUserType;
 }
-
