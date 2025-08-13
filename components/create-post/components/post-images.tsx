@@ -75,7 +75,7 @@ export default function PostImages({ postImages, openEditImages }: Readonly<Post
     }
 
     const imagesToShow = wrapImages(images, images?.length);
-    const isMoreThanMaxImages = imagesToShow.length > MAX_IMAGES_TO_SHOW;
+    const hasImages = imagesToShow.length > 0;
 
     return (
         <div className="pt-2 space-y-2 relative">
@@ -86,7 +86,7 @@ export default function PostImages({ postImages, openEditImages }: Readonly<Post
             />
             <ImagesUploadIconTrigger onImageChange={handleAddImages} />
 
-            {isMoreThanMaxImages && (
+            {hasImages && (
                 <div className="absolute top-0 left-1 w-fit h-fit mt-4">
                     <Button variant='secondary' className="" type="button" onClick={openEditImages}>
                         <Pen className="" />
