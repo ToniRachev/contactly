@@ -3,26 +3,19 @@
 import Avatar from "@/components/user-avatar";
 import { BaseUserType } from "@/lib/types/user";
 import { formatFullName, formatRelativeTime } from "@/lib/utils";
-import PhotoReaction from "./photo-reaction";
 
 type PhotoMetadataProps = {
     author: BaseUserType;
     photoData: {
         createdAt: string;
         caption: string | null;
-        photoId: string
-        isLikedPhoto: boolean;
-        likesCount: number;
-    }
-    photoReaction: {
-        handleOptimisticPhotoReaction: (photoId: string, isLikedPhoto: boolean, userId: string) => void;
-        updateLocalPhotoReaction: (photoId: string, isLikedPhoto: boolean, userId: string) => void;
     }
 }
 
-export default function PhotoMetadata({ author, photoData, photoReaction }: Readonly<PhotoMetadataProps>) {
+export default function PhotoMetadata({ author, photoData }: Readonly<PhotoMetadataProps>) {
+    console.log(photoData)
     return (
-        <div className="absolute top-4 left-[72%] max-w-[20svw]">
+        <div className="">
             <div className="flex items-center gap-2">
                 <Avatar avatar={author.avatarUrl} size={'sm'} />
                 <div>
@@ -35,12 +28,7 @@ export default function PhotoMetadata({ author, photoData, photoReaction }: Read
                 <p className="text-sm text-white">{photoData.caption}</p>
             </div>
 
-            <PhotoReaction
-                photoId={photoData.photoId}
-                isLikedPhoto={photoData.isLikedPhoto}
-                likesCount={photoData.likesCount}
-                photoReaction={photoReaction}
-            />
+
         </div>
     )
 }
