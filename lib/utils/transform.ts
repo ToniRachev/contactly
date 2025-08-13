@@ -142,6 +142,8 @@ export const transformAlbum = (album: AlbumDBType): AlbumType => {
 }
 
 export const transformPhoto = (photo: PhotoDBType): PhotoType => {
+    const likes = photo.likes.map((like) => like.userId);
+
     return {
         id: photo.id,
         albumId: photo.album_id,
@@ -149,5 +151,7 @@ export const transformPhoto = (photo: PhotoDBType): PhotoType => {
         url: photo.url,
         caption: photo.caption,
         createdAt: photo.created_at,
+        likes,
+        likesCount: likes.length,
     }
 }
