@@ -41,8 +41,11 @@ export default function Form({ closeDialog, postImages, openEditImages }: Readon
         const formData = new FormData(formRef.current);
 
         formData.delete('images');
+        formData.delete('captions');
+
         for (const image of postImages.images) {
             formData.append('images', image.file);
+            formData.append('captions', image.caption ?? '');
         }
 
         startTransition(() => {
@@ -60,7 +63,7 @@ export default function Form({ closeDialog, postImages, openEditImages }: Readon
     const error = state.errors?.fieldErrors?.body?.[0] ?? state.errors?.formErrors?.[0] ?? null;
 
     return (
-        <div className="pt-4 relative  max-w-[24svw]">
+        <div className="pt-4 relative">
             <form ref={formRef} onSubmit={handleSubmit}>
                 <Textarea
                     className="resize-none h-32 whitespace-pre-wrap overflow-y-auto break-words scrollbar-custom"
