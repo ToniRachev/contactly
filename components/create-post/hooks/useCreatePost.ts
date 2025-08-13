@@ -26,7 +26,9 @@ export default function useCreatePost() {
 
         const images = files.map((file) => ({
             file: file,
-            url: URL.createObjectURL(file)
+            url: URL.createObjectURL(file),
+            id: crypto.randomUUID(),
+            caption: null
         }))
 
         setPostImages((prevState) => {
@@ -45,6 +47,17 @@ export default function useCreatePost() {
                 return updatedImages;
             })
         }
+    }
+
+    const handleAddImageCaption = (imageId: string, caption: string) => {
+        setPostImages((prevState) => {
+            const updatedImages = [...prevState];
+            const imageIndex = updatedImages.findIndex((image) => image.id === imageId);
+            if (imageIndex !== -1) {
+                updatedImages[imageIndex].caption = caption;
+            }
+            return updatedImages;
+        })
     }
 
     const handleOpenChange = (open: boolean) => {
@@ -84,7 +97,8 @@ export default function useCreatePost() {
         postImages: {
             images: postImages,
             handleAddImages,
-            handleRemoveImage
+            handleRemoveImage,
+            handleAddImageCaption
         }
     }
 }
