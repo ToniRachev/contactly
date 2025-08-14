@@ -21,10 +21,8 @@ export const appendFullNameToUser = (user: BaseUserDBType | UserWithPresenceStat
 
 export const transformPosts = (posts: PostDBType[], userId?: string): PostType[] => {
     return posts.map((post: PostDBType) => ({
-        postId: post.id,
-        createdAt: post.created_at,
+        ...post,
         author: appendFullNameToUser(post.author),
-        body: post.body,
         commentsCount: extractCount(post.commentsCount),
         likesCount: extractCount(post.likesCount),
         likes: extractLikes(post.likes),
@@ -33,17 +31,19 @@ export const transformPosts = (posts: PostDBType[], userId?: string): PostType[]
     }))
 }
 
+export const transformComment = (comment: CommentDBType): CommentType => ({
+    id: comment.id,
+    createdAt: comment.createdAt,
+    authorId: comment.authorId,
+    author: appendFullNameToUser(comment.author),
+    postId: comment.postId,
+    body: comment.body,
+    likes: extractLikes(comment.likes),
+    likesCount: extractCount(comment.likesCount)
+})
+
 export const transformPostComments = (comments: CommentDBType[]): CommentType[] => {
-    return comments.map((comment) => ({
-        id: comment.id,
-        createdAt: comment.created_at,
-        authorId: comment.author_id,
-        author: appendFullNameToUser(comment.author),
-        postId: comment.post_id,
-        body: comment.body,
-        likes: extractLikes(comment.likes),
-        likesCount: extractCount(comment.likesCount)
-    }))
+    return comments.map((comment) => transformComment(comment));
 }
 
 export const transformFriendRequestsUsers = (users: { user: BaseUserDBType }[]) => {
