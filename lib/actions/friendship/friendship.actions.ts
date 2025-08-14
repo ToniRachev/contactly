@@ -4,7 +4,7 @@ import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server"
 import { transformFriendRequestsUsers, transformFriends } from "@/lib/utils/transform";
 import { MESSAGES } from "@/lib/constants/messages";
-import { BaseUserDBType, UserWithPresenceStatusDBType } from "@/lib/types/user";
+import { BaseUserDBType, UserWithPresenceStatusDBType, UserWithPresenceStatusType } from "@/lib/types/user";
 import { baseUserQuery, userQueryWithPresenceStatus } from "@/lib/utils/supabase/queries";
 
 export async function sendFriendRequest(senderId: string, receiverId: string) {
@@ -162,5 +162,5 @@ export async function getFriends(userId: string) {
             .eq('user_id', userId)
     ) as unknown as { friend: UserWithPresenceStatusDBType }[];
 
-    return transformFriends(data);
+    return transformFriends(data) as unknown as UserWithPresenceStatusType[];
 }
