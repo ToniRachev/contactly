@@ -2,13 +2,13 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
-import { transformPostComments } from "@/lib/utils/transform";
+import { transformComment } from "@/lib/utils/transform";
 import { commentSchema, CommentSchemaErrorType, CommentSchemaType } from "@/lib/validations/postSchema";
 import { createFormResult } from "@/lib/validations/utils";
-import { CommentType } from "@/lib/types/post";
+import { CommentDBType, CommentType } from "@/lib/types/post";
 import { MESSAGES } from "@/lib/constants/messages";
 import { parseAndValidateFormData } from "@/lib/utils";
-import { baseUserQuery } from "@/lib/utils/supabase/queries";
+import { commentQuery } from "@/lib/utils/supabase/queries";
 
 export async function createComment(authorId: string, postId: string, body: string) {
     const supabase = await createClient();
@@ -19,12 +19,13 @@ export async function createComment(authorId: string, postId: string, body: stri
             author_id: authorId,
             body
         }])
-        .select(`*, author:author_id(${baseUserQuery}), likes:likes_comments(user:user_id), likesCount:likes_comments(count)`)
+        .select(commentQuery)
+        .single()
     )
 
-    const transformedComment = transformPostComments(data);
+    const transformedComment = transformComment(data as unknown as CommentDBType);
 
-    return transformedComment[0];
+    return transformedComment;
 }
 
 type CommentState = {

@@ -5,7 +5,6 @@ import { createClient } from "@/lib/utils/supabase/server";
 import { AlbumType, AlbumTypeEnum } from "@/lib/types/photos";
 import { transformAlbum, transformPhoto } from "@/lib/utils/transform";
 import { albumQuery, photoQuery } from "@/lib/utils/supabase/queries";
-import { revalidatePath } from "next/cache";
 
 type CreatePhotoProps = {
     url: string;

@@ -1,6 +1,5 @@
 'use client';
 
-import { photoReaction } from "@/lib/actions/photos/photos.actions";
 import { PhotoType } from "@/lib/types/photos";
 import { startTransition, useOptimistic, useState } from "react";
 
