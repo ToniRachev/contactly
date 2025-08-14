@@ -4,7 +4,7 @@ import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { AlbumType, AlbumTypeEnum } from "@/lib/types/photos";
 import { transformAlbum, transformPhoto } from "@/lib/utils/transform";
-import { albumQuery, photoQuery } from "@/lib/utils/supabase/queries";
+import { albumQuery, photoCommentQuery, photoQuery } from "@/lib/utils/supabase/queries";
 
 type CreatePhotoProps = {
     url: string;
@@ -31,6 +31,12 @@ type PhotoReactionProps = {
     id: string;
     userId: string;
     isLikedPhoto: boolean;
+}
+
+type AddPhotoCommentProps = {
+    photoId: string;
+    userId: string;
+    body: string;
 }
 
 export async function getAlbumByTypeAndAuthor({ author, type }: GetOrCreateAlbumProps): Promise<AlbumType | null> {
@@ -177,4 +183,20 @@ export async function photoReaction({ id, userId, isLikedPhoto }: PhotoReactionP
             success: false,
         }
     }
+}
+
+
+
+export async function addPhotoComment({ photoId, userId, body }: AddPhotoCommentProps) {
+    const supabase = await createClient();
+
+    const data = await baseFetcher(
+        supabase.from('comments_photos').insert({
+            photo_id: photoId,
+            author_id: userId,
+            body,
+        })
+            .select(photoCommentQuery)
+            .single()
+    )
 }
