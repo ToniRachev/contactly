@@ -7,11 +7,11 @@ import { createClient } from "@/lib/utils/supabase/server";
 import { transformPosts } from "@/lib/utils/transform";
 import { postSchema, PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
 import { createFormResult } from "@/lib/validations/utils";
-import { PostType } from "@/lib/types/post";
+import { PostDBType, PostType } from "@/lib/types/post";
 import { getUserId } from "@/lib/actions/user/user.actions";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { baseUserQuery, postQuery } from "@/lib/utils/supabase/queries";
+import { postQuery } from "@/lib/utils/supabase/queries";
 import { addPostPhotos } from "../photos/photos.actions";
 
 type PostState = {
@@ -34,7 +34,7 @@ export async function fetchPosts(currentUserId: string, limit: number = 10) {
             .order('created_at', { ascending: false })
     );
 
-    return transformPosts(data, userId);
+    return transformPosts(data as unknown as PostDBType[], userId);
 }
 
 export async function fetchUserPosts(userId: string, limit: number = 10) {
@@ -48,7 +48,7 @@ export async function fetchUserPosts(userId: string, limit: number = 10) {
             .order('created_at', { ascending: false })
     );
 
-    return transformPosts(data, userId);
+    return transformPosts(data as unknown as PostDBType[], userId);
 }
 
 export async function createPost(authorId: string, postData: { body: string, albumId: string }) {
@@ -65,7 +65,7 @@ export async function createPost(authorId: string, postData: { body: string, alb
             .select(postQuery)
     )
 
-    const transformedPost = transformPosts(data, authorId);
+    const transformedPost = transformPosts(data as unknown as PostDBType[], authorId);
     return transformedPost[0];
 }
 
@@ -77,9 +77,9 @@ export async function editPost(postId: string, postContent: string) {
         supabase.from('posts')
             .update({ body: postContent })
             .match({ id: postId, author_id: userId })
-            .select(`*, commentsCount:comments(count), likesCount:likes_posts(count), likes:likes_posts(user:user_id), author:author_id(${baseUserQuery})`));
+            .select(postQuery));
 
-    const transformedPost = transformPosts(data, userId);
+    const transformedPost = transformPosts(data as unknown as PostDBType[], userId);
     return transformedPost[0];
 }
 
