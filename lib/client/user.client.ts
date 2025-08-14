@@ -1,7 +1,7 @@
 import { BaseUserType, PresenceStatusType, UserProfileDBType, UserProfileType } from "../types/user";
 import { createClient } from "../utils/supabase/client";
 import { baseFetcher } from "../utils/supabase/helpers";
-import { baseUserQuery } from "../utils/supabase/queries";
+import { baseUserQuery, userQueryWithBiography } from "../utils/supabase/queries";
 import { appendFullNameToUser } from "../utils/transform";
 
 export async function updateUserStatus(newStatus: PresenceStatusType, userId: string) {
@@ -14,12 +14,13 @@ export async function updateUserStatus(newStatus: PresenceStatusType, userId: st
 
 export async function fetchUserProfile(userId: string) {
     const supabase = createClient();
-    const query = supabase.from('users')
-        .select(`*, biography(*)`)
-        .eq('id', userId)
-        .single();
 
-    const data = await baseFetcher<UserProfileDBType>(query);
+    const data = await baseFetcher<UserProfileDBType>(
+        supabase.from('users')
+            .select(userQueryWithBiography)
+            .eq('id', userId)
+            .single()
+    );
     return appendFullNameToUser(data) as UserProfileType;
 }
 
