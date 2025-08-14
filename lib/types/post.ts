@@ -6,10 +6,10 @@ export type LikesType = { user: string }[];
 
 export type CommentDBType = {
     id: string;
-    created_at: string;
-    author_id: string;
+    createdAt: string;
+    authorId: string;
     author: BaseUserDBType;
-    post_id: string;
+    postId: string;
     body: string;
     likesCount: CountType;
     likes: LikesType;
@@ -27,10 +27,10 @@ export type CommentType = {
 }
 
 export type PostDBType = {
-    id: string;
-    created_at: string;
-    author: BaseUserDBType;
+    postId: string;
+    createdAt: string;
     body: string;
+    author: BaseUserDBType;
     commentsCount: CountType;
     likesCount: CountType;
     likes: LikesType;
