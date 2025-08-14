@@ -6,6 +6,7 @@ import Image from "next/image";
 import PhotoMetadata from "./photo-metadata";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import PhotoReaction from "./photo-reaction";
+import PhotoComment from "./photo-comment";
 
 type PhotoProps = {
     author: BaseUserType;
@@ -44,6 +45,11 @@ export default function Photo({ photo, author, photoReaction }: Readonly<PhotoPr
                     isLikedPhoto={isLikedPhoto}
                     likesCount={photo.likes.length}
                     photoReaction={photoReaction}
+                />
+
+                <PhotoComment
+                    photoId={photo.id}
+                    userId={user.id}
                 />
             </div>
         </div>

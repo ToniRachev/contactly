@@ -39,3 +39,12 @@ export const commentQuery = `
 `;
 
 export const postCommentQuery = `*, comments(${commentQuery})`;
+
+export const photoCommentQuery = `
+  id,
+  createdAt:created_at,
+  authorId:author_id,
+  author:author_id(${baseUserQuery}),
+  photoId:photo_id,
+  body,
+`;
