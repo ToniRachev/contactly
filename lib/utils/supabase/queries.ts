@@ -11,7 +11,9 @@ export const photoQuery = `*, likes:likes_photos(userId:user_id)`;
 export const albumQuery = `*, author:author_id(${baseUserQuery}), photos(${photoQuery})`
 
 export const postQuery = `
-  *,
+  postId:id,
+  createdAt:created_at,
+  body,
   commentsCount:comments(count), 
   likesCount:likes_posts(count),
   likes:likes_posts(user:user_id),
@@ -22,3 +24,18 @@ export const postQuery = `
     ${albumQuery}
   )
 `;
+
+export const conversationOverviewQuery = `*, conversation_participants:conversation_id(user1:user1_id(${baseUserQuery}), user2:user2_id(${baseUserQuery}))`;
+
+export const commentQuery = `
+  id,
+  createdAt:created_at,
+  authorId:author_id,
+  author:author_id(${baseUserQuery}),
+  postId:post_id,
+  body,
+  likes:likes_comments(user:user_id), 
+  likesCount:likes_comments(count)
+`;
+
+export const postCommentQuery = `*, comments(${commentQuery})`;
