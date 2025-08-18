@@ -9,7 +9,7 @@ export type CommentDBType = {
     createdAt: string;
     authorId: string;
     author: BaseUserDBType;
-    postId: string;
+    entityId: string;
     body: string;
     likesCount: CountType;
     likes: LikesType;
@@ -20,7 +20,7 @@ export type CommentType = {
     createdAt: string;
     authorId: string;
     author: BaseUserType;
-    postId: string;
+    entityId: string;
     body: string;
     likes: string[];
     likesCount: number;
