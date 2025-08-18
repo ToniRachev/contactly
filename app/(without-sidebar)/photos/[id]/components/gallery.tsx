@@ -6,7 +6,7 @@ import CloseButton from "./close-button";
 import Navigation from "./navigation";
 import Photo from "./photo";
 import { BaseUserType } from "@/lib/types/user";
-import usePhotos from "../hooks/usePhotos";
+import usePhotos from "../lib/hooks/usePhotos";
 
 type GalleryProps = {
     initialPhotos: PhotoType[];
@@ -16,9 +16,8 @@ type GalleryProps = {
 
 // TODO: Add photo alt
 
-
 export default function Gallery({ initialPhotos, activePhotoId, author }: Readonly<GalleryProps>) {
-    const { photos, galleryNavigation, photoReaction } = usePhotos(initialPhotos, activePhotoId);
+    const { photos, galleryNavigation, togglePhotoReaction, photoComments } = usePhotos(initialPhotos, activePhotoId);
 
     useEffect(() => {
         window.history.replaceState(null, '', `/photos/${photos[galleryNavigation.activePhotoIndex].id}`);
@@ -33,7 +32,8 @@ export default function Gallery({ initialPhotos, activePhotoId, author }: Readon
             <Photo
                 author={author}
                 photo={photos[galleryNavigation.activePhotoIndex]}
-                photoReaction={photoReaction}
+                photoReaction={togglePhotoReaction}
+                photoComments={photoComments}
             />
 
             {albumHasMoreThanOnePhoto && (

@@ -5,6 +5,7 @@ import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { ZodTypeAny } from "zod";
+import { UserProfileType } from "./types/user";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -61,3 +62,20 @@ export function parseAndValidateFormData(
 }
 
 export const resolveAvatarUrl = (avatar: string | null) => avatar ?? '/user_placeholder.png';
+
+type CreateOptimisticCommentProps = {
+  body: string;
+  photoId: string;
+  user: UserProfileType;
+}
+
+export const createOptimisticComment = ({ body, photoId, user }: CreateOptimisticCommentProps) => ({
+  id: crypto.randomUUID(),
+  body,
+  author: user,
+  createdAt: new Date().toISOString(),
+  likes: [],
+  authorId: user.id,
+  entityId: photoId,
+  likesCount: 0,
+})

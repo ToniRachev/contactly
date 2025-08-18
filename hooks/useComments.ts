@@ -1,3 +1,4 @@
+import { deleteCommentAction, editComment as editCommentAction } from "@/lib/actions/comment/comment.actions";
 import { fetchPostComments } from "@/lib/client/post.client";
 import { CommentType } from "@/lib/types/post";
 import { useCallback, useEffect, useState } from "react";
@@ -15,22 +16,32 @@ export default function useComments(
         updateCommentsCount('add');
     }, [updateCommentsCount]);
 
-    const editComment = useCallback((commentId: string, newContent: string) => {
-        setComments((prevComments) => prevComments.map((comment) => comment.id === commentId ? { ...comment, body: newContent } : comment));
+    const editComment = useCallback(async (commentId: string, newContent: string) => {
+        try {
+            await editCommentAction(commentId, newContent);
+            setComments((prevComments) => prevComments.map((comment) => comment.id === commentId ? { ...comment, body: newContent } : comment));
+        } catch (error) {
+            console.error('Failed to edit comment', error);
+        }
     }, []);
 
-    const deleteComment = useCallback((commentId: string) => {
+    const deleteComment = useCallback(async (commentId: string) => {
         const commentIndex = comments.findIndex((comment) => comment.id === commentId);
 
         if (commentIndex === -1) return;
 
-        setComments((prevComments) => {
-            const newComments = [...prevComments];
-            newComments.splice(commentIndex, 1);
-            return newComments;
-        })
+        try {
+            setComments((prevComments) => {
+                const newComments = [...prevComments];
+                newComments.splice(commentIndex, 1);
+                return newComments;
+            })
+            updateCommentsCount('remove');
 
-        updateCommentsCount('remove');
+            await deleteCommentAction(commentId);
+        } catch (error) {
+            console.error('Failed to delete comment', error);
+        }
     }, [updateCommentsCount, comments]);
 
     const reactionComment = useCallback((commentId: string, userId: string, isLikedComment: boolean) => {
@@ -59,7 +70,6 @@ export default function useComments(
             })()
         }
     }, [isDetailedViewOpen, postId]);
-
 
     return { comments, addComment, editComment, deleteComment, reactionComment, isLoading };
 }

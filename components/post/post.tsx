@@ -1,21 +1,20 @@
 'use client';
 
-import { Heart, MessageCircle } from "lucide-react";
 import Avatar from "../user-avatar"
 import { PostType } from "@/lib/types/post";
 import { formatRelativeTime } from "@/lib/utils";
 import DeletePost from "../delete-post";
 import EditPost from "../edit-post";
 import { startTransition, useActionState } from "react";
-import clsx from "clsx";
 import { postReaction } from "@/lib/actions/likes/likes.actions";
-import ReactionItem from "../reaction-item";
 import FriendRequestButton from "../friend-request-button";
 import { useFriends } from "@/lib/context/friends.context";
 import { ColumnsPhotoAlbum, Photo, RenderImageContext, RenderImageProps } from "react-photo-album";
 import { AlbumType } from "@/lib/types/photos";
 import Image from "next/image";
 import Link from "next/link";
+import Like from "../reaction/like";
+import CommentReaction from "../reaction/comment-reaction";
 
 type PostAuthorProps = {
     post: PostType;
@@ -131,19 +130,9 @@ const PostReactions = ({ postId, commentsCount, likesCount, isLikedPost, reactio
 
     return (
         <div className="flex gap-4">
-            <button onClick={handleReaction} disabled={isPending}>
-                <ReactionItem
-                    icon={<Heart className={clsx('', isLikedPost && 'stroke-red-500 fill-red-700')} />}
-                    count={likesCount}
-                />
-            </button>
+            <Like isLiked={isLikedPost} count={likesCount} like={handleReaction} />
 
-            <button onClick={open}>
-                <ReactionItem
-                    icon={<MessageCircle />}
-                    count={commentsCount}
-                />
-            </button>
+            <CommentReaction count={commentsCount} onClick={open} />
         </div>
     )
 }

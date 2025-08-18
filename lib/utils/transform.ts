@@ -36,7 +36,7 @@ export const transformComment = (comment: CommentDBType): CommentType => ({
     createdAt: comment.createdAt,
     authorId: comment.authorId,
     author: appendFullNameToUser(comment.author),
-    postId: comment.postId,
+    entityId: comment.entityId,
     body: comment.body,
     likes: extractLikes(comment.likes),
     likesCount: extractCount(comment.likesCount)
@@ -129,5 +129,6 @@ export const transformPhoto = (photo: PhotoDBType): PhotoType => {
         createdAt: photo.created_at,
         likes,
         likesCount: likes.length,
+        comments: photo.comments.map((comment) => transformComment(comment)),
     }
 }

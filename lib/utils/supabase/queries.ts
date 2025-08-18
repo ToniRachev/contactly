@@ -6,7 +6,18 @@ export const userQueryWithPresenceStatus = `${baseUserQuery}, presenceStatus:pre
 
 export const userQueryWithBiography = `${baseUserQuery}, biography(${biographyQuery}), coverUrl:cover_url`;
 
-export const photoQuery = `*, likes:likes_photos(userId:user_id)`;
+export const photoCommentQuery = `
+  id,
+  createdAt:created_at,
+  authorId:author_id,
+  author:author_id(${baseUserQuery}),
+  entityId:photo_id,
+  body,
+  likes:likes_photos_comments(user:user_id), 
+  likesCount:likes_photos_comments(count)
+`;
+
+export const photoQuery = `*, likes:likes_photos(userId:user_id), comments:comments_photos(${photoCommentQuery})`;
 
 export const albumQuery = `*, author:author_id(${baseUserQuery}), photos(${photoQuery})`
 
@@ -32,19 +43,10 @@ export const commentQuery = `
   createdAt:created_at,
   authorId:author_id,
   author:author_id(${baseUserQuery}),
-  postId:post_id,
+  entityId:post_id,
   body,
   likes:likes_comments(user:user_id), 
   likesCount:likes_comments(count)
 `;
 
 export const postCommentQuery = `*, comments(${commentQuery})`;
-
-export const photoCommentQuery = `
-  id,
-  createdAt:created_at,
-  authorId:author_id,
-  author:author_id(${baseUserQuery}),
-  photoId:photo_id,
-  body,
-`;

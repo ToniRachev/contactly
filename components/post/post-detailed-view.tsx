@@ -11,8 +11,8 @@ import Post from "@/components/post/post"
 import { Separator } from "@/components/ui/separator";
 import Filter from "@/components/filter";
 import { CommentType, PostType } from "@/lib/types/post";
-import CreateComment from "@/components/post/post-detailed-view/create-comment";
-import Comment from "@/components/post/post-detailed-view/comment";
+import CreateComment from "@/components/comment/components/create-comment";
+import Comment from "@/components/comment";
 
 const filters = [
     {
@@ -77,10 +77,11 @@ export function PostDetailedView(
                     {commentState.comments.map((comment) => (
                         <Comment
                             key={comment.id}
+                            author={comment.author}
                             comment={comment}
                             editComment={commentState.editComment}
                             deleteComment={commentState.deleteComment}
-                            reactionComment={commentState.reactionComment}
+                            commentReaction={commentState.reactionComment}
                         />
                     ))}
 

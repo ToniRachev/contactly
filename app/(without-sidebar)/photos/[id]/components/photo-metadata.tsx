@@ -13,7 +13,6 @@ type PhotoMetadataProps = {
 }
 
 export default function PhotoMetadata({ author, photoData }: Readonly<PhotoMetadataProps>) {
-    console.log(photoData)
     return (
         <div className="">
             <div className="flex items-center gap-2">

@@ -3,8 +3,9 @@
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
 import { AlbumType, AlbumTypeEnum } from "@/lib/types/photos";
-import { transformAlbum, transformPhoto } from "@/lib/utils/transform";
+import { transformAlbum, transformComment, transformPhoto } from "@/lib/utils/transform";
 import { albumQuery, photoCommentQuery, photoQuery } from "@/lib/utils/supabase/queries";
+import { CommentDBType } from "@/lib/types/post";
 
 type CreatePhotoProps = {
     url: string;
@@ -199,4 +200,63 @@ export async function addPhotoComment({ photoId, userId, body }: AddPhotoComment
             .select(photoCommentQuery)
             .single()
     )
+
+    return transformComment(data as unknown as CommentDBType)
+}
+
+type EditPhotoCommentProps = {
+    commentId: string;
+    body: string;
+}
+
+export async function editPhotoComment({ commentId, body }: EditPhotoCommentProps) {
+    const supabase = await createClient();
+
+    await baseFetcher(
+        supabase.from('comments_photos').update({ body }).eq('id', commentId)
+    )
+}
+
+type DeletePhotoCommentProps = {
+    commentId: string;
+}
+
+export async function deletePhotoComment({ commentId }: DeletePhotoCommentProps) {
+    const supabase = await createClient();
+
+    await baseFetcher(
+        supabase.from('comments_photos').delete().eq('id', commentId)
+    )
+}
+
+type PhotoCommentReactionProps = {
+    commentId: string;
+    userId: string;
+    isLikedComment: boolean;
+}
+
+export async function photoCommentReaction({ commentId, userId, isLikedComment }: PhotoCommentReactionProps) {
+    const supabase = await createClient();
+
+    try {
+        if (isLikedComment) {
+            await baseFetcher(
+                supabase.from('likes_photos_comments').delete().eq('comment_id', commentId).eq('user_id', userId)
+            )
+        } else {
+            await baseFetcher(
+                supabase.from('likes_photos_comments')
+                    .insert({ comment_id: commentId, user_id: userId })
+            )
+        }
+
+        return {
+            success: true,
+        }
+    } catch (error) {
+        console.error(error);
+        return {
+            success: false,
+        }
+    }
 }

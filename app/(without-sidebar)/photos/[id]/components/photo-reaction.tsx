@@ -1,32 +1,20 @@
 'use client';
 
-import { photoReaction as photoAction } from "@/lib/actions/photos/photos.actions";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
-import { startTransition } from "react";
+import { PhotoReactionType } from "../lib/types";
 
 type PhotoReactionProps = {
     photoId: string;
     isLikedPhoto: boolean;
     likesCount: number;
-    photoReaction: {
-        handleOptimisticPhotoReaction: (photoId: string, isLikedPhoto: boolean, userId: string) => void;
-        updateLocalPhotoReaction: (photoId: string, isLikedPhoto: boolean, userId: string) => void;
-    }
+    photoReaction: PhotoReactionType;
 }
 
 export default function PhotoReaction({ photoId, isLikedPhoto, likesCount, photoReaction }: Readonly<PhotoReactionProps>) {
     const { user } = useAuthenticatedUser();
 
-    const handlePhotoReaction = async () => {
-        startTransition(async () => {
-            photoReaction.handleOptimisticPhotoReaction(photoId, isLikedPhoto, user.id);
-
-            const response = await photoAction({ id: photoId, userId: user.id, isLikedPhoto });
-
-            if (response.success) {
-                photoReaction.updateLocalPhotoReaction(photoId, isLikedPhoto, user.id);
-            }
-        })
+    const handlePhotoReaction = () => {
+        photoReaction(photoId, isLikedPhoto, user.id);
     }
 
     return (

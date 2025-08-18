@@ -65,55 +65,24 @@ export async function createCommentAction(postId: string, authorId: string, stat
     }
 }
 
-export async function editComment(authorId: string, commentId: string, body: string) {
+export async function editComment(commentId: string, body: string) {
     const supabase = await createClient();
 
     await baseFetcher(supabase.from('comments')
         .update({ body })
-        .match({ author_id: authorId, id: commentId })
+        .match({ id: commentId })
         .select('*'))
 }
 
-type EditCommentState = {
-    data: CommentSchemaType;
-    errors: CommentSchemaErrorType;
-    success: boolean;
-}
-
-export async function editCommentAction(authorId: string, commentId: string, state: EditCommentState, formData: FormData) {
-    const { data, result } = parseAndValidateFormData(formData, commentSchema, [
-        'body'
-    ]);
-
-    if (!result.success) {
-        return createFormResult(data as CommentSchemaType, result.error.formErrors as CommentSchemaErrorType, false)
-    }
-
-    if (state.data.body === result.data.body) {
-        return createFormResult(result.data, {} as CommentSchemaErrorType, false);
-    }
-
-    try {
-        await editComment(authorId, commentId, result.data.body);
-
-        return createFormResult(result.data, {} as CommentSchemaErrorType, true);
-
-    } catch (error) {
-        console.error('Failed to edit comment', error);
-        return createFormResult(result.data as CommentSchemaType, MESSAGES.genericError, false);
-    }
-}
-
-export async function deleteComment(authorId: string, commentId: string) {
+export async function deleteComment(commentId: string) {
     const supabase = await createClient();
 
-    await baseFetcher(supabase.from('comments').delete().match({ author_id: authorId, id: commentId }));
+    await baseFetcher(supabase.from('comments').delete().match({ id: commentId }));
 }
 
-export async function deleteCommentAction(authorId: string, commentId: string) {
+export async function deleteCommentAction(commentId: string) {
     try {
-        await deleteComment(authorId, commentId);
-
+        await deleteComment(commentId);
         return {
             success: true,
             error: null
