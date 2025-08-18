@@ -1,3 +1,4 @@
+import { CommentDBType, CommentType } from "./post";
 import { BaseUserDBType, BaseUserType } from "./user";
 
 export enum AlbumTypeEnum {
@@ -17,6 +18,7 @@ export type PhotoDBType = {
     likes: {
         userId: string;
     }[];
+    comments: CommentDBType[];
 }
 
 export type AlbumDBType = {
@@ -37,6 +39,7 @@ export type PhotoType = {
     createdAt: string;
     likes: string[];
     likesCount: number;
+    comments: CommentType[];
 }
 
 export type AlbumType = {
