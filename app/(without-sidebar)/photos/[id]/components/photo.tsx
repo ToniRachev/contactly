@@ -55,6 +55,7 @@ export default function Photo({ photo, author, photoReaction, photoComments }: R
                     comments={photo.comments}
                     editPhotoComment={photoComments.edit}
                     deletePhotoComment={photoComments.delete}
+                    reactionPhotoComment={photoComments.reaction}
                 />
 
                 <CommentForm
