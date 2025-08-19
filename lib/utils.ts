@@ -65,17 +65,17 @@ export const resolveAvatarUrl = (avatar: string | null) => avatar ?? '/user_plac
 
 type CreateOptimisticCommentProps = {
   body: string;
-  photoId: string;
+  entityId: string;
   user: UserProfileType;
 }
 
-export const createOptimisticComment = ({ body, photoId, user }: CreateOptimisticCommentProps) => ({
+export const createOptimisticComment = ({ body, entityId, user }: CreateOptimisticCommentProps) => ({
   id: crypto.randomUUID(),
   body,
   author: user,
   createdAt: new Date().toISOString(),
   likes: [],
   authorId: user.id,
-  entityId: photoId,
+  entityId: entityId,
   likesCount: 0,
 })
