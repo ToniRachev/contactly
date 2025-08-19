@@ -1,6 +1,6 @@
 'use client';
 
-import { addPhotoComment, deletePhotoComment, editPhotoComment, photoReaction } from "@/lib/actions/photos/photos.actions";
+import { addPhotoComment, deletePhotoComment, editPhotoComment, photoCommentReaction, photoReaction } from "@/lib/actions/photos/photos.actions";
 import { PhotoType } from "@/lib/types/photos";
 import { CommentType } from "@/lib/types/post";
 import { UserProfileType } from "@/lib/types/user";
@@ -50,6 +50,25 @@ const deletePhotoCommentState = (state: PhotoType[], photoId: string, commentId:
             return {
                 ...photo,
                 comments: photo.comments.filter((comment) => comment.id !== commentId)
+            }
+        }
+        return photo;
+    })
+}
+
+const updatePhotoCommentReactionState = (state: PhotoType[], photoId: string, commentId: string, userId: string, isLikedComment: boolean) => {
+    return state.map((photo) => {
+        console.log('photo', photo);
+        if (photo.id === photoId) {
+            return {
+                ...photo,
+                comments: photo.comments.map((comment) => {
+                    if (comment.id === commentId) {
+                        const likes = isLikedComment ? comment.likes.filter((id) => id !== userId) : [...comment.likes, userId];
+                        return { ...comment, likes, likesCount: likes.length };
+                    }
+                    return comment;
+                })
             }
         }
         return photo;
@@ -152,6 +171,18 @@ export default function usePhotos(initialPhotos: PhotoType[], activePhotoId: str
         })
     }
 
+    const reactionPhotoCommentWithOptimism = (photoId: string, commentId: string, userId: string, isLikedComment: boolean) => {
+        startTransition(async () => {
+            updateOptimisticPhotos((prevState) => updatePhotoCommentReactionState(prevState, photoId, commentId, userId, isLikedComment));
+
+            await photoCommentReaction({ commentId, userId, isLikedComment });
+
+            startTransition(() => {
+                setPhotosState((prevState) => updatePhotoCommentReactionState(prevState, photoId, commentId, userId, isLikedComment));
+            })
+        })
+    }
+
     return {
         photos: optimisticPhotos,
         galleryNavigation: {
@@ -166,6 +197,7 @@ export default function usePhotos(initialPhotos: PhotoType[], activePhotoId: str
             add: addPhotoCommentWithOptimism,
             edit: editPhotoCommentWithOptimism,
             delete: deletePhotoCommentWithOptimism,
+            reaction: reactionPhotoCommentWithOptimism,
         }
     }
 }

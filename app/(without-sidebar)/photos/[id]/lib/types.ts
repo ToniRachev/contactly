@@ -4,11 +4,13 @@ import { UserProfileType } from "@/lib/types/user";
 export type AddCommentType = (photoId: string, body: string, user: UserProfileType) => void;
 export type DeleteCommentType = (entityId: string, commentId: string) => void;
 export type EditCommentType = (entityId: string, commentId: string, newContent: string) => void;
+export type ReactionPhotoCommentType = (photoId: string, commentId: string, userId: string, isLikedComment: boolean) => void;
 
 export type PhotoCommentsType = {
     add: AddCommentType;
     edit: EditCommentType;
     delete: DeleteCommentType;
+    reaction: ReactionPhotoCommentType;
 }
 
 export type PhotoGalleryNavigationType = {
