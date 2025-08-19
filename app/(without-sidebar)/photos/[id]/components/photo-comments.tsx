@@ -1,18 +1,18 @@
 'use client';
 
 import Comment from "@/components/comment";
-import { photoCommentReaction } from "@/lib/actions/photos/photos.actions";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { CommentType } from "@/lib/types/post";
-import { DeleteCommentType, EditCommentType } from "../lib/types";
+import { DeleteCommentType, EditCommentType, ReactionPhotoCommentType } from "../lib/types";
 
 type PhotoCommentsProps = {
     comments: CommentType[];
     editPhotoComment: EditCommentType;
     deletePhotoComment: DeleteCommentType;
+    reactionPhotoComment: ReactionPhotoCommentType;
 }
 
-export default function PhotoComments({ comments, editPhotoComment, deletePhotoComment }: Readonly<PhotoCommentsProps>) {
+export default function PhotoComments({ comments, editPhotoComment, deletePhotoComment, reactionPhotoComment }: Readonly<PhotoCommentsProps>) {
     const { user } = useAuthenticatedUser();
     return (
         <div className="pt-4">
@@ -25,7 +25,7 @@ export default function PhotoComments({ comments, editPhotoComment, deletePhotoC
                         comment={comment}
                         editComment={(commentId, newContent) => editPhotoComment(comment.entityId, commentId, newContent)}
                         deleteComment={(commentId: string) => deletePhotoComment(comment.entityId, commentId)}
-                        commentReaction={() => photoCommentReaction({ commentId: comment.id, userId: user.id, isLikedComment: isLikedComment })}
+                        commentReaction={() => reactionPhotoComment(comment.entityId, comment.id, user.id, isLikedComment)}
                     />
                 )
             })}
