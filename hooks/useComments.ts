@@ -1,7 +1,16 @@
-import { deleteCommentAction, editComment as editCommentAction } from "@/lib/actions/comment/comment.actions";
+import { createComment, deleteCommentAction, editComment as editCommentAction } from "@/lib/actions/comment/comment.actions";
 import { fetchPostComments } from "@/lib/client/post.client";
 import { CommentType } from "@/lib/types/post";
-import { useCallback, useEffect, useState } from "react";
+import { startTransition, useCallback, useEffect, useOptimistic, useState } from "react";
+
+
+const addCommentState = (comments: CommentType[], comment: CommentType) => [comment, ...comments];
+
+const editCommentState = (comments: CommentType[], commentId: string, newContent: string) => {
+    return comments.map((comment) => comment.id === commentId ? { ...comment, body: newContent } : comment);
+}
+
+const deleteCommentState = (comments: CommentType[], commentId: string) => comments.filter((comment) => comment.id !== commentId);
 
 export default function useComments(
     isDetailedViewOpen: boolean,
@@ -9,40 +18,45 @@ export default function useComments(
     updateCommentsCount: (type: 'add' | 'remove') => void,
 ) {
     const [comments, setComments] = useState<CommentType[]>([]);
+    const [optimisticComments, updateOptimisticComments] = useOptimistic(comments);
     const [isLoading, setIsLoading] = useState(false);
 
     const addComment = useCallback((comment: CommentType) => {
-        setComments((prevComments) => [comment, ...prevComments]);
-        updateCommentsCount('add');
-    }, [updateCommentsCount]);
+        startTransition(async () => {
+            updateOptimisticComments((prevState) => addCommentState(prevState, comment));
+            updateCommentsCount('add');
+
+            const newComment = await createComment(comment.authorId, postId, comment.body);
+
+            startTransition(() => {
+                setComments((prevComments) => addCommentState(prevComments, newComment));
+            })
+        })
+    }, [postId, updateCommentsCount, updateOptimisticComments, setComments]);
 
     const editComment = useCallback(async (commentId: string, newContent: string) => {
-        try {
+        startTransition(async () => {
+            updateOptimisticComments((prevState) => editCommentState(prevState, commentId, newContent))
             await editCommentAction(commentId, newContent);
-            setComments((prevComments) => prevComments.map((comment) => comment.id === commentId ? { ...comment, body: newContent } : comment));
-        } catch (error) {
-            console.error('Failed to edit comment', error);
-        }
+
+            startTransition(() => {
+                setComments((prevComments) => prevComments.map((comment) => comment.id === commentId ? { ...comment, body: newContent } : comment));
+            })
+        })
     }, []);
 
     const deleteComment = useCallback(async (commentId: string) => {
-        const commentIndex = comments.findIndex((comment) => comment.id === commentId);
-
-        if (commentIndex === -1) return;
-
-        try {
-            setComments((prevComments) => {
-                const newComments = [...prevComments];
-                newComments.splice(commentIndex, 1);
-                return newComments;
-            })
+        startTransition(async () => {
+            updateOptimisticComments((prevState) => deleteCommentState(prevState, commentId));
             updateCommentsCount('remove');
 
             await deleteCommentAction(commentId);
-        } catch (error) {
-            console.error('Failed to delete comment', error);
-        }
-    }, [updateCommentsCount, comments]);
+
+            startTransition(() => {
+                setComments((prevComments) => deleteCommentState(prevComments, commentId));
+            })
+        })
+    }, [updateCommentsCount, updateOptimisticComments, setComments]);
 
     const reactionComment = useCallback((commentId: string, userId: string, isLikedComment: boolean) => {
         setComments((prevComments) => {
@@ -71,5 +85,5 @@ export default function useComments(
         }
     }, [isDetailedViewOpen, postId]);
 
-    return { comments, addComment, editComment, deleteComment, reactionComment, isLoading };
+    return { comments: optimisticComments, addComment, editComment, deleteComment, reactionComment, isLoading };
 }
