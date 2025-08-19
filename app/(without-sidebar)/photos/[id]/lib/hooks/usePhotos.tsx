@@ -88,7 +88,7 @@ export default function usePhotos(initialPhotos: PhotoType[], activePhotoId: str
         startTransition(async () => {
             updateOptimisticPhotos((state) => updatePhotoComments(state, photoId, createOptimisticComment({
                 body,
-                photoId,
+                entityId: photoId,
                 user,
             })));
 

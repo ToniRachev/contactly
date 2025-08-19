@@ -1,10 +1,10 @@
 'use client';
 
 import { useAuthenticatedUser } from "@/lib/context/user.context";
-import { createComment } from "@/lib/actions/comment/comment.actions";
 import { CommentType } from "@/lib/types/post";
 import Avatar from "@/components/user-avatar";
 import CommentForm from "./comment-form";
+import { createOptimisticComment } from "@/lib/utils";
 
 type CreateCommentProps = {
     postId: string;
@@ -15,12 +15,13 @@ export default function CreateComment({ postId, addComment }: Readonly<CreateCom
     const { user } = useAuthenticatedUser();
 
     const handleSubmitSuccess = async (content: string) => {
-        try {
-            const newComment = await createComment(user.id, postId, content);
-            addComment(newComment);
-        } catch (error) {
-            console.error(error);
-        }
+        const optimisticComment = createOptimisticComment({
+            body: content,
+            entityId: postId,
+            user
+        })
+
+        addComment(optimisticComment);
     }
 
     return (
