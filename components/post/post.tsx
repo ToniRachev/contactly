@@ -39,14 +39,18 @@ const PostAuthor = ({ post, isFriendWithPostAuthor }: PostAuthorProps) => {
 
     return (
         <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-                <Avatar
-                    avatar={post.author.avatarUrl}
-                />
-                <div>
-                    <h6>{post.author.fullName}</h6>
-                    <p>{formatRelativeTime(post.createdAt)}</p>
-                </div>
+            <div className="">
+                <Link href={`/profile/${post.author.id}`}>
+                    <div className="flex items-center gap-4">
+                        <Avatar
+                            avatar={post.author.avatarUrl}
+                        />
+                        <div>
+                            <h6>{post.author.fullName}</h6>
+                            <p>{formatRelativeTime(post.createdAt)}</p>
+                        </div>
+                    </div>
+                </Link>
             </div>
 
             {controls}
