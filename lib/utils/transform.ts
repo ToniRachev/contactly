@@ -27,14 +27,13 @@ export const transformUserProfile = (user: UserProfileDBType): UserProfileType =
     }
 }
 
-export const transformPosts = (posts: PostDBType[], userId?: string): PostType[] => {
+export const transformPosts = (posts: PostDBType[]): PostType[] => {
     return posts.map((post: PostDBType) => ({
         ...post,
         author: appendFullNameToUser(post.author),
         commentsCount: extractCount(post.commentsCount),
         likesCount: extractCount(post.likesCount),
         likes: extractLikes(post.likes),
-        postOwner: userId ? userId === post.author.id : true,
         album: transformAlbum(post.album),
     }))
 }
