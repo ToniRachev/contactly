@@ -7,49 +7,46 @@ import DeletePost from "../delete-post";
 import EditPost from "../edit-post";
 import { startTransition, useActionState } from "react";
 import { postReaction } from "@/lib/actions/likes/likes.actions";
-import FriendRequestButton from "../friend-request-button";
-import { useFriends } from "@/lib/context/friends.context";
 import { ColumnsPhotoAlbum, Photo, RenderImageContext, RenderImageProps } from "react-photo-album";
 import { AlbumType } from "@/lib/types/photos";
 import Image from "next/image";
 import Link from "next/link";
 import Like from "../reaction/like";
 import CommentReaction from "../reaction/comment-reaction";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 
 type PostAuthorProps = {
     post: PostType;
-    isFriendWithPostAuthor: boolean;
 }
 
-const PostAuthor = ({ post, isFriendWithPostAuthor }: PostAuthorProps) => {
-    let controls;
+const PostAuthor = ({ post }: PostAuthorProps) => {
+    const { user } = useAuthenticatedUser();
 
-    if (isFriendWithPostAuthor) {
-        controls = null;
-    } else if (post.postOwner) {
-        controls = (
-            <div className="grid grid-cols-2 gap-2">
-                <EditPost postId={post.postId} postContent={post.body} />
-                <DeletePost postId={post.postId} />
-            </div>
-        )
-    } else {
-        controls = (<FriendRequestButton receiverId={post.author.id} />)
-    }
+    const isOwnPost = post.author.id === user?.id;
 
     return (
         <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-                <Avatar
-                    avatar={post.author.avatarUrl}
-                />
-                <div>
-                    <h6>{post.author.fullName}</h6>
-                    <p>{formatRelativeTime(post.createdAt)}</p>
-                </div>
+            <div className="">
+                <Link href={`/profile/${post.author.id}`}>
+                    <div className="flex items-center gap-4">
+                        <Avatar
+                            avatar={post.author.avatarUrl}
+                        />
+                        <div>
+                            <h6>{post.author.fullName}</h6>
+                            <p>{formatRelativeTime(post.createdAt)}</p>
+                        </div>
+                    </div>
+                </Link>
             </div>
 
-            {controls}
+            {isOwnPost && (
+                <div className="grid grid-cols-2 gap-2">
+                    <EditPost postId={post.postId} postContent={post.body} />
+                    <DeletePost postId={post.postId} />
+                </div>
+            )}
+
         </div>
     )
 }
@@ -117,7 +114,7 @@ type PostReactionsProps = {
 
 const PostReactions = ({ postId, commentsCount, likesCount, isLikedPost, reaction, open }: PostReactionsProps) => {
     const postReactionWithPostId = postReaction.bind(null, postId, isLikedPost);
-    const [, formAction, isPending] = useActionState(postReactionWithPostId, {
+    const [, formAction] = useActionState(postReactionWithPostId, {
         success: false,
     });
 
@@ -150,15 +147,9 @@ export default function Post({
     isLikedPost,
     reaction
 }: Readonly<PostProp>) {
-    const { friends } = useFriends();
-    const isFriendWithPostAuthor = friends.some(friend => friend.id === post.author.id);
-
     return (
         <div className="flex flex-col gap-4">
-            <PostAuthor
-                post={post}
-                isFriendWithPostAuthor={isFriendWithPostAuthor}
-            />
+            <PostAuthor post={post} />
 
             <PostContent
                 content={post.body}

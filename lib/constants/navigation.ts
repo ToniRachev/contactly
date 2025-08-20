@@ -1,6 +1,8 @@
 import { Compass, LogOut, MessageCircle, UserRound, UsersRound } from "lucide-react";
 import { signout } from "../actions/auth/auth.actions";
 
+export const PROFILE_ID = '___profileId';
+
 export const NAVIGATION = {
     HOME: {
         title: 'News feed',
@@ -27,4 +29,12 @@ export const NAVIGATION = {
         onClick: signout,
         icon: LogOut,
     },
+    PHOTOS: {
+        title: 'Photos',
+        url: '/photos',
+    },
+    PROFILE_PHOTOS: {
+        title: 'Photos',
+        url: `/profile/${PROFILE_ID}/photos`,
+    }
 }

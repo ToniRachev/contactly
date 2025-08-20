@@ -29,7 +29,6 @@ export type BiographyType = {
     currentCity: string | null,
 }
 
-
 export type AuthDataType = {
     user: User,
     session: Session,
@@ -37,11 +36,11 @@ export type AuthDataType = {
 
 export type UserBiographyDBType = {
     id: string;
-    created_at: string,
+    createdAt: string,
     school: string | null,
     hometown: string | null,
-    birth_date: string | null,
-    current_city: string | null,
+    birthDate: string | null,
+    currentCity: string | null,
 }
 
 export type UserWithPresenceStatusDBType = BaseUserDBType & {
@@ -54,12 +53,12 @@ export type UserWithPresenceStatusType = BaseUserType & {
     lastSeen: Date;
 }
 
-export type UserProfileDBType = UserWithPresenceStatusDBType & {
+export type UserProfileDBType = BaseUserDBType & {
     biography: UserBiographyDBType[];
-    cover_url: string | null;
+    coverUrl: string | null;
 }
 
-export type UserProfileType = UserWithPresenceStatusType & {
+export type UserProfileType = BaseUserType & {
     biography: BiographyType;
     coverUrl: string | null;
 }

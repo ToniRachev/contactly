@@ -2,7 +2,7 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
-import { getUserId } from "@/lib/actions/user/user.actions";
+import { getAuthUserId } from "@/lib/actions/user/user.actions";
 
 export async function likePost(postId: string, userId: string) {
     const supabase = await createClient();
@@ -26,7 +26,7 @@ export async function unlikePost(postId: string, userId: string) {
 }
 
 export async function postReaction(postId: string, isLikedPost: boolean) {
-    const userId = await getUserId();
+    const userId = await getAuthUserId();
 
     try {
         if (isLikedPost) {
@@ -70,7 +70,7 @@ export async function unlikeComment(commentId: string, userId: string) {
 }
 
 export async function commentReaction(commentId: string, isLikedComment: boolean) {
-    const userId = await getUserId();
+    const userId = await getAuthUserId();
 
     try {
         if (isLikedComment) {

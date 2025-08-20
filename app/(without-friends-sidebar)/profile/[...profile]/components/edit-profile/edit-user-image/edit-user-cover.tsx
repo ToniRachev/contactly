@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { SectionWrapper } from "..";
 import { Camera } from "lucide-react";
-import EditUserImage from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-user-image";
+import EditUserImage from ".";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { useCallback, useState } from "react";
 import LoadingOverlay from "./loading-overlay";

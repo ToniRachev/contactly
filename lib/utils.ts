@@ -6,6 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { ZodTypeAny } from "zod";
 import { UserProfileType } from "./types/user";
+import { NAVIGATION, PROFILE_ID } from "./constants/navigation";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -79,3 +80,5 @@ export const createOptimisticComment = ({ body, entityId, user }: CreateOptimist
   entityId: entityId,
   likesCount: 0,
 })
+
+export const buildProfilePhotosUrl = (profileId: string) => NAVIGATION.PROFILE_PHOTOS.url.replace(PROFILE_ID, profileId);

@@ -2,7 +2,7 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
-import { PresenceStatusType, UserProfileDBType, BaseUserDBType, UserWithPresenceStatusDBType, BaseUserType, UserProfileType, UserWithPresenceStatusType } from "@/lib/types/user";
+import { PresenceStatusType, UserProfileDBType, BaseUserDBType, UserWithPresenceStatusDBType, BaseUserType, UserWithPresenceStatusType } from "@/lib/types/user";
 import {
     UpdateHometownSchemaType,
     UpdateHometownSchemaErrorType,
@@ -13,12 +13,12 @@ import {
 } from "@/lib/validations/userSchema";
 import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
-import { ActionState } from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-bio/types";
 import { revalidateTag, unstable_cache } from "next/cache";
-import { appendFullNameToUser } from "@/lib/utils/transform";
+import { appendFullNameToUser, transformUserProfile } from "@/lib/utils/transform";
 import { userQueryWithBiography, baseUserQuery, userQueryWithPresenceStatus } from "@/lib/utils/supabase/queries";
 import { createPhoto, getOrCreateAlbumId } from "../photos/photos.actions";
 import { AlbumTypeEnum } from "@/lib/types/photos";
+import { ActionState } from "@/app/(without-friends-sidebar)/profile/[...profile]/components/edit-profile/edit-bio/types";
 
 export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();
@@ -31,7 +31,7 @@ export async function fetchUserProfile(userId: string) {
                 .single();
 
             const data = await baseFetcher<UserProfileDBType>(query);
-            return appendFullNameToUser(data) as UserProfileType;
+            return transformUserProfile(data);
         },
         [`user-profile-${userId}`],
         {
@@ -65,7 +65,7 @@ export async function fetchUserWithPresenceStatus(userId: string) {
 
     return appendFullNameToUser(data) as UserWithPresenceStatusType;
 }
-export async function getUserId() {
+export async function getAuthUserId() {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getUser();
 
@@ -172,7 +172,7 @@ async function deleteBioField(userId: string, field: string) {
 }
 
 export async function updateUserBioAction(field: string, dbField: string, state: ActionState, formData: FormData) {
-    const userId = await getUserId();
+    const userId = await getAuthUserId();
 
     const data = {
         [field]: formData.get(field)
@@ -201,7 +201,7 @@ export async function updateUserBioAction(field: string, dbField: string, state:
 }
 
 export async function deleteUserBioFieldAction(field: string) {
-    const userId = await getUserId();
+    const userId = await getAuthUserId();
 
     try {
         await deleteBioField(userId, field);

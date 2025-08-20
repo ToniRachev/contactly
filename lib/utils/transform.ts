@@ -19,14 +19,21 @@ export const appendFullNameToUser = (user: BaseUserDBType | UserWithPresenceStat
     }
 }
 
-export const transformPosts = (posts: PostDBType[], userId?: string): PostType[] => {
+export const transformUserProfile = (user: UserProfileDBType): UserProfileType => {
+    return {
+        ...appendFullNameToUser(user),
+        biography: user.biography[0],
+        coverUrl: user.coverUrl,
+    }
+}
+
+export const transformPosts = (posts: PostDBType[]): PostType[] => {
     return posts.map((post: PostDBType) => ({
         ...post,
         author: appendFullNameToUser(post.author),
         commentsCount: extractCount(post.commentsCount),
         likesCount: extractCount(post.likesCount),
         likes: extractLikes(post.likes),
-        postOwner: userId ? userId === post.author.id : true,
         album: transformAlbum(post.album),
     }))
 }

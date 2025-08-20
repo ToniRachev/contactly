@@ -11,7 +11,7 @@ type UserProfileCardProps = {
 
 export default function UserProfileCard({ avatar, name, className }: Readonly<UserProfileCardProps>) {
     return (
-        <div className={clsx('flex flex-col justify-center items-center w-full gap-4', className)}>
+        <div className={clsx('flex flex-col justify-center items-center gap-4', className)}>
             <Avatar avatar={avatar} size={'lg'} />
             <h6>{name}</h6>
         </div>
