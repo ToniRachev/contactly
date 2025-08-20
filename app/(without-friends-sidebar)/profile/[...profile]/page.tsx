@@ -33,6 +33,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                         fullName={userProfile.fullName}
                         avatarUrl={userProfile.avatarUrl}
                         isOwnProfile={isOwnProfile}
+                        profileId={profileId}
                     />
 
                     <ProfileNavigation profileId={profileId} />
