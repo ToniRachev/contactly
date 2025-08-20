@@ -1,4 +1,4 @@
-import { getAlbumById, getPhoto } from "@/lib/actions/photos/photos.actions";
+import { fetchUserPhotos, getPhoto } from "@/lib/actions/photos/photos.actions";
 import { notFound } from "next/navigation";
 import Gallery from "./components/gallery";
 
@@ -16,17 +16,12 @@ export default async function Photos({ params }: Readonly<PhotosProps>) {
         return notFound();
     }
 
-    const album = await getAlbumById({ id: photo.albumId });
-
-    if (!album) {
-        return notFound();
-    }
+    const photos = await fetchUserPhotos(photo.authorId);
 
     return (
         <Gallery
-            initialPhotos={album.photos}
+            initialPhotos={photos}
             activePhotoId={id}
-            author={album.author}
         />
     )
 }
