@@ -45,6 +45,5 @@ export type PostType = {
     commentsCount: number;
     likesCount: number;
     likes: string[];
-    postOwner: boolean;
     album: AlbumType;
 }
