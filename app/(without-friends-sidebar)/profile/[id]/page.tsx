@@ -45,7 +45,7 @@ export default async function Profile({ params }: Readonly<ProfilePageProps>) {
             <div className="pt-36 flex gap-48">
                 <div className=" w-1/3 rounded-lg space-y-4">
                     <About user={userProfile} />
-                    <PhotosList photos={photos} />
+                    <PhotosList photos={photos} profileId={id} />
                 </div>
                 <div className="flex flex-col gap-24 w-full">
                     <PostsListWrapper posts={posts} />
