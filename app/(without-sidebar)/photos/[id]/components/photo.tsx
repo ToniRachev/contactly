@@ -31,7 +31,7 @@ export default function Photo({ photo, author, photoReaction, photoComments }: R
                 className="h-[100svh] object-cover"
             />
 
-            <div className="absolute top-4 left-[72%] max-w-[20svw]">
+            <div className="absolute top-4 left-[72%] w-full max-w-[20svw] z-[50]">
                 <PhotoMetadata
                     author={author}
                     photoData={{
