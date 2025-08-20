@@ -65,7 +65,7 @@ export async function fetchUserWithPresenceStatus(userId: string) {
 
     return appendFullNameToUser(data) as UserWithPresenceStatusType;
 }
-export async function getUserId() {
+export async function getAuthUserId() {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getUser();
 
@@ -172,7 +172,7 @@ async function deleteBioField(userId: string, field: string) {
 }
 
 export async function updateUserBioAction(field: string, dbField: string, state: ActionState, formData: FormData) {
-    const userId = await getUserId();
+    const userId = await getAuthUserId();
 
     const data = {
         [field]: formData.get(field)
@@ -201,7 +201,7 @@ export async function updateUserBioAction(field: string, dbField: string, state:
 }
 
 export async function deleteUserBioFieldAction(field: string) {
-    const userId = await getUserId();
+    const userId = await getAuthUserId();
 
     try {
         await deleteBioField(userId, field);
