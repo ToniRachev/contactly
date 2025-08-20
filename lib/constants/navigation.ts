@@ -27,4 +27,8 @@ export const NAVIGATION = {
         onClick: signout,
         icon: LogOut,
     },
+    PHOTOS: {
+        title: 'Photos',
+        url: '/photos',
+    },
 }
