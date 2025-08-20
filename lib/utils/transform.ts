@@ -137,5 +137,6 @@ export const transformPhoto = (photo: PhotoDBType): PhotoType => {
         likes,
         likesCount: likes.length,
         comments: photo.comments.map((comment) => transformComment(comment)),
+        author: appendFullNameToUser(photo.author),
     }
 }
