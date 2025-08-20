@@ -19,6 +19,7 @@ export type PhotoDBType = {
         userId: string;
     }[];
     comments: CommentDBType[];
+    author: BaseUserDBType;
 }
 
 export type AlbumDBType = {
@@ -40,6 +41,7 @@ export type PhotoType = {
     likes: string[];
     likesCount: number;
     comments: CommentType[];
+    author: BaseUserType;
 }
 
 export type AlbumType = {
