@@ -3,7 +3,7 @@ import PostsListWrapper from "@/components/post/posts-list";
 import Cover from "./components/cover";
 import UserData from "./components/user-data";
 import EditProfile from "./components/edit-profile";
-import { fetchUserProfile } from "@/lib/actions/user/user.actions";
+import { fetchUserProfile, getAuthUserId } from "@/lib/actions/user/user.actions";
 import About from "./components/about";
 import { fetchUserPhotos } from "@/lib/actions/photos/photos.actions";
 import PhotosList from "./components/photos-list";
@@ -17,11 +17,14 @@ type ProfilePageProps = {
 export default async function Profile({ params }: Readonly<ProfilePageProps>) {
     const { id } = await params;
 
-    const [userProfile, posts, photos] = await Promise.all([
+    const [userProfile, posts, photos, authUserId] = await Promise.all([
         fetchUserProfile(id),
         fetchUserPosts(id),
-        fetchUserPhotos(id)
+        fetchUserPhotos(id),
+        getAuthUserId()
     ]);
+
+    const isOwnProfile = authUserId === userProfile.id;
 
     return (
         <div>
@@ -32,9 +35,11 @@ export default async function Profile({ params }: Readonly<ProfilePageProps>) {
                     <UserData fullName={userProfile.fullName} avatarUrl={userProfile.avatarUrl} />
                 </div>
 
-                <div className="absolute -bottom-20 right-14">
-                    <EditProfile />
-                </div>
+                {isOwnProfile && (
+                    <div className="absolute -bottom-20 right-14">
+                        <EditProfile />
+                    </div>
+                )}
             </div>
 
             <div className="pt-36 flex gap-48">
