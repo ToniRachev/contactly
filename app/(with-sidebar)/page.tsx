@@ -1,9 +1,9 @@
 import PostsList from "@/components/post/posts-list";
 import { fetchPosts } from "@/lib/actions/post/post.actions"
-import { getUserId } from "@/lib/actions/user/user.actions";
+import { getAuthUserId } from "@/lib/actions/user/user.actions";
 
 export default async function Home() {
-  const userId = await getUserId();
+  const userId = await getAuthUserId();
   const posts = await fetchPosts(userId);
 
   return (
