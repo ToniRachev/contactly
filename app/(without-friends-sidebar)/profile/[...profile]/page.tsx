@@ -1,9 +1,9 @@
 import Cover from "./components/cover";
 import UserData from "./components/user-data";
-import EditProfile from "./components/edit-profile";
 import { fetchUserProfile, getAuthUserId } from "@/lib/actions/user/user.actions";
 import Profile from "./components/profile";
 import UserPhotos from "./components/user-photos";
+import ProfileNavigation from "./components/profile-navigation";
 
 type ProfilePageProps = {
     params: Promise<{
@@ -25,21 +25,21 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
 
     return (
         <div>
-            <div className="w-full h-[50svh] relative">
+            <div className="w-full relative">
                 <Cover coverUrl={userProfile.coverUrl} />
 
-                <div className="absolute -bottom-24 left-4 flex justify-between w-full">
-                    <UserData fullName={userProfile.fullName} avatarUrl={userProfile.avatarUrl} />
+                <div className="absolute -bottom-42 px-8 w-full space-y-4">
+                    <UserData
+                        fullName={userProfile.fullName}
+                        avatarUrl={userProfile.avatarUrl}
+                        isOwnProfile={isOwnProfile}
+                    />
+
+                    <ProfileNavigation profileId={profileId} />
                 </div>
 
-                {isOwnProfile && (
-                    <div className="absolute -bottom-20 right-14">
-                        <EditProfile />
-                    </div>
-                )}
             </div>
-
-            <div className="pt-36">
+            <div className="pt-56 px-8">
                 {content}
             </div>
         </div>
