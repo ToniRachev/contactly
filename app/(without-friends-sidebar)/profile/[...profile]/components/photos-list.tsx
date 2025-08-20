@@ -1,5 +1,4 @@
 import { PhotoType } from "@/lib/types/photos";
-import Image from "next/image";
 import SectionWrapper from "./section-wrapper";
 import Link from "next/link";
 import PhotoLink from "./photo-link";
