@@ -8,7 +8,7 @@ import { transformPosts } from "@/lib/utils/transform";
 import { postSchema, PostSchemaErrorType, PostSchemaType } from "@/lib/validations/postSchema";
 import { createFormResult } from "@/lib/validations/utils";
 import { PostDBType, PostType } from "@/lib/types/post";
-import { getUserId } from "@/lib/actions/user/user.actions";
+import { getAuthUserId } from "@/lib/actions/user/user.actions";
 import { redirect } from "next/navigation";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { postQuery } from "@/lib/utils/supabase/queries";
@@ -24,7 +24,6 @@ type SubmitPostState = PostState & { newPost: PostType | null }
 
 export async function fetchPosts(currentUserId: string, limit: number = 10) {
     const supabase = await createClient();
-    const userId = await getUserId();
 
     const data = await baseFetcher(
         supabase.from('posts')
@@ -34,7 +33,7 @@ export async function fetchPosts(currentUserId: string, limit: number = 10) {
             .order('created_at', { ascending: false })
     );
 
-    return transformPosts(data as unknown as PostDBType[], userId);
+    return transformPosts(data as unknown as PostDBType[]);
 }
 
 export async function fetchUserPosts(userId: string, limit: number = 10) {
@@ -48,7 +47,7 @@ export async function fetchUserPosts(userId: string, limit: number = 10) {
             .order('created_at', { ascending: false })
     );
 
-    return transformPosts(data as unknown as PostDBType[], userId);
+    return transformPosts(data as unknown as PostDBType[]);
 }
 
 export async function createPost(authorId: string, postData: { body: string, albumId: string }) {
@@ -65,13 +64,13 @@ export async function createPost(authorId: string, postData: { body: string, alb
             .select(postQuery)
     )
 
-    const transformedPost = transformPosts(data as unknown as PostDBType[], authorId);
+    const transformedPost = transformPosts(data as unknown as PostDBType[]);
     return transformedPost[0];
 }
 
 export async function editPost(postId: string, postContent: string) {
     const supabase = await createClient();
-    const userId = await getUserId();
+    const userId = await getAuthUserId();
 
     const data = await baseFetcher(
         supabase.from('posts')
@@ -79,13 +78,13 @@ export async function editPost(postId: string, postContent: string) {
             .match({ id: postId, author_id: userId })
             .select(postQuery));
 
-    const transformedPost = transformPosts(data as unknown as PostDBType[], userId);
+    const transformedPost = transformPosts(data as unknown as PostDBType[]);
     return transformedPost[0];
 }
 
 export const deletePost = async (postId: string) => {
     const supabase = await createClient();
-    const userId = await getUserId();
+    const userId = await getAuthUserId();
 
     await baseFetcher(supabase.from('posts').delete().match({ id: postId, author_id: userId }))
 }
@@ -112,7 +111,7 @@ export async function submitPost(path: string, state: SubmitPostState, formData:
     }));
 
     try {
-        const userId = await getUserId();
+        const userId = await getAuthUserId();
         const albumId = await addPostPhotos({
             album: null,
             author: userId,
