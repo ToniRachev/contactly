@@ -5,7 +5,7 @@ import { SectionWrapper } from "..";
 import { Camera } from "lucide-react";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { useCallback, useState } from "react";
-import EditUserImage from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-user-image";
+import EditUserImage from "@/app/(without-friends-sidebar)/profile/[id]/components/edit-profile/edit-user-image";
 import LoadingOverlay from "./loading-overlay";
 
 export default function EditProfilePicture() {

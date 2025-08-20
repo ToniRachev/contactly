@@ -1,15 +1,15 @@
-'use client';
-
-import { useAuthenticatedUser } from "@/lib/context/user.context";
 import Image from "next/image";
 
-export default function Cover() {
-    const { user } = useAuthenticatedUser();
+type CoverProps = {
+    coverUrl: string | null;
+}
+
+export default function Cover({ coverUrl }: Readonly<CoverProps>) {
 
     return (
-        user.coverUrl ? (
+        coverUrl ? (
             <Image
-                src={user.coverUrl}
+                src={coverUrl}
                 alt="User cover photo"
                 fill
                 className="object-cover object-center"

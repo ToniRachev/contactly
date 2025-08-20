@@ -2,7 +2,7 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
-import { PresenceStatusType, UserProfileDBType, BaseUserDBType, UserWithPresenceStatusDBType, BaseUserType, UserProfileType, UserWithPresenceStatusType } from "@/lib/types/user";
+import { PresenceStatusType, UserProfileDBType, BaseUserDBType, UserWithPresenceStatusDBType, BaseUserType, UserWithPresenceStatusType } from "@/lib/types/user";
 import {
     UpdateHometownSchemaType,
     UpdateHometownSchemaErrorType,
@@ -13,12 +13,12 @@ import {
 } from "@/lib/validations/userSchema";
 import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
-import { ActionState } from "@/app/(without-friends-sidebar)/profile/components/edit-profile/edit-bio/types";
 import { revalidateTag, unstable_cache } from "next/cache";
-import { appendFullNameToUser } from "@/lib/utils/transform";
+import { appendFullNameToUser, transformUserProfile } from "@/lib/utils/transform";
 import { userQueryWithBiography, baseUserQuery, userQueryWithPresenceStatus } from "@/lib/utils/supabase/queries";
 import { createPhoto, getOrCreateAlbumId } from "../photos/photos.actions";
 import { AlbumTypeEnum } from "@/lib/types/photos";
+import { ActionState } from "@/app/(without-friends-sidebar)/profile/[id]/components/edit-profile/edit-bio/types";
 
 export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();
@@ -31,7 +31,7 @@ export async function fetchUserProfile(userId: string) {
                 .single();
 
             const data = await baseFetcher<UserProfileDBType>(query);
-            return appendFullNameToUser(data) as UserProfileType;
+            return transformUserProfile(data);
         },
         [`user-profile-${userId}`],
         {

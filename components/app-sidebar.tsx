@@ -102,7 +102,7 @@ export default function AppSidebar() {
                                 </div>
                             </MenuItem>
 
-                            <MenuItem url={NAVIGATION.PROFILE.url}>
+                            <MenuItem url={`${NAVIGATION.PROFILE.url}/${user.id}`}>
                                 <MenuItemIcon icon={NAVIGATION.PROFILE.icon} title={NAVIGATION.PROFILE.title} />
                             </MenuItem>
 

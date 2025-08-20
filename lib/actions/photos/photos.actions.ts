@@ -2,7 +2,7 @@
 
 import { baseFetcher } from "@/lib/utils/supabase/helpers";
 import { createClient } from "@/lib/utils/supabase/server";
-import { AlbumType, AlbumTypeEnum } from "@/lib/types/photos";
+import { AlbumType, AlbumTypeEnum, PhotoDBType } from "@/lib/types/photos";
 import { transformAlbum, transformComment, transformPhoto } from "@/lib/utils/transform";
 import { albumQuery, photoCommentQuery, photoQuery } from "@/lib/utils/supabase/queries";
 import { CommentDBType } from "@/lib/types/post";
@@ -259,4 +259,15 @@ export async function photoCommentReaction({ commentId, userId, isLikedComment }
             success: false,
         }
     }
+}
+
+export const fetchUserPhotos = async (userId: string) => {
+    const supabase = await createClient();
+
+    const data = await baseFetcher(
+        supabase.from('photos').select(photoQuery).eq('author_id', userId)
+    )
+
+    const photos = data ? data.map((photo) => transformPhoto(photo as unknown as PhotoDBType)) : [];
+    return photos;
 }
