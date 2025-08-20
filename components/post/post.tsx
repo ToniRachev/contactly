@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Like from "../reaction/like";
 import CommentReaction from "../reaction/comment-reaction";
+import { useAuthenticatedUser } from "@/lib/context/user.context";
 
 type PostAuthorProps = {
     post: PostType;
@@ -22,11 +23,13 @@ type PostAuthorProps = {
 }
 
 const PostAuthor = ({ post, isFriendWithPostAuthor }: PostAuthorProps) => {
+    const { user } = useAuthenticatedUser();
+
     let controls;
 
     if (isFriendWithPostAuthor) {
         controls = null;
-    } else if (post.postOwner) {
+    } else if (post.author.id === user?.id) {
         controls = (
             <div className="grid grid-cols-2 gap-2">
                 <EditPost postId={post.postId} postContent={post.body} />
@@ -121,7 +124,7 @@ type PostReactionsProps = {
 
 const PostReactions = ({ postId, commentsCount, likesCount, isLikedPost, reaction, open }: PostReactionsProps) => {
     const postReactionWithPostId = postReaction.bind(null, postId, isLikedPost);
-    const [, formAction, isPending] = useActionState(postReactionWithPostId, {
+    const [, formAction] = useActionState(postReactionWithPostId, {
         success: false,
     });
 
