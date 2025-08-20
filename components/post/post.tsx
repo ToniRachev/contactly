@@ -7,8 +7,6 @@ import DeletePost from "../delete-post";
 import EditPost from "../edit-post";
 import { startTransition, useActionState } from "react";
 import { postReaction } from "@/lib/actions/likes/likes.actions";
-import FriendRequestButton from "../friend-request-button";
-import { useFriends } from "@/lib/context/friends.context";
 import { ColumnsPhotoAlbum, Photo, RenderImageContext, RenderImageProps } from "react-photo-album";
 import { AlbumType } from "@/lib/types/photos";
 import Image from "next/image";
@@ -19,26 +17,12 @@ import { useAuthenticatedUser } from "@/lib/context/user.context";
 
 type PostAuthorProps = {
     post: PostType;
-    isFriendWithPostAuthor: boolean;
 }
 
-const PostAuthor = ({ post, isFriendWithPostAuthor }: PostAuthorProps) => {
+const PostAuthor = ({ post }: PostAuthorProps) => {
     const { user } = useAuthenticatedUser();
 
-    let controls;
-
-    if (isFriendWithPostAuthor) {
-        controls = null;
-    } else if (post.author.id === user?.id) {
-        controls = (
-            <div className="grid grid-cols-2 gap-2">
-                <EditPost postId={post.postId} postContent={post.body} />
-                <DeletePost postId={post.postId} />
-            </div>
-        )
-    } else {
-        controls = (<FriendRequestButton receiverId={post.author.id} />)
-    }
+    const isOwnPost = post.author.id === user?.id;
 
     return (
         <div className="flex justify-between items-center">
@@ -56,7 +40,13 @@ const PostAuthor = ({ post, isFriendWithPostAuthor }: PostAuthorProps) => {
                 </Link>
             </div>
 
-            {controls}
+            {isOwnPost && (
+                <div className="grid grid-cols-2 gap-2">
+                    <EditPost postId={post.postId} postContent={post.body} />
+                    <DeletePost postId={post.postId} />
+                </div>
+            )}
+
         </div>
     )
 }
@@ -157,15 +147,9 @@ export default function Post({
     isLikedPost,
     reaction
 }: Readonly<PostProp>) {
-    const { friends } = useFriends();
-    const isFriendWithPostAuthor = friends.some(friend => friend.id === post.author.id);
-
     return (
         <div className="flex flex-col gap-4">
-            <PostAuthor
-                post={post}
-                isFriendWithPostAuthor={isFriendWithPostAuthor}
-            />
+            <PostAuthor post={post} />
 
             <PostContent
                 content={post.body}
