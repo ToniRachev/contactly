@@ -2,7 +2,7 @@ import AppSidebar from "@/components/app-sidebar";
 import ContentWrapper from "@/components/content-wrapper";
 import { ReactNode } from "react";
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
     return (
         <div className="flex">
             <div className="">

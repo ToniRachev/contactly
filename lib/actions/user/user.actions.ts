@@ -18,7 +18,7 @@ import { appendFullNameToUser, transformUserProfile } from "@/lib/utils/transfor
 import { userQueryWithBiography, baseUserQuery, userQueryWithPresenceStatus } from "@/lib/utils/supabase/queries";
 import { createPhoto, getOrCreateAlbumId } from "../photos/photos.actions";
 import { AlbumTypeEnum } from "@/lib/types/photos";
-import { ActionState } from "@/app/(without-friends-sidebar)/profile/[id]/components/edit-profile/edit-bio/types";
+import { ActionState } from "@/app/(without-friends-sidebar)/profile/[...profile]/components/edit-profile/edit-bio/types";
 
 export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();

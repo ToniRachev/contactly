@@ -1,30 +1,27 @@
-import { fetchUserPosts } from "@/lib/actions/post/post.actions";
-import PostsListWrapper from "@/components/post/posts-list";
 import Cover from "./components/cover";
 import UserData from "./components/user-data";
 import EditProfile from "./components/edit-profile";
 import { fetchUserProfile, getAuthUserId } from "@/lib/actions/user/user.actions";
-import About from "./components/about";
-import { fetchUserPhotos } from "@/lib/actions/photos/photos.actions";
-import PhotosList from "./components/photos-list";
+import Profile from "./components/profile";
+import UserPhotos from "./components/user-photos";
 
 type ProfilePageProps = {
     params: Promise<{
-        id: string;
+        profile: string[];
     }>
 }
 
-export default async function Profile({ params }: Readonly<ProfilePageProps>) {
-    const { id } = await params;
+export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
+    const { profile: [profileId, section] } = await params;
 
-    const [userProfile, posts, photos, authUserId] = await Promise.all([
-        fetchUserProfile(id),
-        fetchUserPosts(id),
-        fetchUserPhotos(id),
+    const [userProfile, authUserId] = await Promise.all([
+        fetchUserProfile(profileId),
         getAuthUserId()
     ]);
 
     const isOwnProfile = authUserId === userProfile.id;
+
+    const content = section === "photos" ? <UserPhotos profileId={profileId} /> : <Profile profileId={profileId} profile={userProfile} />;
 
     return (
         <div>
@@ -42,14 +39,8 @@ export default async function Profile({ params }: Readonly<ProfilePageProps>) {
                 )}
             </div>
 
-            <div className="pt-36 flex gap-48">
-                <div className=" w-1/3 rounded-lg space-y-4">
-                    <About user={userProfile} />
-                    <PhotosList photos={photos} profileId={id} />
-                </div>
-                <div className="flex flex-col gap-24 w-full">
-                    <PostsListWrapper posts={posts} />
-                </div>
+            <div className="pt-36">
+                {content}
             </div>
         </div>
     )

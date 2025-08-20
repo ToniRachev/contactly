@@ -2,6 +2,7 @@ import { PhotoType } from "@/lib/types/photos";
 import Image from "next/image";
 import SectionWrapper from "./section-wrapper";
 import Link from "next/link";
+import PhotoLink from "./photo-link";
 
 type PhotosListProps = {
     photos: PhotoType[];
@@ -13,9 +14,7 @@ const List = ({ photos }: Readonly<{ photos: PhotoType[] }>) => {
         <ul className="grid grid-cols-3 gap-3">
             {photos.map((photo) => (
                 <li key={photo.id}>
-                    <Link href={`/photos/${photo.id}`}>
-                        <Image src={photo.url} alt={photo.caption ?? ''} width={100} height={100} className="w-full h-full object-cover" />
-                    </Link>
+                    <PhotoLink photo={photo} />
                 </li>
             ))}
         </ul>
