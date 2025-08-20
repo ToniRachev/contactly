@@ -17,7 +17,7 @@ export const photoCommentQuery = `
   likesCount:likes_photos_comments(count)
 `;
 
-export const photoQuery = `*, likes:likes_photos(userId:user_id), comments:comments_photos(${photoCommentQuery})`;
+export const photoQuery = `*, likes:likes_photos(userId:user_id), comments:comments_photos(${photoCommentQuery}), author:author_id(${baseUserQuery})`;
 
 export const albumQuery = `*, author:author_id(${baseUserQuery}), photos(${photoQuery})`
 
