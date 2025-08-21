@@ -4,6 +4,7 @@ import UserProfileCard from "@/components/user-profile-card";
 import EditProfile from "./edit-profile";
 import { useFriends } from "@/lib/context/friends.context";
 import FriendRequestButton from "@/components/friend-request-button";
+import RemoveFriendButton from "@/components/remove-friend-button";
 
 type UserDataProps = {
     fullName: string;
@@ -27,13 +28,17 @@ export default function UserData({ fullName, avatarUrl, isOwnProfile, profileId 
                 />
 
                 {isOwnProfile && (
-                    <div className="">
-                        <EditProfile />
-                    </div>
+                    <EditProfile />
                 )}
 
                 {!areFriends && !isOwnProfile && (
                     <FriendRequestButton receiverId={profileId} />
+                )}
+
+                {areFriends && (
+                    <div>
+                        <RemoveFriendButton friendId={profileId} className="w-fit" buttonVariant="destructive" />
+                    </div>
                 )}
             </div>
         </div>
