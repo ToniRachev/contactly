@@ -1,7 +1,7 @@
 import { formatFullName } from "@/lib/utils"
 import { CommentDBType, CommentType, PostDBType, PostType, CountType, LikesType } from "@/lib/types/post"
 import { BaseConversationOverviewDBType, ConversationDBType, ConversationOverviewDBType, ConversationOverviewType, ConversationParticipantDBType, MessageDBType } from "../types/conversation"
-import { BaseUserDBType, BaseUserType, UserProfileDBType, UserProfileType, UserWithPresenceStatusDBType, UserWithPresenceStatusType } from "../types/user"
+import { BaseUserDBType, BaseUserType, SearchUserDBType, SearchUserType, UserProfileDBType, UserProfileType, UserWithPresenceStatusDBType, UserWithPresenceStatusType } from "../types/user"
 import { AlbumDBType, AlbumType, PhotoDBType, PhotoType } from "../types/photos"
 
 const extractCount = (item: CountType) => {
@@ -138,5 +138,13 @@ export const transformPhoto = (photo: PhotoDBType): PhotoType => {
         likesCount: likes.length,
         comments: photo.comments.map((comment) => transformComment(comment)),
         author: appendFullNameToUser(photo.author),
+    }
+}
+
+export const transformSearchUser = (user: SearchUserDBType): SearchUserType => {
+    return {
+        id: user.id,
+        avatarUrl: user.avatar_url,
+        fullName: formatFullName(user.first_name, user.last_name),
     }
 }
