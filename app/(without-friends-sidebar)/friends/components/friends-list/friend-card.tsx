@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import CardWrapper from "../card-wrapper";
 import RemoveFriendButton from "@/components/remove-friend-button";
+import Link from "next/link";
+import { NAVIGATION } from "@/lib/constants/navigation";
 
 type FriendCardProps = {
     friendAvatar: string | null;
@@ -16,9 +18,11 @@ export default function FriendCard({ friendAvatar, friendName, friendId }: Reado
             name={friendName}
         >
             <>
-                <Button variant="secondary" className="mr-2">
-                    View profile
-                </Button>
+                <Link href={`${NAVIGATION.PROFILE.url}/${friendId}`} className="w-full">
+                    <Button variant="secondary" className="mr-2 w-full">
+                        View profile
+                    </Button>
+                </Link>
 
                 <RemoveFriendButton friendId={friendId} buttonVariant="destructive" />
             </>
