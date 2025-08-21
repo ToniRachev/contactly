@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Chakra_Petch } from "next/font/google";
 import AppWrapper from "@/components/app-wrapper";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 const chakraPetch = Chakra_Petch({
   variable: "--font-body",
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body
         className={`${chakraPetch.variable} antialiased`}
       >
+        <Toaster />
         <AppWrapper>
           {children}
         </AppWrapper>
