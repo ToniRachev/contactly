@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useMemo, useCallback, useOptimistic, startTransition } from "react";
+import { createContext, useContext, ReactNode, useMemo, useCallback, useOptimistic, startTransition, useState } from "react";
 import { UserProfileType } from "../types/user";
 
 type UserContextType = {
@@ -8,6 +8,7 @@ type UserContextType = {
     isAuthenticated: boolean;
     updateUserAvatar: (avatarUrl: string) => void;
     updateUserCover: (coverUrl: string) => void;
+    updateOptimisticBioField: (field: string, value: string) => void;
     updateUserBioField: (field: string, value: string) => void;
 }
 
@@ -16,10 +17,23 @@ type UserProviderProps = {
     userData: UserProfileType | null;
 }
 
+const updateUserBioFieldState = (state: UserProfileType | null, field: string, value: string) => {
+    if (!state) return null;
+
+    return {
+        ...state,
+        biography: {
+            ...state.biography,
+            [field]: value
+        }
+    }
+}
+
 const UserContext = createContext<UserContextType | null>(null);
 
 export default function UserProvider({ children, userData }: Readonly<UserProviderProps>) {
-    const [user, setUser] = useOptimistic(userData);
+    const [user, setUser] = useState(userData);
+    const [optimisticUser, updateOptimisticUser] = useOptimistic(user);
 
     const updateUserAvatar = useCallback((avatarUrl: string) => {
         startTransition(() => {
@@ -47,29 +61,24 @@ export default function UserProvider({ children, userData }: Readonly<UserProvid
         })
     }, [setUser]);
 
-    const updateUserBioField = useCallback((field: string, value: string) => {
+    const updateOptimisticBioField = useCallback((field: string, value: string) => {
         startTransition(() => {
-            setUser((prevState) => {
-                if (!prevState) return null;
-
-                return {
-                    ...prevState,
-                    biography: {
-                        ...prevState.biography,
-                        [field]: value
-                    }
-                }
-            })
+            updateOptimisticUser((prevState) => updateUserBioFieldState(prevState, field, value));
         })
+    }, [updateOptimisticUser]);
+
+    const updateUserBioField = useCallback((field: string, value: string) => {
+        setUser((prevState) => updateUserBioFieldState(prevState, field, value));
     }, [setUser]);
 
     const contextValue = useMemo(() => ({
-        user,
+        user: optimisticUser,
         isAuthenticated: !!user,
         updateUserAvatar,
         updateUserCover,
+        updateOptimisticBioField,
         updateUserBioField
-    }), [user, updateUserAvatar, updateUserCover, updateUserBioField]);
+    }), [optimisticUser, user, updateUserAvatar, updateUserCover, updateOptimisticBioField, updateUserBioField]);
 
     return (
         <UserContext.Provider value={contextValue}>
@@ -93,6 +102,7 @@ export function useAuthenticatedUser() {
         user: context.user,
         updateUserAvatar: context.updateUserAvatar,
         updateUserCover: context.updateUserCover,
+        updateOptimisticBioField: context.updateOptimisticBioField,
         updateUserBioField: context.updateUserBioField
     };
 }

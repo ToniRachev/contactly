@@ -13,31 +13,23 @@ import {
 } from "@/lib/validations/userSchema";
 import { createFormResult } from "@/lib/validations/utils";
 import { MESSAGES } from "@/lib/constants/messages";
-import { revalidateTag, unstable_cache } from "next/cache";
 import { appendFullNameToUser, transformUserProfile } from "@/lib/utils/transform";
 import { userQueryWithBiography, baseUserQuery, userQueryWithPresenceStatus } from "@/lib/utils/supabase/queries";
 import { createPhoto, getOrCreateAlbumId } from "../photos/photos.actions";
 import { AlbumTypeEnum } from "@/lib/types/photos";
 import { ActionState } from "@/app/(without-friends-sidebar)/profile/[...profile]/components/edit-profile/edit-bio/types";
+import { revalidatePath } from "next/cache";
 
 export async function fetchUserProfile(userId: string) {
     const supabase = await createClient();
 
-    return unstable_cache(
-        async (supabaseClient) => {
-            const query = supabaseClient.from('users')
-                .select(`${userQueryWithBiography}`)
-                .eq('id', userId)
-                .single();
+    const query = supabase.from('users')
+        .select(`${userQueryWithBiography}`)
+        .eq('id', userId)
+        .single();
 
-            const data = await baseFetcher<UserProfileDBType>(query);
-            return transformUserProfile(data);
-        },
-        [`user-profile-${userId}`],
-        {
-            revalidate: 60 * 60 * 24
-        }
-    )(supabase);
+    const data = await baseFetcher<UserProfileDBType>(query);
+    return transformUserProfile(data);
 }
 
 export async function fetchBaseUser(userId: string) {
@@ -136,8 +128,7 @@ export async function updateUserImageAction(userId: string, imageType: 'avatar' 
 
     try {
         const imageUrl = await updateUserImage(userId, result.data.image, imageType);
-
-        revalidateTag(`user-profile-${userId}`);
+        revalidatePath(`/profile/${userId}`, 'page');
         return {
             ...createFormResult(result.data, null, true),
             imageUrl
@@ -152,7 +143,7 @@ export async function updateUserImageAction(userId: string, imageType: 'avatar' 
     }
 }
 
-async function updateBioField(userId: string, field: string, value: string | Date) {
+export async function updateBioField(userId: string, field: string, value: string | Date) {
     const supabase = await createClient();
 
     await baseFetcher(
@@ -192,7 +183,7 @@ export async function updateUserBioAction(field: string, dbField: string, state:
 
     try {
         await updateBioField(userId, dbField, fieldValue);
-        revalidateTag(`user-profile-${userId}`);
+        revalidatePath(`/profile/${userId}`, 'page');
         return createFormResult(result.data, null, true);
     } catch (error) {
         console.error('Failed to update user bio', error);
@@ -205,7 +196,7 @@ export async function deleteUserBioFieldAction(field: string) {
 
     try {
         await deleteBioField(userId, field);
-        revalidateTag(`user-profile-${userId}`);
+        revalidatePath(`/profile/${userId}`, 'page');
         return {
             error: null,
             success: true

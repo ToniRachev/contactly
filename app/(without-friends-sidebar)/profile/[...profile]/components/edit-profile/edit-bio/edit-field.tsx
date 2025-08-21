@@ -1,16 +1,13 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { FieldConfig } from "./types";
 import { updateUserBioAction } from "@/lib/actions/user/user.actions";
 import FieldInput from "./field-input";
 import EmptyFieldPlaceholder from "./empty-field-placeholder";
 import FieldDisplayRow from "./field-display-row";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
-import { parseAndValidateFormData } from "@/lib/utils";
-import { updateBioSchemas } from "@/lib/validations/userSchema";
-import { flushSync } from "react-dom";
 
 type ControlsProps = {
     close: () => void;
@@ -54,20 +51,12 @@ const FormField = ({ field, closeEditing }: FormFieldProps) => {
 
     const error = state.errors?.fieldErrors?.[field.name]?.[0] ?? state.errors?.formErrors?.[0];
 
-    const handleUpdateUserBioField = async (formData: FormData) => {
-        const { data, result } = parseAndValidateFormData(formData, updateBioSchemas[field.name as keyof typeof updateBioSchemas], [field.name]);
-
-        if (!result.success) {
-            formAction(formData);
-            return;
-        }
-
-        flushSync(() => {
-            updateUserBioField(field.name, data[field.name] as string);
+    useEffect(() => {
+        if (state.success) {
+            updateUserBioField(field.name, state.data[field.name] as string);
             closeEditing();
-        })
-        formAction(formData);
-    }
+        }
+    }, [state.success, field.name, state.data, updateUserBioField, closeEditing])
 
     return (
         <form>
@@ -81,7 +70,7 @@ const FormField = ({ field, closeEditing }: FormFieldProps) => {
                 <Controls
                     close={closeEditing}
                     isPending={isPending}
-                    formAction={handleUpdateUserBioField}
+                    formAction={formAction}
                 />
             </li>
         </form >
