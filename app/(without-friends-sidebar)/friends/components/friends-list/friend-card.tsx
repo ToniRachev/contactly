@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import CardWrapper from "../card-wrapper";
-import useFriendRequestAction from "@/hooks/useFriendRequestAction";
-import { useAuthenticatedUser } from "@/lib/context/user.context";
+import RemoveFriendButton from "@/components/remove-friend-button";
 
 type FriendCardProps = {
     friendAvatar: string | null;
@@ -10,13 +9,6 @@ type FriendCardProps = {
 }
 
 export default function FriendCard({ friendAvatar, friendName, friendId }: Readonly<FriendCardProps>) {
-    const { user } = useAuthenticatedUser();
-
-    const { formAction, isPending } = useFriendRequestAction({
-        type: 'remove',
-        userId: user.id,
-        friendId
-    })
 
     return (
         <CardWrapper
@@ -28,16 +20,7 @@ export default function FriendCard({ friendAvatar, friendName, friendId }: Reado
                     View profile
                 </Button>
 
-                <form className="w-full">
-                    <Button
-                        variant="destructive"
-                        className="w-full"
-                        formAction={formAction}
-                        disabled={isPending}
-                    >
-                        Remove friend
-                    </Button>
-                </form>
+                <RemoveFriendButton friendId={friendId} buttonVariant="destructive" />
             </>
         </CardWrapper>
     )
