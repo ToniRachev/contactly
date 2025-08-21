@@ -3,7 +3,7 @@ import ContentWrapper from "@/components/content-wrapper";
 import FriendsSidebar from "@/components/friends-sidebar";
 import { ReactNode } from "react";
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
     return (
         <div className="flex">
             <div className="">

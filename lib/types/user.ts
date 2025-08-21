@@ -62,3 +62,17 @@ export type UserProfileType = BaseUserType & {
     biography: BiographyType;
     coverUrl: string | null;
 }
+
+
+export type SearchUserDBType = {
+    id: string;
+    first_name: string;
+    last_name: string;
+    avatar_url: string | null;
+}
+
+export type SearchUserType = {
+    id: string;
+    avatarUrl: string | null;
+    fullName: string;
+}

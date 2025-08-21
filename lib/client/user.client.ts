@@ -1,8 +1,8 @@
-import { BaseUserType, PresenceStatusType, UserProfileDBType, UserProfileType } from "../types/user";
+import { BaseUserType, PresenceStatusType, SearchUserType, UserProfileDBType, UserProfileType } from "../types/user";
 import { createClient } from "../utils/supabase/client";
 import { baseFetcher } from "../utils/supabase/helpers";
 import { baseUserQuery, userQueryWithBiography } from "../utils/supabase/queries";
-import { appendFullNameToUser } from "../utils/transform";
+import { appendFullNameToUser, transformSearchUser } from "../utils/transform";
 
 export async function updateUserStatus(newStatus: PresenceStatusType, userId: string) {
     const supabase = createClient();
@@ -31,4 +31,22 @@ export async function fetchBaseUser(userId: string) {
     )
 
     return appendFullNameToUser(data) as BaseUserType;
+}
+
+export async function searchUsers(search: string) {
+    const supabase = createClient();
+
+    try {
+        const { data, error } = await supabase
+            .rpc("match_full_name", { search: `%${search}%` });
+
+        if (error) {
+            throw error;
+        }
+
+        return data.map(transformSearchUser);
+    } catch (error) {
+        console.error("Error searching users", error);
+        return [];
+    }
 }
