@@ -6,8 +6,8 @@ import Image from "next/image";
 import PhotoMetadata from "./photo-metadata";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import PhotoComments from "./photo-comments";
-import { PhotoCommentsType, PhotoReactionType } from "../lib/types";
-import CommentForm from "@/components/comment/components/comment-form";
+import { EditPhotoDescriptionType, PhotoCommentsType, PhotoReactionType } from "../lib/types";
+import TextForm from "@/components/text-form";
 import PhotoEngagementStats from "./photo-engagement-stats";
 
 type PhotoProps = {
@@ -15,12 +15,15 @@ type PhotoProps = {
     photo: PhotoType;
     photoReaction: PhotoReactionType;
     photoComments: PhotoCommentsType;
+    editPhotoDescription: EditPhotoDescriptionType;
 }
 
-export default function Photo({ photo, author, photoReaction, photoComments }: Readonly<PhotoProps>) {
+export default function Photo({ photo, author, photoReaction, photoComments, editPhotoDescription }: Readonly<PhotoProps>) {
     const { user } = useAuthenticatedUser();
 
     const isLikedPhoto = photo.likes.includes(user.id);
+    const isOwnPhoto = author.id === user.id;
+
     return (
         <div className="">
             <Image
@@ -38,6 +41,9 @@ export default function Photo({ photo, author, photoReaction, photoComments }: R
                         createdAt: photo.createdAt,
                         caption: photo.caption,
                     }}
+                    isOwnPhoto={isOwnPhoto}
+                    editPhotoDescription={editPhotoDescription}
+                    photoId={photo.id}
                 />
 
                 <PhotoEngagementStats
@@ -58,8 +64,10 @@ export default function Photo({ photo, author, photoReaction, photoComments }: R
                     reactionPhotoComment={photoComments.reaction}
                 />
 
-                <CommentForm
-                    onSubmitSuccess={(content) => photoComments.add(photo.id, content, user)}
+                <TextForm
+                    onSubmit={(content) => photoComments.add(photo.id, content, user)}
+                    name="body"
+                    placeholder="Add a comment"
                 />
             </div>
         </div>

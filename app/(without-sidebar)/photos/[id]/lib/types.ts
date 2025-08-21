@@ -5,6 +5,7 @@ export type AddCommentType = (photoId: string, body: string, user: UserProfileTy
 export type DeleteCommentType = (entityId: string, commentId: string) => void;
 export type EditCommentType = (entityId: string, commentId: string, newContent: string) => void;
 export type ReactionPhotoCommentType = (photoId: string, commentId: string, userId: string, isLikedComment: boolean) => void;
+export type EditPhotoDescriptionType = (photoId: string, description: string) => void;
 
 export type PhotoCommentsType = {
     add: AddCommentType;

@@ -13,7 +13,7 @@ type GalleryProps = {
 }
 
 export default function Gallery({ initialPhotos, activePhotoId }: Readonly<GalleryProps>) {
-    const { photos, galleryNavigation, togglePhotoReaction, photoComments } = usePhotos(initialPhotos, activePhotoId);
+    const { photos, galleryNavigation, togglePhotoReaction, photoComments, photoDescription } = usePhotos(initialPhotos, activePhotoId);
 
     useEffect(() => {
         window.history.replaceState(null, '', `/photos/${photos[galleryNavigation.activePhotoIndex].id}`);
@@ -32,6 +32,7 @@ export default function Gallery({ initialPhotos, activePhotoId }: Readonly<Galle
                 photo={activePhoto}
                 photoReaction={togglePhotoReaction}
                 photoComments={photoComments}
+                editPhotoDescription={photoDescription.edit}
             />
 
             {albumHasMoreThanOnePhoto && (

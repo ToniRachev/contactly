@@ -1,4 +1,4 @@
-import CommentForm from "@/components/comment/components/comment-form";
+import TextForm from "@/components/text-form";
 import { CommentType } from "@/lib/types/post";
 
 type CommentFormProps = {
@@ -17,9 +17,11 @@ export default function EditCommentForm({ comment, editComment, closeEditing }: 
     return (
         <div className="w-full">
             <div className="w-full border rounded-lg border-stone-700">
-                <CommentForm
+                <TextForm
                     value={comment.body}
-                    onSubmitSuccess={handleEditComment}
+                    onSubmit={handleEditComment}
+                    name="body"
+                    placeholder="Edit comment"
                 />
             </div>
 
