@@ -1,6 +1,6 @@
 'use client';
 
-import { addPhotoComment, deletePhotoComment, editPhotoComment, photoCommentReaction, photoReaction } from "@/lib/actions/photos/photos.actions";
+import { addPhotoComment, deletePhotoComment, editPhotoComment, editPhotoDescription, photoCommentReaction, photoReaction } from "@/lib/actions/photos/photos.actions";
 import { PhotoType } from "@/lib/types/photos";
 import { CommentType } from "@/lib/types/post";
 import { UserProfileType } from "@/lib/types/user";
@@ -70,6 +70,15 @@ const updatePhotoCommentReactionState = (state: PhotoType[], photoId: string, co
                     return comment;
                 })
             }
+        }
+        return photo;
+    })
+}
+
+const updatePhotoDescriptionState = (state: PhotoType[], photoId: string, description: string) => {
+    return state.map((photo) => {
+        if (photo.id === photoId) {
+            return { ...photo, caption: description };
         }
         return photo;
     })
@@ -183,6 +192,22 @@ export default function usePhotos(initialPhotos: PhotoType[], activePhotoId: str
         })
     }
 
+    const editPhotoDescriptionWithOptimism = (photoId: string, description: string) => {
+        startTransition(async () => {
+            updateOptimisticPhotos((prevState) => updatePhotoDescriptionState(prevState, photoId, description));
+
+            try {
+                await editPhotoDescription({ photoId, description });
+
+                startTransition(() => {
+                    setPhotosState((prevState) => updatePhotoDescriptionState(prevState, photoId, description));
+                })
+            } catch (error) {
+                console.error('Failed to edit photo description', error);
+            }
+        })
+    }
+
     return {
         photos: optimisticPhotos,
         galleryNavigation: {
@@ -198,6 +223,9 @@ export default function usePhotos(initialPhotos: PhotoType[], activePhotoId: str
             edit: editPhotoCommentWithOptimism,
             delete: deletePhotoCommentWithOptimism,
             reaction: reactionPhotoCommentWithOptimism,
+        },
+        photoDescription: {
+            edit: editPhotoDescriptionWithOptimism,
         }
     }
 }

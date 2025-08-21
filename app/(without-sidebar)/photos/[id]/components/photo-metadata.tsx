@@ -1,8 +1,12 @@
 'use client';
 
+import { Button } from "@/components/ui/button";
 import Avatar from "@/components/user-avatar";
 import { BaseUserType } from "@/lib/types/user";
 import { formatFullName, formatRelativeTime } from "@/lib/utils";
+import { useState } from "react";
+import EditPhotoDescription from "./edit-photo-description";
+import { EditPhotoDescriptionType } from "../lib/types";
 
 type PhotoMetadataProps = {
     author: BaseUserType;
@@ -10,9 +14,14 @@ type PhotoMetadataProps = {
         createdAt: string;
         caption: string | null;
     }
+    isOwnPhoto: boolean;
+    editPhotoDescription: EditPhotoDescriptionType;
+    photoId: string;
 }
 
-export default function PhotoMetadata({ author, photoData }: Readonly<PhotoMetadataProps>) {
+export default function PhotoMetadata({ author, photoData, isOwnPhoto, editPhotoDescription, photoId }: Readonly<PhotoMetadataProps>) {
+    const [isEditing, setIsEditing] = useState(false);
+
     return (
         <div className="">
             <div className="flex items-center gap-2">
@@ -23,11 +32,25 @@ export default function PhotoMetadata({ author, photoData }: Readonly<PhotoMetad
                 </div>
             </div>
 
-            <div className="py-2">
-                <p className="text-sm text-white">{photoData.caption}</p>
+            <div className="py-4">
+                {!isEditing && (
+                    <p className="text-sm text-white">{photoData.caption}</p>
+                )}
+
+                {isOwnPhoto && !isEditing && (
+                    <div className="pt-4">
+                        <Button
+                            variant={'secondary'}
+                            className="text-sm w-fit"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            Edit
+                        </Button>
+                    </div>
+                )}
+
+                {isOwnPhoto && isEditing && <EditPhotoDescription value={photoData.caption ?? ''} closeEditing={() => setIsEditing(false)} editPhotoDescription={editPhotoDescription} photoId={photoId} />}
             </div>
-
-
         </div>
     )
 }

@@ -261,7 +261,7 @@ export async function photoCommentReaction({ commentId, userId, isLikedComment }
     }
 }
 
-export const fetchUserPhotos = async (userId: string, limit: number = 10) => {
+export async function fetchUserPhotos(userId: string, limit: number = 10) {
     const supabase = await createClient();
 
     const data = await baseFetcher(
@@ -270,4 +270,17 @@ export const fetchUserPhotos = async (userId: string, limit: number = 10) => {
 
     const photos = data ? data.map((photo) => transformPhoto(photo as unknown as PhotoDBType)) : [];
     return photos;
+}
+
+type EditPhotoDescriptionProps = {
+    photoId: string;
+    description: string;
+}
+
+export async function editPhotoDescription({ photoId, description }: EditPhotoDescriptionProps) {
+    const supabase = await createClient();
+
+    await baseFetcher(
+        supabase.from('photos').update({ caption: description }).eq('id', photoId)
+    )
 }

@@ -3,7 +3,7 @@
 import { useAuthenticatedUser } from "@/lib/context/user.context";
 import { CommentType } from "@/lib/types/post";
 import Avatar from "@/components/user-avatar";
-import CommentForm from "./comment-form";
+import TextForm from "../../text-form";
 import { createOptimisticComment } from "@/lib/utils";
 
 type CreateCommentProps = {
@@ -28,8 +28,10 @@ export default function CreateComment({ postId, addComment }: Readonly<CreateCom
         <div className="w-full flex gap-2 items-center sticky bottom-0 bg-background py-4">
             <Avatar avatar={'/user_avatar.webp'} size={'sm'} />
 
-            <CommentForm
-                onSubmitSuccess={handleSubmitSuccess}
+            <TextForm
+                onSubmit={handleSubmitSuccess}
+                name="body"
+                placeholder="Add a comment"
             />
         </div>
     )
