@@ -7,6 +7,7 @@ import { PostType } from "@/lib/types/post";
 
 type PostsListWrapperProps = {
     posts: PostType[];
+    showCreatePost?: boolean;
 }
 
 const PostsList = () => {
@@ -24,11 +25,11 @@ const PostsList = () => {
     )
 }
 
-export default function PostsListWrapper({ posts }: Readonly<PostsListWrapperProps>) {
+export default function PostsListWrapper({ posts, showCreatePost = true }: Readonly<PostsListWrapperProps>) {
     return (
         <PostsProvider postsData={posts}>
             <div className="space-y-24 max-w-[35vw] w-full">
-                <CreatePost />
+                {showCreatePost && <CreatePost />}
                 <PostsList />
             </div>
         </PostsProvider>

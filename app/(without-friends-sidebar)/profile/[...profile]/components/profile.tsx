@@ -4,6 +4,7 @@ import About from "./about";
 import PhotosList from "./photos-list";
 import PostsListWrapper from "@/components/post/posts-list";
 import { UserProfileType } from "@/lib/types/user";
+import { getAuthUserId } from "@/lib/actions/user/user.actions";
 
 type ProfileProps = {
     profileId: string;
@@ -11,10 +12,13 @@ type ProfileProps = {
 }
 
 export default async function Profile({ profileId, profile }: Readonly<ProfileProps>) {
-    const [posts, photos] = await Promise.all([
+    const [posts, photos, userId] = await Promise.all([
         fetchUserPosts(profileId),
         fetchUserPhotos(profileId, 9),
+        getAuthUserId()
     ]);
+
+    const isOwnProfile = userId === profileId;
 
     return (
         <div className="flex gap-48">
@@ -23,7 +27,7 @@ export default async function Profile({ profileId, profile }: Readonly<ProfilePr
                 <PhotosList photos={photos} profileId={profileId} />
             </div>
             <div className="flex flex-col gap-24 w-full">
-                <PostsListWrapper posts={posts} />
+                <PostsListWrapper posts={posts} showCreatePost={isOwnProfile} />
             </div>
         </div>
     )

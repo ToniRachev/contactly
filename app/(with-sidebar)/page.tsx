@@ -7,10 +7,10 @@ export default async function Home() {
   const posts = await fetchPosts(userId);
 
   return (
-    <div className="">
+    <div className="w-full">
       <h4>Feed</h4>
 
-      <div className="pt-12 flex flex-col gap-24 w-full items-center">
+      <div className="pt-12 flex flex-col gap-24 w-full max-w-[35vw] items-center mx-auto">
         <PostsList posts={posts} />
       </div>
     </div>
