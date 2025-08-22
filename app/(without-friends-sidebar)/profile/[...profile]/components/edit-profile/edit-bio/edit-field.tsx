@@ -8,6 +8,7 @@ import FieldInput from "./field-input";
 import EmptyFieldPlaceholder from "./empty-field-placeholder";
 import FieldDisplayRow from "./field-display-row";
 import { useAuthenticatedUser } from "@/lib/context/user.context";
+import { formatDate } from "date-fns";
 
 type ControlsProps = {
     close: () => void;
@@ -53,7 +54,12 @@ const FormField = ({ field, closeEditing }: FormFieldProps) => {
 
     useEffect(() => {
         if (state.success) {
-            updateUserBioField(field.name, state.data[field.name] as string);
+            if (state.data[field.name] instanceof Date) {
+                updateUserBioField(field.name, formatDate(state.data[field.name] as Date, "yyyy-MM-dd"));
+            } else {
+                updateUserBioField(field.name, state.data[field.name] as string);
+            }
+
             closeEditing();
         }
     }, [state.success, field.name, state.data, updateUserBioField, closeEditing])
