@@ -25,7 +25,7 @@ export default function Photo({ photo, author, photoReaction, photoComments, edi
     const isOwnPhoto = author.id === user.id;
 
     return (
-        <div className="">
+        <div className="relative w-full flex justify-center">
             <Image
                 src={photo.url}
                 alt="Add Alt later"
@@ -34,7 +34,7 @@ export default function Photo({ photo, author, photoReaction, photoComments, edi
                 className="h-[100svh] object-cover"
             />
 
-            <div className="absolute top-4 left-[72%] w-full max-w-[20svw] z-[50]">
+            <div className="absolute top-4 right-36 w-[20svw] z-[50]">
                 <PhotoMetadata
                     author={author}
                     photoData={{
